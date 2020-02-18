@@ -1,0 +1,31 @@
+{
+	"short_name": "Mi Cuenta MVLTDA",
+	"name": "Mi Cuenta - Monteverde LTDA",
+	"description": "Aplicacion PWA oficial de Monteverde LTDA.",
+	"icons": [
+		{
+		  "src": "/favicon.ico",
+		  "type": "image/x-icon",
+		  "sizes": "48x48"
+		},
+		{
+		  "src": "/favicon.ico",
+		  "type": "image/x-icon",
+		  "sizes": "96x96"
+		},
+		{
+		  "src": "/public/assets/logo-monteverde.png",
+		  "type": "image/png",
+		  "sizes": "144x144"
+		}
+	],
+	"start_url": "/?launcher=app-mobile-PWA",
+	"background_color": "#d8e9cf",
+	"theme_color": "#6ba74c",
+	"display": "standalone",
+	"orientation": "portrait",
+	"related_applications": [],
+    "prefer_related_applications": false,
+	"dir": "ltr",
+    "lang": "es-CO"
+}

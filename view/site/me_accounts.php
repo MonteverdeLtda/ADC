@@ -37,7 +37,7 @@
 										<p><strong>Tipo de Cuenta.: </strong> {{ accountInfo.account.type.name }}</p>
 										<p><strong>Act. Econom.: </strong> {{ accountInfo.account.economic_activity.name }}</p>
 										<ul class="list-unstyled">
-											<li><i class="fa fa-building"></i> Direccion Princ.: {{ accountInfo.account.address.minsize }}</li>
+											<li><i class="fa fa-building"></i> Direccion Princ.: {{ accountInfo.account.address }}</li>
 											<li><i class="fa fa-phone"></i> Teléfono: {{ accountInfo.account.phone }}</li>
 											<li><i class="fa fa-mobile"></i> Móvil: {{ accountInfo.account.mobile }}</li>
 										</ul>
@@ -99,45 +99,25 @@
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Correo Electronico Principal <span class="required"> *</span></label>
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<input v-model="forms.account_edit.email" type="text" name="email" required="required" class="form-control col-md-7 col-xs-12">
+									<input v-model="forms.account_edit.email" type="text" name="email" required="required" class="form-control col-xs-12">
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="phone"> Teléfono Fijo <span class="required"> *</span></label>
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<input v-model="forms.account_edit.phone" type="text" name="phone" required="required" class="form-control col-md-7 col-xs-12">
+									<input v-model="forms.account_edit.phone" type="text" name="phone" required="required" class="form-control col-xs-12">
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="mobile"> Teléfono Móvil <span class="required"> *</span></label>
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<input v-model="forms.account_edit.mobile" type="text" name="mobile" required="required" class="form-control col-md-7 col-xs-12">
-								</div>
-							</div>
-							
-							<div class="form-group">
-								<label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Middle Name / Initial</label>
-								<div class="col-md-6 col-sm-6 col-xs-12">
-									<input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+									<input v-model="forms.account_edit.mobile" type="text" name="mobile" required="required" class="form-control col-xs-12">
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">Gender</label>
+								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="address"> Dirección principal <span class="required"> *</span></label>
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<div id="gender" class="btn-group" data-toggle="buttons">
-										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-											<input type="radio" name="gender" value="male"> &nbsp; Male &nbsp;
-										</label>
-										<label class="btn btn-primary" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-										  <input type="radio" name="gender" value="female"> Female
-										</label>
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">Date Of Birth <span class="required">*</span></label>
-								<div class="col-md-6 col-sm-6 col-xs-12">
-									<input id="birthday" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
+									<input v-model="forms.account_edit.address" type="text" name="address" required="required" class="form-control col-xs-12">
 								</div>
 							</div>
 							<div class="ln_solid"></div>
@@ -145,7 +125,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
+						<button @click="submitEditAccountInModal" type="button" class="btn btn-primary">Actualizar</button>
 					</div>
 				</div>
 			</div>
@@ -179,6 +159,17 @@ var Home = Vue.extend({
 	computed: {
 	},
 	methods: {
+		submitEditAccountInModal(){
+			var self = this;
+			try {				
+				MV.api.update('/accounts/' + self.forms.account_edit.id, self.forms.account_edit, (a) => {
+					console.error(a);
+					
+				});
+			} catch(e){
+				console.error(e);
+			}
+		},
 		loadOptions(data){
 			var self = this;
 			MV.api.readList('/economic_activities', {}, (a) => {
@@ -196,15 +187,11 @@ var Home = Vue.extend({
 					// self.forms.account_edit = data.account;
 					self.forms.account_edit = {
 						id: data.account.id,
-						economic_activity: data.account.economic_activity.id,
-						identification_type: data.account.identification_type.id,
-						identification_number: data.account.identification_number,
-						names: data.account.names,
-						surname: data.account.surname,
 						email: data.account.email,
 						phone: data.account.phone,
 						mobile: data.account.mobile,
 						birthday: data.account.birthday,
+						address: data.account.address,
 					};
 					
 					self.dialogEdit.modal('show');
@@ -256,7 +243,6 @@ var Home = Vue.extend({
 				join: [
 					'accounts,identifications_types',
 					'accounts,accounts_types',
-					'accounts,addresses',
 					'accounts,economic_activities',
 					'accounts,users',
 					'accounts,identifications_types',

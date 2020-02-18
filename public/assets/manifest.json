@@ -1,6 +1,6 @@
 {
-	"short_name": "Mi Cuenta MVLTDA",
-	"name": "Mi Cuenta - Monteverde LTDA",
+	"short_name": "Area de Clientes MVLTDA",
+	"name": "Area de Clientes - Monteverde LTDA",
 	"description": "Aplicacion PWA oficial de Monteverde LTDA.",
 	"icons": [
 		{
@@ -23,7 +23,7 @@
 	"background_color": "#d8e9cf",
 	"theme_color": "#6ba74c",
 	"display": "standalone",
-	"orientation": "portrait",
+	"orientation": "any",
 	"related_applications": [],
     "prefer_related_applications": false,
 	"dir": "ltr",

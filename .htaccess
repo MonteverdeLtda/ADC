@@ -3,7 +3,7 @@ Options +Indexes
 RewriteEngine On 
 
 RewriteCond %{SERVER_PORT} 80 
-RewriteRule ^(.*)$ https://emvarias.monteverdeltda.com/$1 [R,L]
+RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R,L]
 
 RewriteBase /
 RewriteRule ^index\.php$ - [L]

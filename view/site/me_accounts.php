@@ -15,61 +15,6 @@
 
 <template id="home">
 	<div>
-		<div id="dialog-form" title="Actualización de datos" class="dialog">
-			<br />
-			<form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" v-if="forms.account_edit !== null">
-				<div class="form-group">
-					<label class="control-label col-md-3 col-sm-3 col-xs-12" for="economic_activity">Act. Economica <span class="required">*</span></label>
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<select v-model="forms.account_edit.economic_activity" required="required" class="form-control col-md-7 col-xs-12">
-							<option value="">Seleccione una opcion...</option>
-							<option v-for="(option, option_i) in options.economic_activities" :value="option.id">{{ option.name }}</option>
-						</select>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-md-3 col-sm-3 col-xs-12" for="identification_type">Tipo de Doc. <span class="required">*</span></label>
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<select v-model="forms.account_edit.identification_type" required="required" class="form-control col-md-7 col-xs-12">
-							<option value="">Seleccione una opcion...</option>
-							<option v-for="(option, option_i) in options.identifications_types" :value="option.id">{{ option.name }}</option>
-						</select>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-md-3 col-sm-3 col-xs-12" for="identification_number">Nro. Doc <span class="required">*</span></label>
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<input v-model="forms.account_edit.identification_number" type="text" name="last-name" required="required" class="form-control col-md-7 col-xs-12">
-					</div>
-				</div>
-				<div class="form-group">
-					<label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Middle Name / Initial</label>
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-md-3 col-sm-3 col-xs-12">Gender</label>
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<div id="gender" class="btn-group" data-toggle="buttons">
-							<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-								<input type="radio" name="gender" value="male"> &nbsp; Male &nbsp;
-							</label>
-							<label class="btn btn-primary" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
-							  <input type="radio" name="gender" value="female"> Female
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-md-3 col-sm-3 col-xs-12">Date Of Birth <span class="required">*</span></label>
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<input id="birthday" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
-					</div>
-				</div>
-				<div class="ln_solid"></div>
-			</form>
-		</div>
 		
 		<div class="col-md-12">
 			<div class="x_panel">
@@ -139,6 +84,72 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="modal fade bs-edit-me-account-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+						<h4 class="modal-title" id="myModalLabel">Actualizacion de datos</h4>
+					</div>
+					<div class="modal-body">
+						<br />
+						<form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" v-if="forms.account_edit !== null">
+							
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">Correo Electronico Principal <span class="required"> *</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input v-model="forms.account_edit.email" type="text" name="email" required="required" class="form-control col-md-7 col-xs-12">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="phone"> Teléfono Fijo <span class="required"> *</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input v-model="forms.account_edit.phone" type="text" name="phone" required="required" class="form-control col-md-7 col-xs-12">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="mobile"> Teléfono Móvil <span class="required"> *</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input v-model="forms.account_edit.mobile" type="text" name="mobile" required="required" class="form-control col-md-7 col-xs-12">
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Middle Name / Initial</label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Gender</label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<div id="gender" class="btn-group" data-toggle="buttons">
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" name="gender" value="male"> &nbsp; Male &nbsp;
+										</label>
+										<label class="btn btn-primary" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+										  <input type="radio" name="gender" value="female"> Female
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Date Of Birth <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input id="birthday" class="date-picker form-control col-md-7 col-xs-12" required="required" type="text">
+								</div>
+							</div>
+							<div class="ln_solid"></div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -163,27 +174,7 @@ var Home = Vue.extend({
 		var self = this;
 		self.loadOptions();
 		
-		self.dialogEdit = $( "#dialog-form" ).dialog({
-		  autoOpen: false,
-		  height: 'auto',
-		  width: 350,
-		  modal: true,
-		  buttons: {
-			"Actualizar": function(a){
-				
-			},
-			"Cerrar": function() {
-			  self.dialogEdit.dialog( "close" );
-			}
-		  },
-		  close: function() {
-			self.forms.account_edit = null;
-		  },
-		  open: function(event){
-			  console.log('open');
-			  console.log(self.forms.account_edit);
-		  }
-		});
+		self.dialogEdit = $( ".bs-edit-me-account-modal-lg" );
 	},
 	computed: {
 	},
@@ -216,7 +207,7 @@ var Home = Vue.extend({
 						birthday: data.account.birthday,
 					};
 					
-					self.dialogEdit.dialog( "open" );
+					self.dialogEdit.modal('show');
 				} else {
 					return false;
 				}

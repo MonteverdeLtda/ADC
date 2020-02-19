@@ -84,4 +84,97 @@ class RegisterForm extends ModeloBase
 		return ($this->id > 0) ? true : false;
     }
 
+    public function setData($data = []){
+		if(is_array($data)){
+			foreach($data as $k => $v){
+				$this->set($k, $v);
+				/*if($k == 'password'){
+					$this->set($k, password_hash($v, PASSWORD_DEFAULT));
+				}*/
+			}
+		}
+    }
+	
+    public function createBasic(){
+        $sql = "INSERT INTO {$this->getTableUse()} (username, password, names, surname, phone, mobile, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $id = (int) parent::getInsert($sql, [
+			$this->username,
+			password_hash($this->password, PASSWORD_DEFAULT),
+			$this->names,
+			$this->surname,
+			$this->phone,
+			$this->mobile,
+			$this->email
+		]);
+		if($id > 0){
+			$orig_pass = $this->password;
+			$this->id = $id;
+			$this->getById($id);
+			$file = dirname(dirname(dirname(__DIR__) . "/../") ) . "/templates/mails/register.php";
+			$fileExist = @file_exists($file);
+			$template = "NONE {$file}";
+			if($fileExist == true){
+				$template = @htmlspecialchars(@file_get_contents($file, true));
+				$template = (preg_replace([
+					'/%username%/i',
+					'/%email%/i',
+					'/%password%/i',
+				], [
+					"{$this->username}",
+					$this->email,
+					$orig_pass,
+				], $template));
+			}
+			$template = htmlspecialchars_decode(utf8_decode($template));
+			
+			$mail = new MailSend();
+			$mail->setSubject("¡Te damos la bienvenida a Monteverde!");
+			$mail->addTo($this->email, "{$this->names} {$this->surname}");
+			$mail->setHtml(true);
+			$mail->setMessage($template);
+			$sendingMail = $mail->sendMail();
+			return $sendingMail;
+		} else {
+			return false;
+		}
+    }
+	
+    public function IncludeInAccount($account = 0, $permissions = null){
+		$permissions = ($permissions == null || (int) $permissions > 0) ? $permissions : null;
+		if($this->id > 0 && $account > 0){
+			$sql = "INSERT INTO accounts_users (user, account, permissions) VALUES (?, ?, ?)";
+			$id = (int) parent::getInsert($sql, [
+				$this->id,
+				$account,
+				$permissions
+			]);
+			if($id > 0){
+				$file = dirname(dirname(dirname(__DIR__) . "/../") ) . "/templates/mails/addInAccount.php";
+				$fileExist = @file_exists($file);
+				$template = "NONE {$file}";
+				if($fileExist == true){
+					$template = @htmlspecialchars(@file_get_contents($file, true));
+					$template = (preg_replace([
+						'/%username%/i',
+					], [
+						"{$this->username}",
+					], $template));
+				}
+				$template = htmlspecialchars_decode(utf8_decode($template));
+				
+				$mail = new MailSend();
+				$mail->setSubject("¡Nueva cuenta agregada!");
+				$mail->addTo($this->email, "{$this->names} {$this->surname}");
+				$mail->setHtml(true);
+				$mail->setMessage($template);
+				$sendingMail = $mail->sendMail();
+				return $sendingMail;
+			} else {
+				return false;
+			}			
+		} else {
+			return false;
+		}
+    }
+
 }

@@ -14,7 +14,6 @@ define('CORE_PATH', dirname(CONFIG_PATH . '../') . '/core');
 
 ini_set('memory_limit', '128M');
 
-
 spl_autoload_register(function($className){
 		$namespace = str_replace("\\","/", __NAMESPACE__);
 		$className = str_replace("\\","/", $className);
@@ -23,7 +22,7 @@ spl_autoload_register(function($className){
 		$ruta_3 = dirname(CONFIG_PATH . '../') . "/core/libs/" . (empty($namespace) ? "" : $namespace . "/") . "{$className}.php";
 		
 	try {
-		if(@get_called_class() != false){			
+		if(@get_called_class() != false){
 			$ruta_4 = dirname(CONFIG_PATH . '../') . "/core/model/" . str_replace(substr(get_called_class(), 0, strrpos(get_called_class(), "\\")) . "/","", $className) . ".php";
 			$ruta_5 = dirname(CONFIG_PATH . '../') . "/core/" . str_replace(substr(get_called_class(), 0, strrpos(get_called_class(), "\\")) . "/","", $className) . ".php";
 			$ruta_6 = dirname(CONFIG_PATH . '../') . "/core/libs/" . str_replace(substr(get_called_class(), 0, strrpos(get_called_class(), "\\")) . "/","", $className) . ".php";
@@ -42,7 +41,7 @@ spl_autoload_register(function($className){
 				exit();
 			}
 		}else{
-			throw new Exception('Division by zero.');
+			throw new Exception('Archivo no encontrado.');
 		}
 		
 		
@@ -62,8 +61,6 @@ spl_autoload_register(function($className){
 			exit();
 		}
 	}
-
-	
 });
 
 session_start();

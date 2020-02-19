@@ -8,17 +8,20 @@
 class SiteController extends ControladorBase{
     public function __construct() {
         parent::__construct();
-
     }
 	
 	public function actionIndex(){
+		$dataPost = $this->getPost();
+		if(isset($dataPost['action']) && method_exists($this, 'action'.$dataPost['action'])){
+			$this->{'action'.$dataPost['action']}();
+			exit();
+		}
+		
 		$nodeSlugDefault = '/';
 		$url = $_SERVER['REQUEST_URI'];
-		
 		$modelNode = new Router($this->adapter);
 		$modelNode->getBySlug($_SERVER['REQUEST_URI']);
 		if(!$modelNode->isValid() && isset($_SERVER['REDIRECT_URL'])){ $modelNode->getBySlug($_SERVER['REDIRECT_URL']); }
-		
 		if($modelNode->isValid()){
 			if($modelNode->permission_access !== null){
 				if ($this->isGuest){
@@ -178,4 +181,66 @@ class SiteController extends ControladorBase{
 		]);
     }
 	
+	public function actionMeJSON(){
+        if ($this->isGuest){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		header("Content-type:application/json");
+		
+		echo json_encode($this->user, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES);
+		return json_encode($this->user, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES);
+		echo json_encode($this->user, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+		return json_encode($this->user, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+	}
+	
+	public function actionInviteUserInAccount(){
+        if ($this->isGuest || ($this->checkPermission('me:accounts') !== true)){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$sendJSON = new stdClass();
+		$sendJSON->error = true;
+		$requestIn = $this->getRequest();
+		# $sendJSON->_request = $requestIn;
+		$requestIn['phone'] = (!isset($requestIn['phone'])) ? '-' : $requestIn['phone'];
+		$requestIn['mobile'] = (!isset($requestIn['mobile'])) ? '-' : $requestIn['mobile'];
+		$requestIn['permissions'] = (!isset($requestIn['permissions'])) ? null : ($requestIn['permissions'] == null || (int) $requestIn['permissions'] > 0) ? $requestIn['permissions'] : null;
+		
+		if(isset($requestIn['username'])
+			&& isset($requestIn['password'])
+			&& isset($requestIn['names'])
+			&& isset($requestIn['surname'])
+			&& isset($requestIn['phone'])
+			&& isset($requestIn['mobile'])
+			&& isset($requestIn['email'])
+			&& isset($requestIn['account'])
+		){
+			if(isset($requestIn['controller']))
+				unset($requestIn['controller']);
+			if(isset($requestIn['action']))
+				unset($requestIn['action']);
+			
+			$permissions = $requestIn['permissions'];
+			if(isset($requestIn['permissions']))
+				unset($requestIn['permissions']);
+			$account = $requestIn['account'];
+			if(isset($requestIn['account']))
+				unset($requestIn['account']);
+			
+			$sendJSON->userData = $requestIn;
+			$sendJSON->account = $account;
+			
+			$register = new RegisterForm($this->adapter);
+			$register->setData($requestIn);
+			$newUser = $register->createBasic();
+			if($newUser = true){
+				$includeResponse = $register->IncludeInAccount($account, $permissions);
+				$sendJSON->error = !$includeResponse;
+					
+			} else {
+				
+			}
+		}
+		
+		
+		header("Content-type:application/json");
+		$result = json_encode($sendJSON, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES);
+		echo $result;
+		return $result;
+	}
 }

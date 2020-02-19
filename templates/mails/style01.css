@@ -1,0 +1,263 @@
+
+h3{margin: 2em 0em;}
+.my-5{margin:7em 0em !important;}
+/*********************** Demo - 1 *******************/
+.email-signature1{background:#fff;font-family:Lato,sans-serif;padding:25px;box-shadow:0 0 10px rgba(0,0,0,.4);position:relative;z-index:1}
+.email-signature1:before{content:"";background:linear-gradient(to right,#f01c4e ,#69177d);width:47%;height:100%;position:absolute;top:0;right:0;z-index:-1}
+.email-signature1 .signature-content{color:#fff;background:#001f38;width:65%;padding:20px}
+.email-signature1 .signature-details{text-align:center;margin:0 0 10px;display:inline-block}
+.email-signature1 .title{font-size:24px;font-weight:600;text-transform:uppercase;margin:0}
+.email-signature1 .post{font-size:14px}
+.email-signature1 .inner-content{padding:0 40px 0 0;margin:0;list-style:none}
+.email-signature1 .inner-content li{color:#fff;font-size:15px;line-height:35px;display:block}
+.email-signature1 .inner-content li span{color:#001f38;background:linear-gradient(to right,#f01c4e ,#69177d);text-align:center;line-height:25px;width:25px;height:25px;margin-right:6px;border-radius:5px}
+.email-signature1 .signature-img{background:#fff;width:160px;height:160px;padding:7px;overflow:hidden;transform:translateY(-50%);position:absolute;top:50%;right:13%;z-index:1}
+.email-signature1 .signature-img img{width:100%;height:auto}
+.email-signature1 .icon{padding:0;margin:0;list-style:none;transform:translateY(-50%);position:absolute;top:50%;right:20px}
+.email-signature1 .icon li a{color:#f01c4e;background:#fff;font-size:18px;text-align:center;line-height:30px;width:30px;height:30px;margin:15px 0;border-radius:50%;display:block;transition:all .3s ease 0s}
+.email-signature1 .icon li a:hover{color:#fff;background:#f01c4e;text-decoration:none;box-shadow:0 0 10px #fff}
+@media screen and (max-width:767px){.email-signature1 .signature-img{right:17%}
+}
+@media screen and (max-width:576px){.email-signature1{padding:17px}
+.email-signature1:before{width:100%;height:50%;top:auto;bottom:0}
+.email-signature1 .signature-content{text-align:center;width:100%;padding:20px 10px 50px}
+.email-signature1 .inner-content{padding:0}
+.email-signature1 .inner-content li{line-height:40px}
+.email-signature1 .signature-img{margin:0 auto;transform:translateY(0);position:relative;right:0;top:-35px}
+.email-signature1 .icon{text-align:center;transform:translateY(0) translatex(50%);top:auto;bottom:10px;right:50%}
+.email-signature1 .icon li{display:inline-block}
+.email-signature1 .icon li a{margin:0 5px 0}
+}
+
+/*********************** Demo - 2 *******************/
+.demo{background-color:#4a5069}
+.email-signature2{background:#fff;font-family:Karla,sans-serif;padding:30px 35px 30px 30px;box-shadow:0 0 10px rgba(0,0,0,.4);position:relative;z-index:1}
+.email-signature2:before{content:"";background:linear-gradient(to right,#da4453,#89216b);width:100%;height:19%;position:absolute;bottom:0;left:0;z-index:-1}
+.email-signature2 .signature-details{color:#89216b;width:50%;margin-bottom:20px;display:inline-block}
+.email-signature2 .title{font-size:24px;font-weight:700;text-transform:uppercase;margin:0}
+.email-signature2 .post{font-size:15px;text-transform:capitalize}
+.email-signature2 .signature-content{color:#000;font-size:14px;line-height:35px;text-align:right;width:50%;padding:0 33px 0 0;margin:30px 0 60px;display:inline-block;float:right;list-style:none;position:relative}
+.email-signature2 .signature-content li{position:relative}
+.email-signature2 .signature-content li span{color:#fff;background:#89216b;line-height:25px;text-align:center;width:25px;height:25px;border-radius:5px;position:absolute;right:-33px;top:4px}
+.email-signature2 .signature-icon{color:rgba(255,255,255,.5);background:linear-gradient(to right,#da4453,#89216b);font-size:50px;text-align:center;line-height:125px;width:140px;height:140px;border:7px solid #fff;display:inline-block}
+.email-signature2 .icon{text-align:right;padding:0;margin:0;list-style:none;position:absolute;right:35px;bottom:13px}
+.email-signature2 .icon li{text-align:center;margin:0 0 0 8px;display:inline-block}
+.email-signature2 .icon li a{color:#89216b;background:#fff;font-size:15px;line-height:29px;text-align:center;width:28px;height:28px;border-radius:50%;display:block;transition:all .3s ease 0s}
+.email-signature2 .icon li a:hover{color:#fff;background:#89216b;box-shadow:0 0 10px -3px #fff;text-decoration:none;}
+@media screen and (max-width:576px){.email-signature2{text-align:center;padding:20px 20px 60px 20px}
+.email-signature2 .signature-details{width:100%;margin:0 0 10px}
+.email-signature2 .title{font-size:20px}
+.email-signature2 .signature-content{text-align:center;width:auto;padding:0;margin:0 auto 20px;float:none;display:inline-block}
+.email-signature2 .signature-content li{margin-top:30px}
+.email-signature2 .signature-content li span{transform:translateX(50%);top:-25px;right:50%}
+.email-signature2 .signature-icon{margin:0 auto;float:none;display:block}
+.email-signature2 .icon{text-align:center;width:100%;transform:translateX(-50%);bottom:15px;left:50%}
+}
+
+/*********************** Demo - 3 *******************/
+.email-signature3{font-family:'Roboto Condensed',sans-serif;background:linear-gradient(-45deg,#ced6e0,#dfe4ea);padding:0 0 60px 180px;box-shadow:10px 10px 10px rgba(0,0,0,.2);position:relative}
+.email-signature3 .signature-img{background:linear-gradient(-45deg,#e82c56,#fc718e);width:145px;height:145px;padding:10px 10px;overflow:hidden;position:absolute;top:25px;left:17px}
+.email-signature3 .signature-img img{width:100%;height:auto}
+.email-signature3 .signature-details{color:#fff;background:linear-gradient(to right,#e82c56,#fc718e);padding:15px 15px;margin-bottom:15px;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.email-signature3 .title{font-size:24px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin:0 0 5px;display:inline-block}
+.email-signature3 .title:after{content:'/';display:inline-block;margin:0 0 0 5px}
+.email-signature3 .post{font-size:15px;font-weight:500;letter-spacing:1px;text-transform:capitalize;display:inline-block}
+.email-signature3 .signature-content{color:#5a5a5a;font-size:16px;line-height:35px;padding:0 0 0 10px;margin:0;list-style:none}
+.email-signature3 .signature-content li span{margin:0 6px 0 0}
+.email-signature3 .icon{padding:0;margin:0;list-style:none;box-shadow:0 -1px 10px rgba(0,0,0,.3);position:absolute;bottom:0;left:0}
+.email-signature3 .icon li{margin-right:-35px;display:inline-block;-webkit-clip-path:polygon(29% 0,100% 0,69% 100%,0 100%);clip-path:polygon(29% 0,100% 0,69% 100%,0 100%)}
+.email-signature3 .icon li:first-child{-webkit-clip-path:polygon(0 0,100% 0,69% 100%,0 100%);clip-path:polygon(0 0,100% 0,69% 100%,0 100%)}
+.email-signature3 .icon li a{color:#fff;background:linear-gradient(to right,#e82c56 50%,#fc718e);font-size:18px;line-height:45px;height:45px;padding:0 40px;display:block;transition:all .3s ease 0s}
+.email-signature3 .icon li a:hover{background:linear-gradient(to right,#373c44 50%,#57606f);text-decoration:none;}
+.email-signature3 .signature-website{font-size:16px;position:absolute;bottom:10px;right:20px}
+@media screen and (max-width:576px){.email-signature3{padding:180px 0 75px 0}
+.email-signature3 .signature-img{top:17px;left:0;right:0;margin:0 auto}
+.email-signature3 .signature-details{text-align:center}
+.email-signature3 .title{display:block}
+.email-signature3 .title:after{display:none}
+.email-signature3 .post{display:block;margin:0}
+.email-signature3 .signature-content{padding:0;margin-bottom:7px;text-align:center}
+.email-signature3 .icon{box-shadow:none;transform:translateX(-50%);bottom:42px;left:50%}
+.email-signature3 .icon li{margin:0 3px;-webkit-clip-path:none;clip-path:none}
+.email-signature3 .icon li:first-child{-webkit-clip-path:none;clip-path:none}
+.email-signature3 .icon li a{text-align:center;line-height:30px;width:30px;height:30px;padding:0}
+.email-signature3 .signature-website{transform:translateX(50%);right:50%;bottom:10px}
+}
+
+/*********************** Demo - 4 *******************/
+:root{--color_1:#fff;--color_2:#EA2027;--color_3:#a31519}
+.email-signature4{font-family:Roboto,sans-serif;padding:0 0 0 140px;position:relative}
+.email-signature4 .signature-img{width:165px;height:165px;border:10px solid #fff;box-shadow:10px -10px 0 var(--color_2);transform:translateY(-50%) rotate(45deg);overflow:hidden;position:absolute;top:50%;left:35px}
+.email-signature4 .signature-img img{width:140%;height:auto;margin-top:-30px;margin-left:-30px;transform:rotate(-45deg)}
+.email-signature4 .content{color:var(--color_1);background:radial-gradient(var(--color_2),var(--color_2),var(--color_3));padding:15px 15px 15px 120px}
+.email-signature4 .signature-details:after{content:'';background-color:var(--color_1);height:2px;width:80px;margin:10px 0 0;display:block}
+.email-signature4 .title{font-size:25px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin:0}
+.email-signature4 .post{font-size:18px;letter-spacing:1px;text-transform:capitalize;display:block}
+.email-signature4 .signature-content{margin:0;padding:10px 0 5px 0;list-style:none}
+.email-signature4 .signature-content li{font-size:17px;line-height:25px}
+.email-signature4 .signature-content li span{font-size:15px;font-weight:600;margin-right:7px;display:inline-block}
+.email-signature4 .signature-content li:last-child{margin:0}
+.email-signature4 .icon{padding:0;margin:0;list-style:none}
+.email-signature4 .icon li{display:inline-block;margin:0 5px 0 0}
+.email-signature4 .icon li a{color:var(--color_1);font-size:15px;text-align:center;line-height:25px;height:25px;width:25px;border-radius:10px 0;transition:all .3s ease 0s}
+.email-signature4 .icon li a:hover{color:var(--color_2);background-color:#fff;text-decoration:none;box-shadow:0 0 20px var(color_3)}
+@media screen and (max-width:767px){.email-signature4{padding:0;margin-top:130px}
+.email-signature4 .signature-img{box-shadow:10px 10px 0 var(--color_2);margin:0 auto;transform:translateY(0) rotate(45deg);left:0;right:0;top:-110px}
+.email-signature4 .content{padding:110px 15px 15px;text-align:center}
+.email-signature4 .signature-details:after{margin:15px auto 0}
+.email-signature4 .signature-content{padding:10px 10px 10px 0}
+.email-signature4 .icon{padding:0}
+}
+
+/*********************** Demo - 5 *******************/
+.email-signature5{background:#e1f0f4;font-family:Poppins,sans-serif;padding:20px 20px 20px 200px;border:15px solid #fff;border-radius:0 100px;box-shadow:5px 5px 20px rgba(0,0,0,.4);overflow:hidden;position:relative;z-index:1}
+.email-signature5 .signature-icon{color:#fff;background:#00b6d6;font-size:100px;line-height:200px;text-align:center;width:170px;height:100%;position:absolute;top:0;left:0}
+.email-signature5 .signature-icon:after,.email-signature5 .signature-icon:before{content:'';position:absolute;right:-1px;top:0;width:100%;height:110%;background-color:#476670;opacity:.15;transform:rotate(-3deg);transform-origin:top right;z-index:-1}
+.email-signature5 .signature-icon:after{transform:rotate(-8deg)}
+.email-signature5 .signature-content{margin:0 0 15px;padding:0;list-style:none;display:block}
+.email-signature5 .signature-content li{color:#476670;font-size:15px;font-weight:300;margin-bottom:5px}
+.email-signature5 .signature-content li:first-child{margin:0}
+.email-signature5 .title{color:#476670;font-size:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin:0;display:block}
+.email-signature5 .post{color:#476670;font-size:17px;font-weight:400;text-transform:uppercase;display:block}
+.email-signature5 .icon{font-size:22px;padding:0;margin:0;list-style:none}
+.email-signature5 .icon li{display:inline-block;margin:0 5px}
+.email-signature5 .icon li a{color:#fff;background-color:#00b6d6;padding:5px;transition:all .3s ease 0s}
+.email-signature5 .icon li a:hover{background-color:#476670;text-decoration:none;}
+@media screen and (max-width:767px){.email-signature5{padding:180px 0 15px 0;border-width:10px}
+.email-signature5 .signature-icon{width:100%;height:150px;line-height:150px}
+.email-signature5 .signature-icon:after,.email-signature5 .signature-icon:before{height:100%;transform:rotate(0);right:0;top:auto;bottom:-8px}
+.email-signature5 .signature-icon:after{bottom:-18px}
+.email-signature5 .icon,.email-signature5 .signature-content{text-align:center}
+}
+
+/*********************** Demo - 6 *******************/
+.email-signature6{font-family:Poppins,sans-serif;background:#fff;position:relative}
+.email-signature6 .signature-details{color:#fff;background:#124680;text-align:center;text-transform:uppercase;width:50%;padding:20px;display:inline-block}
+.email-signature6 .signature-icon{color:#124680;background:#efefef;font-size:60px;text-align:center;line-height:100px;width:100px;height:100px;margin:0 auto 20px;border-radius:50%}
+.email-signature6 .title{font-size:25px;font-weight:700;letter-spacing:1px;margin:0}
+.email-signature6 .post{display:block;font-size:17px;letter-spacing:1px;margin:0 0 15px}
+.email-signature6 .icon{font-size:16px;padding:0;margin:0;list-style:none}
+.email-signature6 .icon li{display:inline-block;margin:0 5px}
+.email-signature6 .icon li a{color:#124680;background-color:#fff;text-align:center;line-height:28px;height:28px;width:28px;border-radius:50%;transition:all .3s ease 0s}
+.email-signature6 .icon li a:hover{color:#fff;background-color:#124680;box-shadow:0 0 0 2px #fff;text-decoration:none;}
+.email-signature6 .signature-content{width:170px;margin:0;padding:0;list-style:none;position:absolute;right:25%;top:50%;transform:translateY(-50%) translateX(50%)}
+.email-signature6 .signature-content li{color:#476670;font-size:14px;font-weight:300;margin-bottom:12px}
+.email-signature6 .signature-content li span{color:#124680;font-weight:600;margin-right:7px;display:inline-block}
+.email-signature6 .signature-content li:last-child{margin:0}
+.email-signature6 .signature-content li a span{margin:0}
+@media screen and (max-width:479px){.email-signature6 .signature-details{width:100%;padding:20px}
+.email-signature6 .title{font-size:20px}
+.email-signature6 .signature-content{text-align:center;position:relative;top:auto;bottom:0;right:50%;transform:translateY(0) translateX(50%)}
+}
+
+/*********************** Demo - 7 *******************/
+.email-signature7{background:#fff;font-family:Poppins,sans-serif;padding:0 0 0 200px;position:relative;z-index:1;overflow:hidden}
+.email-signature7:after,.email-signature7:before{content:'';height:100%;width:35%;background:#0a3957;position:absolute;left:0;top:0;z-index:-1;-webkit-clip-path:polygon(0 0,70% 0,100% 50%,70% 100%,0 100%);clip-path:polygon(0 0,70% 0,100% 50%,70% 100%,0 100%)}
+.email-signature7:after{height:90%;width:32%;background:#ca3436;transform:translateY(-50%);top:50%;left:30px;z-index:-2}
+.email-signature7 .signature-icon{color:#fff;background:#b6b2b3;font-size:60px;line-height:100px;text-align:center;width:100px;height:100px;border-radius:50%;transform:translateY(-50%);position:absolute;top:50%;left:7%}
+.email-signature7 .signature-detail{padding:27px 0 20px 25px;border-bottom:3px solid #ca3436}
+.email-signature7 .title{color:#ca3436;font-size:22px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0}
+.email-signature7 .post{color:#ca3436;font-size:17px}
+.email-signature7 .icon{font-size:16px;padding:0;margin:0;list-style:none;position:absolute;right:15px;top:28px}
+.email-signature7 .icon li{display:inline-block;margin:0 2px}
+.email-signature7 .icon li a{color:#fff;background-color:#0a3957;text-align:center;line-height:28px;height:28px;width:28px;border-radius:5px}
+.email-signature7 .icon li a:hover{background-color:#ca3436}
+.email-signature7 .signature-content{margin:0;padding:10px 0 10px 25px;list-style:none;display:block}
+.email-signature7 .signature-content li{color:#949494;font-size:15px;margin-bottom:3px}
+.email-signature7 .signature-content li span{color:#ca3436;font-weight:600;margin-right:7px;display:inline-block}
+@media screen and (max-width:1200px){.email-signature7{padding:0 0 0 218px}
+}
+@media screen and (max-width:767px){.email-signature7{padding:185px 0 50px 0}
+.email-signature7:before{width:100%;height:40%;-webkit-clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%);clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%)}
+.email-signature7:after{background:#ca3436;width:90%;height:38%;transform:translateY(0) translateX(-50%);top:23px;left:50%;-webkit-clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%);clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%)}
+.email-signature7 .signature-icon{transform:translateX(-50%) translateY(0);top:22px;left:50%}
+.email-signature7 .signature-detail{text-align:center;padding:0 0 10px}
+.email-signature7 .icon{transform:translateX(50%);top:auto;right:50%;bottom:15px}
+.email-signature7 .signature-content{text-align:center;padding:10px 0 0}
+}
+
+/*********************** Demo - 8 *******************/
+.email-signature8{background:#fff;font-family:'Roboto Condensed',sans-serif;text-align:center;box-shadow:10px 10px 0 -2px rgba(0,0,0,.2);position:relative}
+.email-signature8:after{content:'';display:block;clear:both}
+.email-signature8 .signature-details{width:50%;padding:12px 20px 0;float:left;display:inline-block}
+.email-signature8 .signature-img{width:120px;height:120px;margin:0 auto 10px;border-radius:50%;border-top:5px solid #b2cc10;border-right:5px solid #00b894;border-bottom:5px solid #b2cc10;border-left:5px solid #00b894;overflow:hidden}
+.email-signature8 .signature-img img{width:100%;height:auto}
+.email-signature8 .title{color:#00b894;font-size:25px;font-weight:500;line-height:25px;margin:0}
+.email-signature8 .post{color:#b2cc10;font-size:15px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.email-signature8 .signature-content{background:#b2cd10;vertical-align:top;width:43%;padding:18px 0;margin:0;float:left;display:inline-block;list-style:none}
+.email-signature8 .signature-content li{color:#000;font-size:15px;line-height:40px;padding:0 25px;position:relative}
+.email-signature8 .signature-content li span{color:#fff;background:#ac0e69;width:40px;height:40px;line-height:40px;transform:translateY(-50%);position:absolute;left:-20px;top:50%}
+.email-signature8 .signature-content li:nth-child(even) span{background:#801855}
+.email-signature8 .icon{padding:0;margin:0;list-style:none;position:absolute;top:20px;right:20px}
+.email-signature8 .icon li a{color:#fff;background:#13999a;line-height:40px;width:40px;height:40px;box-shadow:0 -5px 5px -5px #666 inset;display:block}
+.email-signature8 .icon li a:hover{background:#0b7d7a}
+@media screen and (max-width:576px){.email-signature8{padding:0 0 40px 0}
+.email-signature8 .signature-details{width:100%;padding:20px 20px 15px;float:none}
+.email-signature8 .title{font-size:20px}
+.email-signature8 .signature-content{width:100%;padding:20px 0;float:none}
+.email-signature8 .signature-content li{padding:40px 0 0 0}
+.email-signature8 .signature-content li span{transform:translateX(-50%) translateY(0);left:50%;top:0}
+.email-signature8 .icon{top:auto;bottom:15px;left:0;right:0;margin:0 auto}
+.email-signature8 .icon li{display:inline-block;margin-left:-4px}
+}
+
+/*********************** Demo - 9 *******************/
+:root{--main-color:#F83B71}
+.email-signature9{background:linear-gradient(#f2f2f2,#dbdbdb,#eaeaea);font-family:Lato,sans-serif;padding:20px 10px 20px 200px;overflow:hidden;position:relative}
+.email-signature9:after,.email-signature9:before{content:'';background:linear-gradient(to right,#555 49%,#666 50%);height:100%;width:30px;box-shadow:0 0 10px #000;position:absolute;left:80px;top:0}
+.email-signature9:after{width:34px;left:auto;right:0}
+.email-signature9 .signature-img{height:130px;width:130px;border:4px solid var(--main-color);transform:translateY(-50%);position:absolute;left:30px;top:50%}
+.email-signature9 .signature-img img{width:100%;height:auto}
+.email-signature9 .signature-details{margin:0 0 10px}
+.email-signature9 .title{color:var(--main-color);font-size:20px;font-weight:600;text-transform:uppercase;margin:0 0 5px}
+.email-signature9 .post{font-size:17px;font-style:italic}
+.email-signature9 .signature-content{color:#000;font-size:15px;line-height:25px;padding:0;margin:0;list-style:none}
+.email-signature9 .signature-content li span{margin-right:6px}
+.email-signature9 .icon{width:30px;padding:0;margin:0;list-style:none;transform:translateY(-50%);position:absolute;right:0;top:50%;z-index:1}
+.email-signature9 .icon li a{color:#fff;background-color:transparent;font-size:16px;text-align:center;line-height:25px;height:25px;width:25px;margin:15px 0;display:block;transition:all .3s ease 0s}
+.email-signature9 .icon li a:hover{color:var(--main-color);background-color:#fff;text-decoration:none}
+@media screen and (max-width:576px){.email-signature9{padding:150px 20px 40px 20px}
+.email-signature9:after,.email-signature9:before{background:linear-gradient(to bottom,#555 49%,#666 50%);width:100%;height:35px;top:60px;left:0;transform:translateY(0)}
+.email-signature9:after{top:auto;bottom:0}
+.email-signature9 .signature-img{top:10px;left:50%;transform:translateY(0) translateX(-50%)}
+.email-signature9 .signature-content,.email-signature9 .signature-details{text-align:center}
+.email-signature9 .icon{text-align:center;width:100%;height:30px;transform:translateY(0);top:auto;bottom:0}
+.email-signature9 .icon li{display:inline-block}
+.email-signature9 .icon li a{margin:0 15px 0}
+}
+
+/*********************** Demo - 10 *******************/
+.email-signature10{background:#fff;font-family:'Roboto Condensed',sans-serif;padding:50px 20px 15px 120px;box-shadow:10px 10px 3px rgba(0,0,0,.2);overflow:hidden;position:relative}
+.email-signature10:before{content:"";background:linear-gradient(to right,#f39c12 49%,#f1c40f 50%);width:18px;height:100%;position:absolute;top:0;left:0}
+.email-signature10 .signature-img{background:#fff;width:140px;height:140px;padding:3px;border-radius:50%;border:5px solid #f1c40f;overflow:hidden;position:absolute;top:15px;left:30px;z-index:1}
+.email-signature10 .signature-img img{width:100%;height:auto;border-radius:50%}
+.email-signature10 .signature-details{color:#fff;background:#3498db;text-align:center;padding:15px 10px 15px 50px;margin-bottom:20px;border-right:15px solid #2980b9}
+.email-signature10 .title{font-size:25px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin:0}
+.email-signature10 .post{font-size:16px;font-weight:400;text-transform:uppercase;letter-spacing:1px}
+.email-signature10 .signature-content{padding:20px 10px 0 0;margin:0;list-style:none;position:relative}
+.email-signature10 .signature-content:after,.email-signature10 .signature-content:before{content:"";background:#2980b9;width:4px;height:100%;position:absolute;top:0;left:-25px}
+.email-signature10 .signature-content:after{background:#f1c40f;height:80%;top:20px;left:-35px}
+.email-signature10 .signature-content li{color:#95afc0;font-size:16px;margin:0 0 10px;display:block}
+.email-signature10 .signature-content li span{color:#f1c40f;font-size:20px;text-align:center;line-height:23px;height:23px;width:25px;margin:2px 2px 0 0}
+@media screen and (max-width:576px){.email-signature10{padding:200px 0 15px}
+.email-signature10:before{background:linear-gradient(to bottom,#f39c12 49%,#f1c40f 50%);width:100%;height:15px}
+.email-signature10 .signature-img{margin:0 auto;top:26px;left:0;right:0}
+.email-signature10 .signature-details{padding:10px;border-right:none}
+.email-signature10 .signature-content{text-align:center;padding:0}
+.email-signature10 .signature-content:after,.email-signature10 .signature-content:before{width:60%;height:4px;transform:translateX(-50%);top:-103px;left:50%}
+.email-signature10 .signature-content:after{width:45%;top:-112px}
+}
+
+/*********************** Demo - 11 *******************/
+
+
+/*********************** Demo - 12 *******************/
+
+
+/*********************** Demo - 13 *******************/
+
+
+/*********************** Demo - 14 *******************/
+
+
+/*********************** Demo - 15 *******************/

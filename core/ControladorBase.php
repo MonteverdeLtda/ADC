@@ -17,8 +17,19 @@ class ControladorBase {
     public $errors = [];
 	public $user;
 	private $permissions = [];
+	private $_get = [];
+	private $_post = [];
+	private $_put = [];
+	private $_request = [];
+	private $_delete = [];
 
 	public function __construct($params = []) {
+		$this->set('_get', (isset($_GET) ? $_GET : []));
+		$this->set('_post', (isset($_POST) ? $_POST : []));
+		$this->set('_put', (isset($_PUT) ? $_PUT : []));
+		$this->set('_request', (isset($_REQUEST) ? $_REQUEST : []));
+		$this->set('_delete', (isset($_DELETE) ? $_DELETE : []));
+		
         global $global_session;
         $this->session = $global_session;
 		require_once 'Conectar.php';
@@ -41,6 +52,34 @@ class ControladorBase {
 		$this->addScriptsBase();
 		
     }
+	
+	public function set($key, $value){
+		try {
+			$this->{$key} = $value;
+		} catch(Exception $e){
+			
+		}
+	}
+	
+	public function getGet(){
+		return $this->_get;
+	}
+	
+	public function getRequest(){
+		return $this->_request;
+	}
+	
+	public function getPost(){
+		return $this->_post;
+	}
+	
+	public function getPut(){
+		return $this->_put;
+	}
+	
+	public function getDelete(){
+		return $this->_delete;
+	}
 	
 	private function addScriptsBase(){
 		$toMessageFormat = 'Date.prototype.toMessageFormat = function() {
@@ -173,7 +212,6 @@ class ControladorBase {
 		return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 	}
 
-    
 	public function goHome(){
 		return $this->redirect();
 	}

@@ -129,8 +129,6 @@ function cortar_string($string, $largo) {
    return $string;
 }
 
-
-
 function DMStoDD($deg,$min,$sec){
     // Converting DMS ( Degrees / minutes / seconds ) to decimal format
     return $deg+((($min*60)+($sec))/3600);

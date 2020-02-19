@@ -132,26 +132,13 @@ class Usuario extends ModeloBase{
 					"name" => "phone", 
 					"placeholder" => "Teléfono Fijo"
 				], [])]
-			, ["phone" => new PHPStrap\Form\Text([
-					"name" => "phone", 
+			, ["mobile" => new PHPStrap\Form\Text([
+					"name" => "mobile", 
 					"placeholder" => "Teléfono Móvil"
 				], [])]
 			, ["address" => new PHPStrap\Form\Textarea("", [
 					"name" => "address", 
 					"placeholder" => "Dirección"
-				], [])]
-			, ["department" => new PHPStrap\Form\Select(Types::OptionsForm($this->adapter, "geo_departments", [
-					"key" => "id",
-					"label" => "name"
-				]), [], [
-					"name" => "department", 
-					"placeholder" => "Departamento"
-				], [])]
-			, ["city" => new PHPStrap\Form\Select(Types::OptionsForm($this->adapter, "geo_citys", [
-					"key" => "id"
-				]), [], [
-					"name" => "city", 
-					"placeholder" => "Ciudad"
 				], [])]
 			, ["bulletin" => new PHPStrap\Form\Select(["1"=>"SI", "0"=>"NO"], ["0"], [
 				"name" => "bulletin", 

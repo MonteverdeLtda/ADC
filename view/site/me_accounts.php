@@ -2,6 +2,9 @@
 .modal {
 	overflow: auto;
 }
+.bootbox-input-textarea {
+	min-height: 170px;
+}
 </style>
 
 <div class="page-title">
@@ -60,18 +63,18 @@
 									-->
 									<div class="col-xs-12 col-sm-12 emphasis">
 										<template v-if="accountInfo.isAdmin === true">
-											<button type="button" class="btn btn-success btn-xs" @click="openManagerUsersInAccount(accountInfo)">
-												<i class="fa fa-users"></i>
-											</button>
-											<button type="button" class="btn btn-info btn-xs" @click="MeAccountCommunications(accountInfo.account.id)">
-												<i class="fa fa-comments"></i>
-											</button>
 											<button type="button" class="btn btn-default btn-xs" @click="openEditAccount(accountInfo)">
 												<i class="fa fa-edit"> </i> Act. Datos
+											</button>
+											<button type="button" class="btn btn-success btn-xs" @click="openManagerUsersInAccount(accountInfo)">
+												<i class="fa fa-users"></i>
 											</button>
 										</template>
 										
 										<template v-if="accountInfo.isAdmin === true || accountInfo.isManager === true">
+											<button type="button" class="btn btn-info btn-xs" @click="MeAccountCommunications(accountInfo.account.id)">
+												<i class="fa fa-comments"></i>
+											</button>
 											<button type="button" class="btn btn-default btn-xs" @click="openListMicroroutesModal(accountInfo)">
 												<i class="fa fa-road"> </i> Microrutas
 											</button>
@@ -509,16 +512,28 @@ var Home = Vue.extend({
 	computed: {
 	},
 	methods: {
-		openListMicroroutesModal(){
+		openListMicroroutesModal(data){
 			var self = this;
+			self.setFormAccountEdit(data);
 			// $("#datatable-buttons-microroutes-modal")
 			self.dialogMicroroutes.modal('show');
-			
-			MV.api.readList('/microroutes', {}, (a) => {
+			$('#datatable-buttons-microroutes-modal').html('Cargando, porfavor espere...');
+			setTimeout(self.loadListMicroroutes, 1500); // 300000 == 5 Minutos || 1Min = 60000 || 1Seg = 1000
+		},
+		loadListMicroroutes(){
+			var self = this;
+			MV.api.readList('/microroutes', {
+				filter: [
+					'account,eq,' + self.forms.create_user.account
+				], 
+				join: [
+					'accounts_contracts'
+				],
+			}, (a) => {
 				if(a.length > 0){
 					self.meMicroroutesTotal = a.length;
 					self.meMicroroutesView = a;
-					
+					$('#datatable-buttons-microroutes-modal').html('');
 					self.dataTable = $('#datatable-buttons-microroutes-modal')
 						.DataTable({
 							destroy: true,
@@ -530,9 +545,11 @@ var Home = Vue.extend({
 								b.name, 
 								b.id_ref, 
 								b.address_text, 
-								b.area_m2.toLocaleString(), 
-								b.obs, 
-								'<button class="request-microroute-in-model btn btn-sm btn-default" data-microroute_id="' + b.id + '"><i class="fa fa-comment"></i></button>',
+								b.area_m2.toLocaleString(),
+								b.contract.name,
+								(b.last_executed !== null) ? b.last_executed : '- 0 -',
+								'<button class="request-microroute-in-model btn btn-sm btn-default" data-account_id="' + b.account + '" data-microroute_id="' + b.id + '" data-microroute_name="' + b.name + '"><i class="fa fa-comment"></i></button>',
+								(b.obs.length <= 3) ? 'Sin Observaciones' : b.obs.length, 
 								b.description,
 							]),
 							columns: [
@@ -541,8 +558,10 @@ var Home = Vue.extend({
 								{ title: "Lote REF." },
 								{ title: "Direccion(es)" },
 								{ title: "Area m2" },
-								{ title: "Obs." },
+								{ title: "Contrato" },
+								{ title: "Última ejecucion" },
 								{ title: "Action" },
+								{ title: "Obs." },
 								{ title: "Descripcion" },
 							],
 							dom: "Blfrtip",
@@ -560,6 +579,10 @@ var Home = Vue.extend({
 								  className: "btn-sm"
 								},
 								{
+								  extend: "pdfHtml5",
+								  className: "btn-sm"
+								},
+								{
 								  extend: "print",
 								  className: "btn-sm"
 								},
@@ -572,14 +595,71 @@ var Home = Vue.extend({
 									tds = $(this).find( ".request-microroute-in-model" );
 									selectedId = parseInt($(tds[0]).data('microroute_id'));
 									microroute_id = ((parseInt(selectedId)>0) ? parseInt(selectedId) : 0);
-									console.log(microroute_id);
 								} );
 								
 								apiTables.$(".request-microroute-in-model").click(function() {
 									microroute_id = $(this).data('microroute_id');
+									microroute_name = $(this).data('microroute_name');
+									account_id = $(this).data('account_id');
 									
-									try {
-										console.log(microroute_id);
+									try {										
+										textBase = 'Solicitud para Actualizar/Remover la microruta ' + microroute_name + ".\n" 
+											+ "**Informacion Nueva**: " + "\n";
+										bootbox.prompt({
+											title: "This is a prompt with a textarea!",
+											value: textBase,
+											inputType: 'textarea',
+											callback: function (result) {
+												if(result.length > 15 && escape(result) !== escape(textBase)){
+													MV.api.create('/accounts_communications', {
+														account: account_id,
+														created_by: <?= $this->user->id; ?>,
+														updated_by: <?= $this->user->id; ?>,
+													}, (b) => {
+														if(b > 0){
+															MV.api.create('/accounts_communications_parts', {
+																communication: b,
+																account: account_id,
+																message: result,
+																created_by: <?= $this->user->id; ?>,
+																updated_by: <?= $this->user->id; ?>,
+															}, (c) => {
+																if(c > 0){
+																	new PNotify({
+																		"title": "Exito!",
+																		"text": "la notificación se a enviado correctamente.",
+																		"styling":"bootstrap3",
+																		"type":"success",
+																		"icon":true,
+																		"animation":"flip",
+																		"hide":true,
+																		"delay": 2500,
+																	});
+																	
+																	self.sendNotificationAccountGroup(account_id, {
+																		type: 'new-communication-client',
+																		data:  {
+																			id: c,
+																			communication: b,
+																			account: account_id,
+																			message: result,
+																			created_by: <?= $this->user->id; ?>,
+																			updated_by: <?= $this->user->id; ?>,
+																		},
+																	});
+																} else {
+																	self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+																}
+															});
+														} else {
+															self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+														}
+													});
+													
+												}
+											}
+										});
+
 									} catch(e){
 										console.error(e);
 										return false;
@@ -588,8 +668,9 @@ var Home = Vue.extend({
 							}
 						});
 				} else {
-					alert("Ocurrio un error cargando la lista.");
+					self.showErrorModal("No hay microrutas para mostrar.");
 					console.log(a);
+					self.dialogMicroroutes.modal('show');
 				}
 			});
 		},
@@ -601,10 +682,7 @@ var Home = Vue.extend({
 						'notifications_groups,notifications_groups_users'
 					]
 				}, (a) => {
-					console.log(a);
 					if(a.notifications_group !== undefined && a.notifications_group.id){
-						console.log(a.notifications_group.name);
-						console.log(a.notifications_group.notifications_groups_users);
 						a.notifications_group.notifications_groups_users.forEach((b) => {
 							send = {};
 							send.type = data.type;
@@ -613,7 +691,7 @@ var Home = Vue.extend({
 							send.created_by = <?= $this->user->id; ?>;
 							
 							MV.api.create('/notifications', send, (a) => {
-								console.log('Result noti: ', l);
+								console.log('Result noti: ', a);
 							});
 						});
 					}
@@ -626,7 +704,6 @@ var Home = Vue.extend({
 		},
 		replyCommunication(){
 			var self = this;
-			console.log(self.replySelected);
 			bootbox.prompt({
 				title: "Comunicacion a 1 click",
 				message: "Escribe la informacion adiccional o el nuevo mensaje que deseas enviar.",
@@ -692,7 +769,6 @@ var Home = Vue.extend({
 		},
 		markAsRead(){
 			var self = this;
-			console.log(self.replySelected);
 			bootbox.confirm({
 				title: "Confirma tu accion",
 				message: "Debes de confirmar antes de cambiar esta comunicacion a \"Leida\", Nuestro personal esperara tu proxima comunicación.",
@@ -725,7 +801,6 @@ var Home = Vue.extend({
 		},
 		markAsSolved(){
 			var self = this;
-			console.log(self.replySelected);
 			bootbox.confirm({
 				title: "Confirma tu accion",
 				message: "Debes de confirmar antes de cambiar esta comunicacion a \"Solucionada\", eventualmente será cerrada por nuestro sistema y no recibiras mas notificaciones.",
@@ -769,11 +844,8 @@ var Home = Vue.extend({
 				],
 				order: 'updated,desc'
 			}, (a) => {
-				// console.log(a);
-				// box_list_communications.html('');
 				self.meCommunicationsView = [];
 				a.forEach((b) => {
-					console.log(b);
 					self.meCommunicationsView.push(b);
 				});
 				self.dialogCommunications.modal('show');
@@ -854,7 +926,6 @@ var Home = Vue.extend({
 						MV.api.remove('/accounts_users/' + relationshipId, {
 							id: relationshipId
 						}, (a) => {
-							console.log(a);
 							self.loadUsersAccountInModal();
 						});
 					}
@@ -882,7 +953,6 @@ var Home = Vue.extend({
 							id: relationshipId,
 							permissions: result,
 						}, (a) => {
-							console.log(a);
 							self.loadUsersAccountInModal();
 						});
 					}
@@ -951,7 +1021,6 @@ var Home = Vue.extend({
 													account: self.forms.create_user.account,
 													permissions: c,
 												}, (d) => {
-													console.log(d);
 													self.loadUsersAccountInModal();
 												});
 											}
@@ -1012,7 +1081,6 @@ var Home = Vue.extend({
 													account: self.forms.create_user.account,
 													permissions: c,
 												}, (d) => {
-													console.log(d);
 													self.loadUsersAccountInModal();
 												});
 											}
@@ -1093,7 +1161,6 @@ var Home = Vue.extend({
 			var self = this;
 			try {				
 				MV.api.update('/accounts/' + self.forms.account_edit.id, self.forms.account_edit, (a) => {
-					console.log(a);
 					if(Number(a) > 0){
 						new PNotify({
 							"title": "¡Éxito!",

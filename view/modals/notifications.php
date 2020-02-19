@@ -594,7 +594,6 @@ var appNotifications = new Vue({
 						$messageTxt = b.datajson.schedule.lot.microroute_name + ' necesita gestion, gestionala para continuar la aprobación.';
 						$create = true;
 					} else if(b.type == 'new-communication-client'){
-						console.log(b);
 						$title = 'Nuevo mensaje';
 						$messageTxt = b.datajson.message.substr(0,65);
 						$create = true;

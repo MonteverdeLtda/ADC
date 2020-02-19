@@ -24,9 +24,7 @@
 				<div class="x_content">
 					<div class="row">
 						<div class="col-md-12 col-sm-12 col-xs-12 text-center">
-							<ul class="pagination pagination-split">
-								<!-- // <li><a href="#">A</a></li> -->
-							</ul>
+							
 						</div>
 						<div class="clearfix"></div>
 				  
@@ -65,17 +63,20 @@
 											<button type="button" class="btn btn-success btn-xs" @click="openManagerUsersInAccount(accountInfo)">
 												<i class="fa fa-users"></i>
 											</button>
+											<button type="button" class="btn btn-info btn-xs" @click="MeAccountCommunications(accountInfo.account.id)">
+												<i class="fa fa-comments"></i>
+											</button>
 											<button type="button" class="btn btn-default btn-xs" @click="openEditAccount(accountInfo)">
 												<i class="fa fa-edit"> </i> Act. Datos
 											</button>
 										</template>
 										
 										<template v-if="accountInfo.isAdmin === true || accountInfo.isManager === true">
+											<button type="button" class="btn btn-default btn-xs" @click="openListMicroroutesModal(accountInfo)">
+												<i class="fa fa-road"> </i> Microrutas
+											</button>
 											<button type="button" class="btn btn-primary btn-xs">
 												<i class="fa fa-dashboard"> </i> Consola
-											</button>
-											<button type="button" class="btn btn-default btn-xs">
-												<i class="fa fa-list"> </i> Lotes
 											</button>
 										</template>
 									</div>
@@ -172,13 +173,12 @@
 						<div class="clearfix"></div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-info pull-left" data-dismiss="modal">Contactar</button>
+						<button type="button" class="btn btn-info pull-left" @click="MeAccountContact(forms.create_user.account)"> <i class="fa fa-comment"></i> Contactar</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		
 		
 		<div class="modal fade bs-manager-users-me-account-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog modal-lg">
@@ -319,11 +319,140 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="modal fade bs-communications-me-account-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+						<h4 class="modal-title" id="myModalLabel">Comunicaciones</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							
+							<div class="col-sm-3 mail_list_column" id="box-list-communications">
+								<button @click="MeAccountContact(forms.create_user.account)" class="btn btn-sm btn-success btn-block" type="button">Contactar</button>
+								
+								<template v-if="meCommunicationsView.length > 0">
+									<a @click="meCommunicationsPartsView = communication.accounts_communications_parts; replySelected = communication;" v-for="(communication, communication_i) in meCommunicationsView" v-if="communication.accounts_communications_parts.length > 0" style="cursor:pointer;">
+										<div class="mail_list">
+											<div class="left">
+												<i class="fa fa-circle-o" v-if="communication.status == 0"></i> 
+												<i class="fa fa-circle" v-if="communication.status == 1"></i> 
+												<i class="fa fa-check" v-if="communication.is_closed == 1"></i> 
+											</div>
+											<div class="right">
+												<h3>{{ communication.accounts_communications_parts[(communication.accounts_communications_parts.length-1)].created_by.username }} <small>{{ communication.accounts_communications_parts[(communication.accounts_communications_parts.length-1)].created }}</small></h3>
+												<p>
+													{{ communication.accounts_communications_parts[(communication.accounts_communications_parts.length-1)].message.substr(0,65) }}...
+												</p>
+											</div>
+										</div>
+									</a>
+								</template>
+								<template v-else>
+									<a>
+										<div class="mail_list">
+											<div class="left">
+												<i class="fa fa-circle"></i> <i class="fa fa-edit"></i>
+											</div>
+											<div class="right">
+												<h3>No tienes comunicaciones <small>-</small></h3>
+												<p>Contactanos desde el boton "Contactar"</p>
+											</div>
+										</div>
+									</a>
+								</template>
+							</div>
+							<!-- /MAIL LIST -->
+							
+							<!-- CONTENT MAIL -->
+							<div class="col-sm-9 mail_view">
+								<div class="inbox-body" v-if="meCommunicationsPartsView.length > 0 && replySelected !== null">
+									<div class="mail_heading row">
+										<div class="col-md-8">
+											<div class="btn-group">
+												<button v-if="replySelected.is_closed == 0" @click="replyCommunication()" class="btn btn-sm btn-primary" type="button"><i class="fa fa-reply"></i> Responder</button>
+												<button @click="markAsRead" v-if="replySelected.status == 1" class="btn btn-sm btn-info" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Marcar como leido"><i class="fa fa-check"></i> Marcar como leido</button>
+												<button @click="markAsSolved" v-if="replySelected.is_closed == 0" class="btn btn-sm btn-success" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Cerrar y Marcar como solucionado"><i class="fa fa-check"></i> Solucionado</button>
+												<button onclick="javascript:window.print();" class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Print"><i class="fa fa-print"></i></button>
+												<!-- // 
+												<button class="btn btn-sm btn-default" type="button"  data-placement="top" data-toggle="tooltip" data-original-title="Forward"><i class="fa fa-share"></i></button>
+												
+												-->
+											</div>
+										</div>
+										<div class="col-md-4 text-right">
+											<p class="date" style="zoom:0.8;"> Última actividad {{ replySelected.updated }}</p>
+										</div>
+										<div class="col-md-12"><h4></h4></div>
+										<!-- // <div class="col-md-12"> <h4>{{ meCommunicationsPartsView[0].message.substr(0,155) }}</h4> </div> -->
+									</div>
+									<template v-if="meCommunicationsPartsView.length > 0" v-for="(part, part_i) in meCommunicationsPartsView">
+										<div class="sender-info">
+											<div class="row">
+												<div class="col-md-12">
+													<strong>{{ part.created_by.username }}</strong>
+													<span>({{ part.created_by.email }})</span> Fecha y Hora: <strong>{{ part.created }}</strong>
+													<!-- // <a class="sender-dropdown"><i class="fa fa-chevron-down"></i></a> -->
+												</div>
+											</div>
+										</div>
+										<div class="view-mail">
+											<p>{{ part.message }}</p>
+										</div>
+										<div class="ln_solid"></div>
+									</template>
+									
+									
+									<!-- //
+									<div class="btn-group">
+										<button class="btn btn-sm btn-primary" type="button"><i class="fa fa-reply"></i> Reply</button>
+										<button class="btn btn-sm btn-default" type="button"  data-placement="top" data-toggle="tooltip" data-original-title="Forward"><i class="fa fa-share"></i></button>
+										<button class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Print"><i class="fa fa-print"></i></button>
+										<button class="btn btn-sm btn-default" type="button" data-placement="top" data-toggle="tooltip" data-original-title="Trash"><i class="fa fa-trash-o"></i></button>
+									</div>
+									-->
+								</div>
+							</div>
+							<!-- /CONTENT MAIL -->
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="modal fade bs-microroutes-me-account-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+						<h4 class="modal-title" id="myModalLabel">Microrutas</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<table id="datatable-buttons-microroutes-modal" class="table table-striped table-bordered"></table>
+								<div id="demo_info"></div>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
-  
 var Home = Vue.extend({
 	template: '#home',
 	data(){
@@ -335,6 +464,8 @@ var Home = Vue.extend({
 			},
 			records: [],
 			dialogEdit: null,
+			dialogCommunications: null,
+			dialogMicroroutes: null,
 			forms: {
 				account_edit: null,
 				account_edit_contacts: [],
@@ -352,16 +483,20 @@ var Home = Vue.extend({
 					account: 0,
 				},
 			},
+			replySelected: null,
+			meCommunicationsView: [],
+			meCommunicationsPartsView: [],
+			meMicroroutesView: [],
 		};
 	},
 	mounted: function () {
 		var self = this;
 		self.loadOptions();
-		
 		self.dialogEdit = $(".bs-edit-me-account-modal-lg");
 		self.dialogManagerusers = $(".bs-manager-users-me-account-modal-lg");
+		self.dialogCommunications = $(".bs-communications-me-account-modal-lg");
+		self.dialogMicroroutes = $(".bs-microroutes-me-account-modal-lg");
 		
-
 		$(".mask-phone").inputmask("57 (9{1,2}) 9{3} 9{4}").change((event) => {
 			self.forms.create_user.phone = $(event.target).val().replace("_", "").replace("_", "").replace("_", "").replace("_", "").replace("_", "").replace("_", "").replace("_", "").replace("_", "").replace("_", "").replace("_", "");
 		});
@@ -374,9 +509,342 @@ var Home = Vue.extend({
 	computed: {
 	},
 	methods: {
+		openListMicroroutesModal(){
+			var self = this;
+			// $("#datatable-buttons-microroutes-modal")
+			self.dialogMicroroutes.modal('show');
+			
+			MV.api.readList('/microroutes', {}, (a) => {
+				if(a.length > 0){
+					self.meMicroroutesTotal = a.length;
+					self.meMicroroutesView = a;
+					
+					self.dataTable = $('#datatable-buttons-microroutes-modal')
+						.DataTable({
+							destroy: true,
+							language: { "url": "/public/assets/build/js/lang-datatable.json" },
+							// data: self.records,
+							fixedHeader: true,
+							data: a.map(b => [
+								b.id,
+								b.name, 
+								b.id_ref, 
+								b.address_text, 
+								b.area_m2.toLocaleString(), 
+								b.obs, 
+								'<button class="request-microroute-in-model btn btn-sm btn-default" data-microroute_id="' + b.id + '"><i class="fa fa-comment"></i></button>',
+								b.description,
+							]),
+							columns: [
+								{ title: "id" },
+								{ title: "Microruta" },
+								{ title: "Lote REF." },
+								{ title: "Direccion(es)" },
+								{ title: "Area m2" },
+								{ title: "Obs." },
+								{ title: "Action" },
+								{ title: "Descripcion" },
+							],
+							dom: "Blfrtip",
+							buttons: [
+								{
+								  extend: "copy",
+								  className: "btn-sm"
+								},
+								{
+								  extend: "csv",
+								  className: "btn-sm"
+								},
+								{
+								  extend: "excel",
+								  className: "btn-sm"
+								},
+								{
+								  extend: "print",
+								  className: "btn-sm"
+								},
+							],
+							responsive: true,
+							initComplete: function( settings, json ) {
+								var apiTables = this.api();
+								
+								apiTables.$('tr').click( function () {
+									tds = $(this).find( ".request-microroute-in-model" );
+									selectedId = parseInt($(tds[0]).data('microroute_id'));
+									microroute_id = ((parseInt(selectedId)>0) ? parseInt(selectedId) : 0);
+									console.log(microroute_id);
+								} );
+								
+								apiTables.$(".request-microroute-in-model").click(function() {
+									microroute_id = $(this).data('microroute_id');
+									
+									try {
+										console.log(microroute_id);
+									} catch(e){
+										console.error(e);
+										return false;
+									}
+								});
+							}
+						});
+				} else {
+					alert("Ocurrio un error cargando la lista.");
+					console.log(a);
+				}
+			});
+		},
+		sendNotificationAccountGroup(account_id, data){
+			var self = this;
+			try{
+				MV.api.read('/accounts/' + account_id, {
+					join: [
+						'notifications_groups,notifications_groups_users'
+					]
+				}, (a) => {
+					console.log(a);
+					if(a.notifications_group !== undefined && a.notifications_group.id){
+						console.log(a.notifications_group.name);
+						console.log(a.notifications_group.notifications_groups_users);
+						a.notifications_group.notifications_groups_users.forEach((b) => {
+							send = {};
+							send.type = data.type;
+							send.datajson = JSON.stringify(data.data);
+							send.user = b.user;
+							send.created_by = <?= $this->user->id; ?>;
+							
+							MV.api.create('/notifications', send, (a) => {
+								console.log('Result noti: ', l);
+							});
+						});
+					}
+				});
+			}
+			catch(e){
+				console.error(e);
+				callb(e)
+			}
+		},
+		replyCommunication(){
+			var self = this;
+			console.log(self.replySelected);
+			bootbox.prompt({
+				title: "Comunicacion a 1 click",
+				message: "Escribe la informacion adiccional o el nuevo mensaje que deseas enviar.",
+				locale: 'es',
+				centerVertical: true,
+				inputType: 'textarea',
+				callback: (a) => {
+					if(a !== null){
+						if(a.length > 15){
+							MV.api.create('/accounts_communications_parts', {
+								communication: self.replySelected.id,
+								account: self.replySelected.account,
+								message: a,
+								created_by: <?= $this->user->id; ?>,
+								updated_by: <?= $this->user->id; ?>,
+							}, (b) => {
+								if(b > 0){
+									MV.api.update('/accounts_communications/' + self.replySelected.id, {
+										account: self.replySelected.account,
+										status: 0,
+										updated_by: <?= $this->user->id; ?>,
+									}, (c) => {
+										if(c > 0){
+											MV.api.read('/accounts_communications_parts/' + b, {
+												filter: [
+													'account,eq,' + self.replySelected.account,
+												],
+												join: [
+													'users',
+												],
+											}, (d) => {
+												self.meCommunicationsPartsView.push(d);
+												self.MeAccountCommunications(self.replySelected.account);
+												new PNotify({
+													"title": "Exito!",
+													"text": "la notificación se a enviado correctamente.",
+													"styling":"bootstrap3",
+													"type":"success",
+													"icon":true,
+													"animation":"flip",
+													"hide":true,
+													"delay": 2500,
+												});
+												
+												self.sendNotificationAccountGroup(self.replySelected.account, {
+													type: 'new-communication-client',
+													data: d,
+												})
+											});
+										}
+									});
+								} else {
+									self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+								}
+							});
+						} 
+						else {
+							self.showErrorModal("El mensaje no puede ser enviado por que es demaciado corto, danos mas informacion sobre tu solicitud.");
+						}
+					}
+				}
+			});
+		},
+		markAsRead(){
+			var self = this;
+			console.log(self.replySelected);
+			bootbox.confirm({
+				title: "Confirma tu accion",
+				message: "Debes de confirmar antes de cambiar esta comunicacion a \"Leida\", Nuestro personal esperara tu proxima comunicación.",
+				locale: 'es',
+				centerVertical: true,
+				callback: (a) => {
+					if(a == true){
+						MV.api.update('/accounts_communications/' + self.replySelected.id, {
+							status: 0,
+							updated_by: <?= $this->user->id; ?>,
+						}, (c) => {
+							if(c > 0){
+								self.replySelected.status = 0;
+								self.MeAccountCommunications(self.replySelected.account);
+								new PNotify({
+									"title": "Exito!",
+									"text": "la comunicacion fue archivada correctamente.",
+									"styling":"bootstrap3",
+									"type":"success",
+									"icon":true,
+									"animation":"flip",
+									"hide":true,
+									"delay": 2500,
+								});
+							}
+						});
+					}
+				}
+			});
+		},
+		markAsSolved(){
+			var self = this;
+			console.log(self.replySelected);
+			bootbox.confirm({
+				title: "Confirma tu accion",
+				message: "Debes de confirmar antes de cambiar esta comunicacion a \"Solucionada\", eventualmente será cerrada por nuestro sistema y no recibiras mas notificaciones.",
+				locale: 'es',
+				centerVertical: true,
+				callback: (a) => {
+					if(a == true){
+						MV.api.update('/accounts_communications/' + self.replySelected.id, {
+							is_closed: 1,
+							updated_by: <?= $this->user->id; ?>,
+						}, (c) => {
+							if(c > 0){
+								self.MeAccountCommunications(self.replySelected.account);
+								self.replySelected.is_closed = 1;
+								new PNotify({
+									"title": "Exito!",
+									"text": "la comunicacion fue archivada correctamente.",
+									"styling":"bootstrap3",
+									"type":"success",
+									"icon":true,
+									"animation":"flip",
+									"hide":true,
+									"delay": 2500,
+								});
+							}
+						});
+					}
+				}
+			});
+		},
+		MeAccountCommunications(account_id){
+			var self = this;
+			var box_list_communications = $("#box-list-communications");
+			self.forms.create_user.account = account_id;
+			MV.api.readList('/accounts_communications', {
+				filter: [
+					'account,eq,' + account_id,
+				], join: [
+					'users',
+					'accounts_communications_parts,users',
+				],
+				order: 'updated,desc'
+			}, (a) => {
+				// console.log(a);
+				// box_list_communications.html('');
+				self.meCommunicationsView = [];
+				a.forEach((b) => {
+					console.log(b);
+					self.meCommunicationsView.push(b);
+				});
+				self.dialogCommunications.modal('show');
+			});
+		},
+		MeAccountContact(account_id){
+			var self = this;
+			bootbox.prompt({
+				title: "Nueva Solicitud/Comunicacion",
+				message: "Cuentanos tu solicitud y nuestro personal sera notificado.",
+				locale: 'es',
+				centerVertical: true,
+				inputType: 'textarea',
+				callback: (a) => {
+					if(a !== null){
+						if(a.length > 15){
+							MV.api.create('/accounts_communications', {
+								account: account_id,
+								created_by: <?= $this->user->id; ?>,
+								updated_by: <?= $this->user->id; ?>,
+							}, (b) => {
+								if(b > 0){
+									MV.api.create('/accounts_communications_parts', {
+										communication: b,
+										account: account_id,
+										message: a,
+										created_by: <?= $this->user->id; ?>,
+										updated_by: <?= $this->user->id; ?>,
+									}, (c) => {
+										if(c > 0){
+											self.MeAccountCommunications(account_id);
+											new PNotify({
+												"title": "Exito!",
+												"text": "la notificación se a enviado correctamente.",
+												"styling":"bootstrap3",
+												"type":"success",
+												"icon":true,
+												"animation":"flip",
+												"hide":true,
+												"delay": 2500,
+											});
+											
+											self.sendNotificationAccountGroup(account_id, {
+												type: 'new-communication-client',
+												data:  {
+													id: c,
+													communication: b,
+													account: account_id,
+													message: a,
+													created_by: <?= $this->user->id; ?>,
+													updated_by: <?= $this->user->id; ?>,
+												},
+											});
+										} else {
+											self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+										}
+									});
+								} else {
+									self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+								}
+							});
+						} 
+						else {
+							self.showErrorModal("El mensaje no puede ser enviado por que es demaciado corto, danos mas informacion sobre tu solicitud.");
+						}
+					}
+				}
+			});
+		},
 		deleteUserInMeAccount(relationshipId){
 			var self = this;
-			
 			bootbox.confirm({
 				message: "Confirme que desea eliminar este usuario de su lista?",
 				locale: 'es',
@@ -392,8 +860,6 @@ var Home = Vue.extend({
 					}
 				}
 			});
-			
-			// MV.api.delete
 		},
 		updatePermissionsUserInMeAccount(relationshipId){
 			var self = this;
@@ -403,7 +869,6 @@ var Home = Vue.extend({
 					text: a.name,
 				};
 			});
-			
 			bootbox.prompt({
 				title: "Actualizar permisos",
 				message: "Elija los nuevos permisos de acceso.",
@@ -423,8 +888,6 @@ var Home = Vue.extend({
 					}
 				}
 			});
-			
-			// MV.api.delete
 		},
 		resetFormCreateUser(){
 			var self = this;
@@ -448,7 +911,7 @@ var Home = Vue.extend({
 				"icon":true,
 				"animation":"flip",
 				"hide":true,
-				"delay": 1000,
+				"delay": 2500,
 			});
 		},
 		checkInputEmailnewUser(event){
@@ -462,8 +925,6 @@ var Home = Vue.extend({
 					]
 				}, (a) => {
 					if(a.length > 0){
-						
-						
 						bootbox.confirm({
 							message: "Desea agrega a " + newValue + "?",
 							locale: 'es',
@@ -476,7 +937,6 @@ var Home = Vue.extend({
 											text: a.name,
 										};
 									});
-									
 									bootbox.prompt({
 										title: "Actualizar permisos",
 										message: "Elija los nuevos permisos de acceso.",
@@ -497,21 +957,18 @@ var Home = Vue.extend({
 											}
 										}
 									});
-									
 								} else {
 									self.showErrorModal("Ya existe este usuario intenta con otro.");
 									$(event.target).val(self.forms.create_user.email);
 								}
 							}
 						});
-						
 						self.showErrorModal("Ya existe este usuario intenta con otro o selecciona \"Añadir\"");
 						$(event.target).val(self.forms.create_user.username);
 					} else {
 						self.forms.create_user.email = newValue;
 						$(event.target).val(newValue);
 					}
-					
 				});
 			} else {
 				$(event.target).val(self.forms.create_user.email);
@@ -541,7 +998,6 @@ var Home = Vue.extend({
 											text: a.name,
 										};
 									});
-									
 									bootbox.prompt({
 										title: "Actualizar permisos",
 										message: "Elija los nuevos permisos de acceso.",
@@ -562,11 +1018,9 @@ var Home = Vue.extend({
 											}
 										}
 									});
-									
 								}
 							}
 						});
-						
 						self.showErrorModal("Ya existe este usuario intenta con otro o selecciona \"Añadir\"");
 						$(event.target).val(self.forms.create_user.username);
 					} else {
@@ -832,15 +1286,12 @@ var router = new VueRouter({
 	]
 });
 
-app = new Vue({
+var app = new Vue({
 	router: router,
 	mounted(){
 		var self = this;
 	},
-	data: function () {
-		return {
-		};
-	},
+	data: function () { return {}; },
 	methods: {
 	}
 }).$mount('#me-accounts');

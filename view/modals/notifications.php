@@ -418,7 +418,6 @@ var appNotifications = new Vue({
 									}
 								};
 								
-								
 								buttonsEnabled.noclose3 = {
 									label: "Subir fotos Despues",
 									className: 'btn-warning',
@@ -496,6 +495,10 @@ var appNotifications = new Vue({
 					});
 						
 					$create = true;
+				} 
+				else if(dataNot.type == 'new-communication-client'){
+					console.log(dataNot);
+					console.log('new-communication-client Sin parametrizar');
 				}
 
 				
@@ -589,6 +592,11 @@ var appNotifications = new Vue({
 					} else if(b.type == 'novelty-execution-schedule'){
 						$title = 'Hay una observación';
 						$messageTxt = b.datajson.schedule.lot.microroute_name + ' necesita gestion, gestionala para continuar la aprobación.';
+						$create = true;
+					} else if(b.type == 'new-communication-client'){
+						console.log(b);
+						$title = 'Nuevo mensaje';
+						$messageTxt = b.datajson.message.substr(0,65);
 						$create = true;
 					}
 					

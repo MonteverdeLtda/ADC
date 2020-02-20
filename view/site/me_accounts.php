@@ -606,60 +606,67 @@ var Home = Vue.extend({
 										textBase = 'Solicitud para Actualizar/Remover la microruta ' + microroute_name + ".\n" 
 											+ "**Informacion Nueva**: " + "\n";
 										bootbox.prompt({
-											title: "This is a prompt with a textarea!",
+											title: "Nueva comunicacion",
 											value: textBase,
 											inputType: 'textarea',
 											callback: function (result) {
-												if(result.length > 15 && escape(result) !== escape(textBase)){
-													MV.api.create('/accounts_communications', {
-														account: account_id,
-														created_by: <?= $this->user->id; ?>,
-														updated_by: <?= $this->user->id; ?>,
-													}, (b) => {
-														if(b > 0){
-															MV.api.create('/accounts_communications_parts', {
-																communication: b,
-																account: account_id,
-																message: result,
-																created_by: <?= $this->user->id; ?>,
-																updated_by: <?= $this->user->id; ?>,
-															}, (c) => {
-																if(c > 0){
-																	new PNotify({
-																		"title": "Exito!",
-																		"text": "la notificación se a enviado correctamente.",
-																		"styling":"bootstrap3",
-																		"type":"success",
-																		"icon":true,
-																		"animation":"flip",
-																		"hide":true,
-																		"delay": 2500,
-																	});
-																	
-																	self.sendNotificationAccountGroup(account_id, {
-																		type: 'new-communication-client',
-																		data:  {
-																			id: c,
-																			communication: b,
-																			account: account_id,
-																			message: result,
-																			created_by: <?= $this->user->id; ?>,
-																			updated_by: <?= $this->user->id; ?>,
-																		},
-																	});
-																} else {
-																	self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
-																}
-															});
-														} else {
-															self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+												if(result !== null){
+													if(result.length > 15 && escape(result) !== escape(textBase)){
+														MV.api.create('/accounts_communications', {
+															account: account_id,
+															created_by: <?= $this->user->id; ?>,
+															updated_by: <?= $this->user->id; ?>,
+														}, (b) => {
+															if(b > 0){
+																MV.api.create('/accounts_communications_parts', {
+																	communication: b,
+																	account: account_id,
+																	message: result,
+																	created_by: <?= $this->user->id; ?>,
+																	updated_by: <?= $this->user->id; ?>,
+																}, (c) => {
+																	if(c > 0){
+																		new PNotify({
+																			"title": "Exito!",
+																			"text": "la notificación se a enviado correctamente.",
+																			"styling":"bootstrap3",
+																			"type":"success",
+																			"icon":true,
+																			"animation":"flip",
+																			"hide":true,
+																			"delay": 2500,
+																		});
+																		
+																		self.sendNotificationAccountGroup(account_id, {
+																			type: 'new-communication-client',
+																			data:  {
+																				id: c,
+																				communication: b,
+																				account: account_id,
+																				message: result,
+																				created_by: <?= $this->user->id; ?>,
+																				updated_by: <?= $this->user->id; ?>,
+																			},
+																		});
+																	} else {
+																		self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+																	}
+																});
+															} else {
+																self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+															}
+														});
+													} else {
+														if(result.length <= 15){
+															self.showErrorModal("El mensaje es muy corto para ser enviado...");
 														}
-													});
-													
+														else if(escape(result) == escape(textBase)){
+															self.showErrorModal("Debes contarnos cual es tu solicitud para proceder");
+														}
+													}
 												}
 											}
 										});
-
 									} catch(e){
 										console.error(e);
 										return false;
@@ -809,6 +816,7 @@ var Home = Vue.extend({
 				callback: (a) => {
 					if(a == true){
 						MV.api.update('/accounts_communications/' + self.replySelected.id, {
+							status: 0,
 							is_closed: 1,
 							updated_by: <?= $this->user->id; ?>,
 						}, (c) => {

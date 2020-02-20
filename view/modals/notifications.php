@@ -10,7 +10,6 @@ button, .buttons, .btn, .modal-footer .btn+.btn {
 	max-height: 150px !important;
 }
 </style>
-
 <script>
 var appNotifications = new Vue({
 	data: function () {
@@ -339,10 +338,6 @@ var appNotifications = new Vue({
 					$create = true;
 				} 
 				else if(dataNot.type == 'novelty-execution-schedule'){
-					console.log('Parametrizando: ', 'novelty-execution-schedule');
-					console.log('dataNot', dataNot);
-					console.log('datajson.id', dataNot.datajson);
-					
 					$title = dataNot.datajson.schedule.lot.microroute_name + ' | Necesita de tu gestion.';
 					$parrOne = $('<p></p>').append('Hay una observación, gestionala para continuar la aprobación.');
 					$parrTwo = $('<p></p>')
@@ -497,14 +492,505 @@ var appNotifications = new Vue({
 					$create = true;
 				} 
 				else if(dataNot.type == 'new-communication-client'){
-					console.log(dataNot);
-					console.log('new-communication-client Sin parametrizar');
+					MV.api.read('/accounts_communications/' + dataNot.datajson.communication, {
+						join: [
+							'accounts',
+							'users',
+							'accounts_communications_parts,users',
+						]
+					}, function(communication){
+						var isEditable = communication.is_closed == 0 ? true : false;
+						console.log('communication', communication);
+						
+						$messagesHtml = $('<div></div>').attr('class', 'row').attr('id', 'notifications-list-parts-box');
+						communication.accounts_communications_parts.forEach((x) => {
+							$messagesHtml.append(
+								$('<div></div>').attr('class', 'col-md-12')
+									.append($('<strong></strong>').text(x.created_by.surname + ' ' + x.created_by.names + ' '))
+									.append($('<span></span>').text('(' + x.created_by.email + ') '))
+									.append($('<strong></strong>').attr('class', 'pull-right').text(x.created))
+									.append($('<p></p>').append(x.message))
+							);
+						});
+						
+						$title = "Nuevo mensaje/comunicacion del cliente " + communication.account.names + ' ' + communication.account.surname;
+						
+						
+						if(isEditable == true){
+							$buttonReply = $('<button></button>')
+								.attr('id', 'btn-notifications-modal-communications-reply')
+								.attr('class', 'btn btn-sm btn-primary')
+								.attr('type', 'button')
+								.append($('<i></i>').attr('class', 'fa fa-reply'))
+								.append(' Responder');
+							$buttonMarkAsSolved = $('<button></button>')
+								.attr('id', 'btn-notifications-modal-communications-solved')
+								.attr('class', 'btn btn-sm btn-success')
+								.attr('type', 'button')
+								.append($('<i></i>').attr('class', 'fa fa-check'))
+								.append(' Gestión completa ');
+						}
+						else {
+							$buttonReply = $('<div></div>');
+							$buttonMarkAsSolved = $('<div></div>');
+						}
+						
+						$Body = $('<div></div>').attr('class', 'row')
+							.append($('<div></div>').attr('class', 'col-sm-12 mail_list_column'))
+							.append($('<div></div>').attr('class', 'col-sm-12 mail_view').attr('id', 'notifications-box-current-part')
+							.append(
+								$('<div></div>').attr('class', 'inbox-body')
+									.append(
+										$('<div></div>').attr('class', 'mail_heading row')
+											.append($('<div></div>').attr('class', 'col-md-8').append(
+													$('<div></div>').attr('class', 'btn-group')
+														.append($buttonReply)
+														.append($buttonMarkAsSolved)
+												)
+											)
+											.append($('<div></div>').attr('class', 'col-md-4 text-right').append($('<p></p>').attr('class', 'date').attr('style', 'zoom:0.8;').text('Última actividad')))
+											.append($('<div></div>').attr('class', 'col-md-12').append($('<h2></h2>')))
+									)
+									.append(
+										$('<div></div>').attr('class', 'sender-info')
+											.append($('<div></div>').attr('class', 'view-mail').append($('<div></div>').append($messagesHtml)))
+											.append($('<div></div>').attr('class', 'ln_solid'))
+									)
+							));
+						
+						$bodyBox = $('<div></div>').attr('class', 'row').append($Body);
+						
+						if(isEditable == false){
+							$bodyBox.append($('<p></p>').append("La comunicacion posiblemente ya fue gestionada o el cliente cambio su estado a solucionada."));
+						}
+					
+						var buttonsEnabled = {
+							cancel: {
+								label: "Cerrar",
+								className: 'btn-danger',
+								callback: function(){
+									console.log('Custom cancel clicked');
+								}
+							},
+							ok: {
+								label: "Marcar como leida",
+								className: 'btn-default',
+								callback: function(){
+									bootbox.confirm({
+										message: "Marcar notificacion como leida?.",
+										locale: 'es',
+										buttons: { confirm: { label: 'Marcar', }, },
+										callback: function (result) {
+											if(result === true){
+												MV.api.update('/notifications/' + dataNot.id, {
+													read: 1,
+													updated_by: <?= ($this->user->id); ?>
+												},function(xs){
+													eljQuery.remove();
+													$count.text(parseInt($count.text())-1);
+												});
+											}
+										}
+									});
+								}
+							},
+						};
+						
+						var dialog = bootbox.dialog({
+							title: $title,
+							message: $bodyBox.html(),
+							size: 'large',
+							className: 'rubberBand animated',
+							buttons: buttonsEnabled
+						})
+						.init(function (){
+							$('#btn-notifications-modal-communications-solved').click((event) => {
+								bootbox.confirm({
+									title: "Confirma tu accion",
+									message: "Debes de confirmar antes de cambiar esta comunicacion a \"Solucionada\", eventualmente será cerrada por nuestro sistema y no recibiras mas notificaciones.",
+									locale: 'es',
+									centerVertical: true,
+									callback: (a) => {
+										if(a == true){
+											MV.api.update('/accounts_communications/' + communication.id, {
+												status: 0,
+												is_closed: 1,
+												updated_by: <?= $this->user->id; ?>,
+											}, (c) => {
+												if(c > 0){
+													self.MeAccountCommunications(communication.account.id);
+													communication.is_closed = 1;
+													new PNotify({
+														"title": "Exito!",
+														"text": "la comunicacion fue archivada correctamente.",
+														"styling":"bootstrap3",
+														"type":"success",
+														"icon":true,
+														"animation":"flip",
+														"hide":true,
+														"delay": 2500,
+													});
+												}
+											});
+										}
+									}
+								});
+								
+							});
+								
+							$('#btn-notifications-modal-communications-reply').click((event) => {
+								bootbox.prompt({
+									title: "Comunicacion a 1 click",
+									message: "Escribe la informacion adiccional o el nuevo mensaje que deseas enviar.",
+									locale: 'es',
+									centerVertical: true,
+									inputType: 'textarea',
+									callback: (a) => {
+										if(a !== null){
+											if(a.length > 15){
+												MV.api.create('/accounts_communications_parts', {
+													communication: communication.id,
+													account: communication.account.id,
+													message: a,
+													created_by: <?= $this->user->id; ?>,
+													updated_by: <?= $this->user->id; ?>,
+												}, (b) => {
+													if(b > 0){
+														MV.api.update('/accounts_communications/' + communication.id, {
+															account: communication.account.id,
+															status: 1,
+															updated_by: <?= $this->user->id; ?>,
+														}, (c) => {
+															if(c > 0){
+																MV.api.read('/accounts_communications_parts/' + b, {
+																	filter: [
+																		'account,eq,' + communication.account.id,
+																	],
+																	join: [
+																		'users',
+																	],
+																}, (d) => {
+																	send = {};
+																	send.type = 'response-communication-client';
+																	send.datajson = JSON.stringify(d);
+																	send.user = d.created_by.id;
+																	send.created_by = <?= $this->user->id; ?>;
+																	
+																	MV.api.create('/notifications', send, (f) => {
+																		console.log('Result noti: ', f);
+																		new PNotify({
+																			"title": "Exito!",
+																			"text": "la notificación se a enviado correctamente.",
+																			"styling":"bootstrap3",
+																			"type":"success",
+																			"icon":true,
+																			"animation":"flip",
+																			"hide":true,
+																			"delay": 2500,
+																		});
+																		
+																		$('#notifications-list-parts-box').append(
+																			$('<div></div>').attr('class', 'col-md-12')
+																				.append($('<strong></strong>').text(d.created_by.surname + ' ' + d.created_by.names + ' '))
+																				.append($('<span></span>').text('(' + d.created_by.email + ') '))
+																				.append($('<strong></strong>').attr('class', 'pull-right').text(d.created))
+																				.append($('<p></p>').append(d.message))
+																		);
+																	});
+																	
+																	/*
+																	self.sendNotificationAccountGroup(communication.account.id, {
+																		type: 'new-communication-client',
+																		data: d,
+																	});*/
+																	/*
+																	self.meCommunicationsPartsView.push(d);
+																	self.MeAccountCommunications(communication.account.id);
+																	*/
+																});
+															}
+														});
+													} else {
+														self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+													}
+												});
+											} 
+											else {
+												self.showErrorModal("El mensaje no puede ser enviado por que es demaciado corto, danos mas informacion sobre tu solicitud.");
+											}
+										}
+									}
+								});
+							});
+						});
+					});
+				} 
+				else if(dataNot.type == 'response-communication-client'){
+					MV.api.read('/accounts_communications/' + dataNot.datajson.communication, {
+						join: [
+							'accounts',
+							'users',
+							'accounts_communications_parts,users',
+						]
+					}, function(communication){
+						var isEditable = communication.is_closed == 0 ? true : false;
+						console.log('communication', communication);
+						
+						$messagesHtml = $('<div></div>').attr('class', 'row').attr('id', 'notifications-list-parts-box');
+						communication.accounts_communications_parts.forEach((x) => {
+							$messagesHtml.append(
+								$('<div></div>').attr('class', 'col-md-12')
+									.append($('<strong></strong>').text(x.created_by.surname + ' ' + x.created_by.names + ' '))
+									.append($('<span></span>').text('(' + x.created_by.email + ') '))
+									.append($('<strong></strong>').attr('class', 'pull-right').text(x.created))
+									.append($('<p></p>').append(x.message))
+							);
+						});
+						
+						$title = "Respondimos tu mensaje/comunicacion";
+						
+						if(isEditable == true){
+							$buttonReply = $('<button></button>')
+								.attr('id', 'btn-notifications-modal-communications-reply')
+								.attr('class', 'btn btn-sm btn-primary')
+								.attr('type', 'button')
+								.append($('<i></i>').attr('class', 'fa fa-reply'))
+								.append(' Responder');
+							$buttonMarkAsSolved = $('<button></button>')
+								.attr('id', 'btn-notifications-modal-communications-solved')
+								.attr('class', 'btn btn-sm btn-success')
+								.attr('type', 'button')
+								.append($('<i></i>').attr('class', 'fa fa-check'))
+								.append(' Gestión completa ');
+						}
+						else {
+							$buttonReply = $('<div></div>');
+							$buttonMarkAsSolved = $('<div></div>');
+						}
+						
+						
+						$Body = $('<div></div>').attr('class', 'row')
+							.append($('<div></div>').attr('class', 'col-sm-12 mail_list_column'))
+							.append($('<div></div>').attr('class', 'col-sm-12 mail_view').attr('id', 'notifications-box-current-part')
+							.append(
+								$('<div></div>').attr('class', 'inbox-body')
+									.append(
+										$('<div></div>').attr('class', 'mail_heading row')
+											.append($('<div></div>').attr('class', 'col-md-8').append(
+													$('<div></div>').attr('class', 'btn-group')
+														.append($buttonReply)
+														.append($buttonMarkAsSolved)
+												)
+											)
+											.append($('<div></div>').attr('class', 'col-md-4 text-right').append($('<p></p>').attr('class', 'date').attr('style', 'zoom:0.8;').text('Última actividad')))
+											.append($('<div></div>').attr('class', 'col-md-12').append($('<h2></h2>')))
+									)
+									.append(
+										$('<div></div>').attr('class', 'sender-info')
+											.append($('<div></div>').attr('class', 'view-mail').append($('<div></div>').append($messagesHtml)))
+											.append($('<div></div>').attr('class', 'ln_solid'))
+									)
+							));
+						
+						$bodyBox = $('<div></div>').attr('class', 'row').append($Body);
+						
+						if(isEditable == false){
+							$bodyBox.append($('<p></p>').append("La comunicacion posiblemente ya fue gestionada o el cliente cambio su estado a solucionada."));
+						}
+					
+						var buttonsEnabled = {
+							cancel: {
+								label: "Cerrar",
+								className: 'btn-danger',
+								callback: function(){
+									console.log('Custom cancel clicked');
+								}
+							},
+							ok: {
+								label: "Marcar como leida",
+								className: 'btn-default',
+								callback: function(){
+									bootbox.confirm({
+										message: "Marcar notificacion como leida?.",
+										locale: 'es',
+										buttons: { confirm: { label: 'Marcar', }, },
+										callback: function (result) {
+											if(result === true){
+												MV.api.update('/notifications/' + dataNot.id, {
+													read: 1,
+													updated_by: <?= ($this->user->id); ?>
+												},function(xs){
+													eljQuery.remove();
+													$count.text(parseInt($count.text())-1);
+												});
+											}
+										}
+									});
+								}
+							},
+						};
+						
+						var dialog = bootbox.dialog({
+							title: $title,
+							message: $bodyBox.html(),
+							size: 'large',
+							className: 'rubberBand animated',
+							buttons: buttonsEnabled
+						})
+						.init(function (){
+							$('#btn-notifications-modal-communications-solved').click((event) => {
+								bootbox.confirm({
+									title: "Confirma tu accion",
+									message: "Debes de confirmar antes de cambiar esta comunicacion a \"Solucionada\", eventualmente será cerrada por nuestro sistema y no recibiras mas notificaciones.",
+									locale: 'es',
+									centerVertical: true,
+									callback: (a) => {
+										if(a == true){
+											MV.api.update('/accounts_communications/' + communication.id, {
+												status: 0,
+												is_closed: 1,
+												updated_by: <?= $this->user->id; ?>,
+											}, (c) => {
+												if(c > 0){
+													self.MeAccountCommunications(communication.account.id);
+													communication.is_closed = 1;
+													new PNotify({
+														"title": "Exito!",
+														"text": "la comunicacion fue archivada correctamente.",
+														"styling":"bootstrap3",
+														"type":"success",
+														"icon":true,
+														"animation":"flip",
+														"hide":true,
+														"delay": 2500,
+													});
+												}
+											});
+										}
+									}
+								});
+								
+							});
+								
+							$('#btn-notifications-modal-communications-reply').click((event) => {
+								bootbox.prompt({
+									title: "Comunicacion a 1 click",
+									message: "Escribe la informacion adiccional o el nuevo mensaje que deseas enviar.",
+									locale: 'es',
+									centerVertical: true,
+									inputType: 'textarea',
+									callback: (a) => {
+										if(a !== null){
+											if(a.length > 15){
+												MV.api.create('/accounts_communications_parts', {
+													communication: communication.id,
+													account: communication.account.id,
+													message: a,
+													created_by: <?= $this->user->id; ?>,
+													updated_by: <?= $this->user->id; ?>,
+												}, (b) => {
+													if(b > 0){
+														MV.api.update('/accounts_communications/' + communication.id, {
+															account: communication.account.id,
+															status: 0,
+															updated_by: <?= $this->user->id; ?>,
+														}, (c) => {
+															if(c > 0){
+																MV.api.read('/accounts_communications_parts/' + b, {
+																	filter: [
+																		'account,eq,' + communication.account.id,
+																	],
+																	join: [
+																		'users',
+																	],
+																}, (d) => {
+																	send = {};
+																	send.type = 'response-communication-client';
+																	send.datajson = JSON.stringify(d);
+																	send.user = d.created_by.id;
+																	send.created_by = <?= $this->user->id; ?>;
+																	
+																	MV.api.create('/notifications', send, (f) => {
+																		console.log('Result noti: ', f);
+																		new PNotify({
+																			"title": "Exito!",
+																			"text": "la notificación se a enviado correctamente.",
+																			"styling":"bootstrap3",
+																			"type":"success",
+																			"icon":true,
+																			"animation":"flip",
+																			"hide":true,
+																			"delay": 2500,
+																		});
+																		
+																		$('#notifications-list-parts-box').append(
+																			$('<div></div>').attr('class', 'col-md-12')
+																				.append($('<strong></strong>').text(d.created_by.surname + ' ' + d.created_by.names + ' '))
+																				.append($('<span></span>').text('(' + d.created_by.email + ') '))
+																				.append($('<strong></strong>').attr('class', 'pull-right').text(d.created))
+																				.append($('<p></p>').append(d.message))
+																		);
+																	});
+																	
+																	/*
+																	self.sendNotificationAccountGroup(communication.account.id, {
+																		type: 'new-communication-client',
+																		data: d,
+																	});*/
+																	/*
+																	self.meCommunicationsPartsView.push(d);
+																	self.MeAccountCommunications(communication.account.id);
+																	*/
+																});
+															}
+														});
+													} else {
+														self.showErrorModal("Ocurrio un error misterioso al enviar el mensaje.");
+													}
+												});
+											} 
+											else {
+												self.showErrorModal("El mensaje no puede ser enviado por que es demaciado corto, danos mas informacion sobre tu solicitud.");
+											}
+										}
+									}
+								});
+							});
+						});
+					});
 				}
-
 				
 			} catch (e){
 				console.error(e);
 				console.log(e);
+			}
+		},
+		sendNotificationAccountGroup(account_id, data){
+			var self = this;
+			try{
+				MV.api.read('/accounts/' + account_id, {
+					join: [
+						'notifications_groups,notifications_groups_users'
+					]
+				}, (a) => {
+					if(a.notifications_group !== undefined && a.notifications_group.id){
+						a.notifications_group.notifications_groups_users.forEach((b) => {
+							send = {};
+							send.type = data.type;
+							send.datajson = JSON.stringify(data.data);
+							send.user = b.user;
+							send.created_by = <?= $this->user->id; ?>;
+							
+							MV.api.create('/notifications', send, (a) => {
+								console.log('Result noti: ', a);
+							});
+						});
+					}
+				});
+			}
+			catch(e){
+				console.error(e);
+				callb(e)
 			}
 		},
 		canvasToElementMedia(fileResponse){
@@ -567,91 +1053,96 @@ var appNotifications = new Vue({
 			var task = (task !== undefined) ? true : task;
 			$Ul = $('#menu-notifications-top');
 			$count = $('#count-notifications');
-			
-			$Ul.html('<li><a><i class="fa fa-spinner fa-spin"></i> Cargando, espere... </a></li>');
-			$count.text(0);
-			self.meNotificationsPendings(function(a){
-				self.records = Array.isArray(a) === true ? a : [];
-				$Ul.html('');
-				self.records.forEach(function(b){
-					b.datajson = JSON.parse(b.datajson);
-					$create = false;
-					$title = 'Nueva notificacion';
-					$messageTxt = 'Tienes una nueva notificacion.';
-					$buttonsBox = $('<div></div>');
-					
-					if(b.type == 'photographic-report-declined'){
-						$title = 'Foto rechazada';
-						$messageTxt = "Se ha rechazado una fotografia tuya en la microruuta "+ b.datajson.schedule.lot.microroute_name +".<br><b>F. programacion: </b>" + b.datajson.schedule.date_executed_schedule;
-						$messageTxt += (moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD') == b.datajson.schedule.date_executed_schedule) ? '' : '/' + moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD');
-						$create = true;
-					} else if(b.type == 'schedule-executed'){
-						$title = b.datajson.lot.microroute_name;
-						$messageTxt = 'se ha cambiado el estado a "Ejecutado".';						
-						$create = true;
-					} else if(b.type == 'novelty-execution-schedule'){
-						$title = 'Hay una observación';
-						$messageTxt = b.datajson.schedule.lot.microroute_name + ' necesita gestion, gestionala para continuar la aprobación.';
-						$create = true;
-					} else if(b.type == 'new-communication-client'){
-						$title = 'Nuevo mensaje';
-						$messageTxt = b.datajson.message.substr(0,65);
-						$create = true;
-					}
-					
-					if($create == true){
-						/*
-						$buttonReadNot = $('<button></button>').attr('style', 'display: inline-flex;zoom:0.5;').attr('class', 'btn-round btn-success').append($('<i></i>').attr('class', 'fa fa-check')).click(function(){
-							$thisElement = $(this);
-							bootbox.confirm({
-								message: "Marcar notificacion como leida?.",
-								locale: 'es',
-								buttons: { confirm: { label: 'Marcar', }, },
-								callback: function (result) {
-									if(result === true){
-										MV.api.update('/notifications/' + b.id, {
-											read: 1,
-											updated_by: <?= ($this->user->id); ?>
-										},function(xs){
-											$thisElement.remove();
-											$count.text(parseInt($count.text())-1);
-										});
+			if(self.records.length == 0){
+				$Ul.html('<li><a><i class="fa fa-spinner fa-spin"></i> Cargando, espere... </a></li>');
+				$count.text(0);
+				self.meNotificationsPendings(function(a){
+					self.records = Array.isArray(a) === true ? a : [];
+					$Ul.html('');
+					self.records.forEach(function(b){
+						b.datajson = JSON.parse(b.datajson);
+						$create = false;
+						$title = 'Nueva notificacion';
+						$messageTxt = 'Tienes una nueva notificacion.';
+						$buttonsBox = $('<div></div>');
+						
+						if(b.type == 'photographic-report-declined'){
+							$title = 'Foto rechazada';
+							$messageTxt = "Se ha rechazado una fotografia tuya en la microruuta "+ b.datajson.schedule.lot.microroute_name +".<br><b>F. programacion: </b>" + b.datajson.schedule.date_executed_schedule;
+							$messageTxt += (moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD') == b.datajson.schedule.date_executed_schedule) ? '' : '/' + moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD');
+							$create = true;
+						} else if(b.type == 'schedule-executed'){
+							$title = b.datajson.lot.microroute_name;
+							$messageTxt = 'se ha cambiado el estado a "Ejecutado".';						
+							$create = true;
+						} else if(b.type == 'novelty-execution-schedule'){
+							$title = 'Hay una observación';
+							$messageTxt = b.datajson.schedule.lot.microroute_name + ' necesita gestion, gestionala para continuar la aprobación.';
+							$create = true;
+						} else if(b.type == 'new-communication-client'){
+							$title = 'Nuevo mensaje';
+							$messageTxt = b.datajson.message.substr(0,65);
+							$create = true;
+						} else if(b.type == 'response-communication-client'){
+							$title = 'Respondimos tu solicitud.';
+							$messageTxt = b.datajson.message.substr(0,65);
+							$create = true;
+						}
+						
+						if($create == true){
+							/*
+							$buttonReadNot = $('<button></button>').attr('style', 'display: inline-flex;zoom:0.5;').attr('class', 'btn-round btn-success').append($('<i></i>').attr('class', 'fa fa-check')).click(function(){
+								$thisElement = $(this);
+								bootbox.confirm({
+									message: "Marcar notificacion como leida?.",
+									locale: 'es',
+									buttons: { confirm: { label: 'Marcar', }, },
+									callback: function (result) {
+										if(result === true){
+											MV.api.update('/notifications/' + b.id, {
+												read: 1,
+												updated_by: <?= ($this->user->id); ?>
+											},function(xs){
+												$thisElement.remove();
+												$count.text(parseInt($count.text())-1);
+											});
+										}
 									}
-								}
+								});
 							});
-						});
-						$buttonsBox.append($buttonReadNot);*/
-						
-						$count.text(parseInt($count.text())+1);
-						$spanTime = $('<span></span>').attr('class', 'time').attr('style', 'display: inline-flex;').append(moment(b.created).format('DD-MM-Y HH:mm:ss')).append($buttonsBox);
-						$spanUsername = $('<span></span>').append($title);
-						
-						$spanBox = $('<span></span>').append($spanUsername).append($spanTime);
-						$message = $('<span></span>').attr('class', 'message').append($messageTxt);
-						
-						$ABox = $('<a></a>').append($spanBox).append($message);
-						
-						$Li = $('<li></li>').append($ABox).click(function(){
-							self.openNotificationInModal(b, $(this));
-						});
-						
+							$buttonsBox.append($buttonReadNot);*/
+							
+							$count.text(parseInt($count.text())+1);
+							$spanTime = $('<span></span>').attr('class', 'time').attr('style', 'display: inline-flex;').append(moment(b.created).format('DD-MM-Y HH:mm:ss')).append($buttonsBox);
+							$spanUsername = $('<span></span>').append($title);
+							
+							$spanBox = $('<span></span>').append($spanUsername).append($spanTime);
+							$message = $('<span></span>').attr('class', 'message').append($messageTxt);
+							
+							$ABox = $('<a></a>').append($spanBox).append($message);
+							
+							$Li = $('<li></li>').append($ABox).click(function(){
+								self.openNotificationInModal(b, $(this));
+							});
+							
+							$Ul.append($Li);
+						}
+					});
+					
+					if(self.records.length == 0){
+						$Li = $('<li></li>').append($('<a></a>').append(
+							$('<span></span>').append('').append('')
+						).append(
+							$('<span></span>').attr('class', 'message').append('No tienes notificaciones sin leer.')
+						));
 						$Ul.append($Li);
 					}
+					
+					if(task == true){
+						self.addToTask();
+					}
 				});
-				
-				if(self.records.length == 0){
-					$Li = $('<li></li>').append($('<a></a>').append(
-						$('<span></span>').append('').append('')
-					).append(
-						$('<span></span>').attr('class', 'message').append('No tienes notificaciones sin leer.')
-					));
-					$Ul.append($Li);
-				}
-				
-				if(task == true){
-					self.addToTask();
-				}
-			})
+			}
 		},
 		meNotificationsPendings(call){
 			var self = this;
@@ -666,6 +1157,19 @@ var appNotifications = new Vue({
 			} catch(e){
 				
 			}
+		},
+		showErrorModal(text, title = null){
+			title = (title !== null) ? title : "¡Ups!";
+			new PNotify({
+				"title": title,
+				"text": text,
+				"styling":"bootstrap3",
+				"type":"error",
+				"icon":true,
+				"animation":"flip",
+				"hide":true,
+				"delay": 2500,
+			});
 		},
 	}
 }).$mount('#notifications-navbar-top');

@@ -78,9 +78,9 @@
 											<button type="button" class="btn btn-default btn-xs" @click="openListMicroroutesModal(accountInfo)">
 												<i class="fa fa-road"> </i> Microrutas
 											</button>
-											<button type="button" class="btn btn-primary btn-xs">
+											<!-- // <button type="button" class="btn btn-primary btn-xs">
 												<i class="fa fa-dashboard"> </i> Consola
-											</button>
+											</button>-->
 										</template>
 									</div>
 								</div>

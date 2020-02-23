@@ -106,7 +106,7 @@ return [
                 ],
                 [
                     'type' => 'stylesheet',
-                    'file' => '/vendors/dropzone/dist/min/dropzone.min.css', // Dropzone.js
+                    'file' => '/vendors/dropzone/v5.7.0/src/dropzone.scss', // Dropzone.js CSS
                 ],
                 [
                     'type' => 'stylesheet',
@@ -147,6 +147,10 @@ return [
                     'type' => 'script',
                     'file' => 'https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js', // axios
                 ],
+                [
+                    'type' => 'stylesheet',
+                    'file' => '/vendors/zoom.js/css/zoom.css',
+                ],
 				/*
                 [
                     'type' => 'stylesheet',
@@ -160,6 +164,14 @@ return [
                 [
                     'type' => 'script',
                     'file' => '/vendors/bootstrap/dist/js/bootstrap.min.js', // Bootstrap
+                ],
+                [
+                    'type' => 'script',
+                    'file' => '/vendors/zoom.js/js/zoom.js',
+                ],
+                [
+                    'type' => 'script',
+                    'file' => '/vendors/zoom.js/js/transition.js',
                 ],
                 [
                     'type' => 'script',
@@ -456,10 +468,6 @@ return [
                 ],
                 [
                     'type' => 'script',
-                    'file' => '/vendors/dropzone/dist/min/dropzone.min.js', // Dropzone.js
-                ],
-                [
-                    'type' => 'script',
                     'file' => '/vendors/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js', // jQuery custom content scroller
                 ],
                 [
@@ -505,7 +513,11 @@ return [
                 [
                     'type' => 'script',
                     'file' => '/vendors/hammer/hammer.js', // Hammer
-                ]
+                ],
+                [
+                    'type' => 'script',
+                    'file' => '/vendors/dropzone/v5.7.0/src/dropzone.js', // Dropzone.js
+                ],
             ],
             'footer_scripts' => [
                 [

@@ -118,7 +118,7 @@ return [
 				],
 				[
 					'type' => 'stylesheet',
-					'file' => '/build/css/custom.min.css', // Custom Theme Style
+					'file' => '/build/css/custom_oblue.css', // Custom Theme Style
 				],
 			],
 			'footer_scripts' => [

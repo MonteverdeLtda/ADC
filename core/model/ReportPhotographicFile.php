@@ -8,7 +8,7 @@
 class ReportPhotographicFile extends ModeloBase{
     
 	public function __construct($adapter) {
-        $table="emvarias_reports_photographic";
+        $table="reports_photographic";
         parent::__construct($table, $adapter);
     }
 	
@@ -81,23 +81,7 @@ class ReportPhotographicFile extends ModeloBase{
     public function saveFolders($columns = null){
 		if($this->create_by > 0){} else { return 0; }
 		$sql = "UPDATE {$this->getTableUse()} SET `schedule`=?, `year`=?, `type`=?, `status`=?, `group`=?, `period`=?, `lat`=?, `lng`=?, `file_name`=?, `file_type`=?, `file_size`=?, `file_path_full`=?, `file_path_short`=?, `create_by`=? WHERE `id`='{$this->id}'";
-		/*$sql = "UPDATE `admin_mv_pro`.`emvarias_reports_photographic` 
-			SET 
-				`schedule`='85', 
-				`year`='2019', 
-				`type`='B', 
-				`group`='1', 
-				`period`='15', 
-				`lat`='6.23925', 
-				`lng`='-75.6091', 
-				`status`='1', 
-				`file_name`='TIwWmq-logo-monteverde.pn', 
-				`file_type`='image/pn', 
-				`file_size`='10368', 
-				`file_path_full`='/home/admin/web/micuenta.monteverdeltda.com/public_html/public/reports-photographics/CW72436/2020/16-31 ENERO/CUADRILLA 2/Z2CC0079FM2/ANTES/en-revision/2020-01-18-TIwWmq-logo-monteverde.pn', `file_path_short`='/public/reports-photographics/CW72436/2020/16-31 ENERO/CUADRILLA 2/Z2CC0079FM2/ANTES/en-revision/2020-01-18-TIwWmq-logo-monteverde.pn', 
-				`created`='2020-01-04 13:21:11', 
-				`updated_by`='{$this->updated_by}'
-			WHERE `id`={$this->id};"*/
+		
 		
 		$query = $this->db()->prepare($sql);
 

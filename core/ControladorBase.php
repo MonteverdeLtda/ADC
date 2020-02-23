@@ -29,6 +29,7 @@ class ControladorBase {
 		$this->set('_put', (isset($_PUT) ? $_PUT : []));
 		$this->set('_request', (isset($_REQUEST) ? $_REQUEST : []));
 		$this->set('_delete', (isset($_DELETE) ? $_DELETE : []));
+		$this->set('_files', (isset($_FILES) ? $_FILES : []));
 		
         global $global_session;
         $this->session = $global_session;
@@ -63,6 +64,10 @@ class ControladorBase {
 	
 	public function getGet(){
 		return $this->_get;
+	}
+	
+	public function getFiles(){
+		return $this->_files;
 	}
 	
 	public function getRequest(){

@@ -135,7 +135,7 @@ class ControladorBase {
 		$nameNode = strtolower($nameNode);
 		$permisosBase = (array) $this->permissions;
 		
-		$permision = in_array('isadmin', $permisosBase) || in_array($nameNode, $permisosBase) ? true : false;
+		$permision = in_array('isadmin', $permisosBase) || in_array('isAdmin', $permisosBase) || in_array($nameNode, $permisosBase) ? true : false;
 		return $permision;
 	}
   

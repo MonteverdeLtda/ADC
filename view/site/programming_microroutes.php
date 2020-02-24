@@ -24,7 +24,7 @@
 <div id="emvarias-lots">
 	<div class="page-title">
 		<div class="title_left">
-			<h3><?= $title; ?> <small><?= $subtitle; ?></small></h3>
+			<h3><?= $title; ?> <small></small></h3>
 		</div>
 		<div class="title_right">
 		</div>
@@ -63,7 +63,7 @@
 								<div class="col-md-9 col-sm-9 col-xs-12">
 									<select @change="loadEvents" v-model="formCreate.period" class="select2_single form-control" tabindex="-1">
 										<option value="0">Seleccione una opcion</option>
-										<option v-for="(option, i_option) in options.emvarias_periods" :value="option.id">{{ option.name }}</option>
+										<option v-for="(option, i_option) in options.periods" :value="option.id">{{ option.name }}</option>
 									</select>
 								</div>
 							</div>
@@ -80,14 +80,44 @@
 								<div class="col-md-9 col-sm-9 col-xs-12">
 									<select @change="loadEvents" v-model="formCreate.group" class="select2_single form-control" tabindex="-1">
 										<option value="0">Seleccione una opcion</option>
-										<option v-for="(option, i_option) in options.emvarias_groups" :value="option.id">{{ option.name }}</option>
+										<option v-for="(option, i_option) in options.groups" :value="option.id">{{ option.name }}</option>
 									</select>
 								</div>
 							</div>
 							<div class="clearfix"></div>
-							<div class="ln_solid"></div>
+						</div>
+					</div>
+					<div class="row">
+						<br>
+						<div class="col-md-6 col-sm-6 col-xs-6">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha Inicio</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<div class='input-group date' id='datetimepicker1'>
+										<input type='text' class="form-control" name="start_date" id="example1" v-model="formCreate.date_executed_schedule" autocomplete="off" />
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+							</div>
 							<div class="clearfix"></div>
 						</div>
+						<div class="col-md-6 col-sm-6 col-xs-6">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha Fin</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<div class='input-group date' id='datetimepicker2'>
+										<input type='text' class="form-control" name="start_date" id="example2" autocomplete="off" />
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="clearfix"></div>
 						<div class="col-md-8 col-sm-8 col-xs-8" style="zoom:0.8;">
 							<div class="x_content">	
 								<!-- // 
@@ -106,8 +136,6 @@
 						</div>
 					</div>
 				</div>
-				
-						
 			</div>
 		</div>
 		
@@ -122,36 +150,6 @@
 						</button>
 						<h4 class="modal-title" id="myModalLabel">Programar</h4>
 					</div>
-					<div class="modal-body">
-						<!-- // 
-						<h4>Text in a modal</h4>
-						<p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
-						<p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-						-->
-						<div class="form-group">
-							<label>Fecha de inicio</label>
-							<div class='input-group date' id='datetimepicker1'>
-								<input type='text' class="form-control" name="start_date" id="example1" v-model="formCreate.date_executed_schedule" autocomplete="off" />
-								<span class="input-group-addon">
-									<span class="glyphicon glyphicon-calendar"></span>
-								</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label>End Date</label>
-							<div class='input-group date' id='datetimepicker2'>
-								<input type='text' class="form-control" name="start_date" id="example2" autocomplete="off" />
-								<span class="input-group-addon">
-									<span class="glyphicon glyphicon-calendar"></span>
-								</span>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-						<button @click="createSchedule" type="button" class="btn btn-primary">Programar</button>
-					</div>
-
 				</div>
 			</div>
 		</div>
@@ -174,8 +172,8 @@ var List = Vue.extend({
 	data(){
 		return {
 			options: {
-				emvarias_groups: [],
-				emvarias_periods: [],
+				groups: [],
+				periods: [],
 			},
 			total: 0,
 			records: [],
@@ -198,7 +196,7 @@ var List = Vue.extend({
 	computed: {
 		startDatePicket(){
 			var self = this;
-			var x = self.options.emvarias_periods.find((x) => x.id == self.formCreate.period);
+			var x = self.options.periods.find((x) => x.id == self.formCreate.period);
 			var startDate   = moment(x.start + '/' + self.formCreate.year, "DD/MM/YYYY");
 			var endDate     = moment(x.end + '/' + self.formCreate.year, "DD/MM/YYYY");
 			var compareDate = moment();
@@ -207,7 +205,7 @@ var List = Vue.extend({
 		},
 		endDatePicket(){
 			var self = this;
-			var x = self.options.emvarias_periods.find((x) => x.id == self.formCreate.period);
+			var x = self.options.periods.find((x) => x.id == self.formCreate.period);
 			var startDate   = moment(x.start + '/' + self.formCreate.year, "DD/MM/YYYY");
 			var endDate     = moment(x.end + '/' + self.formCreate.year, "DD/MM/YYYY");
 			var compareDate = moment();
@@ -226,7 +224,7 @@ var List = Vue.extend({
 	methods: {
 		changeDatesInputs(){
 			var self = this;
-			var x = self.options.emvarias_periods.find((x) => x.id == self.formCreate.period);
+			var x = self.options.periods.find((x) => x.id == self.formCreate.period);
 			if(x.start_month && x.end_month){
 				var startDate   = moment(x.start + '/' + self.formCreate.year, "DD/MM/YYYY");
 				var endDate     = moment(x.end + '/' + self.formCreate.year, "DD/MM/YYYY");
@@ -258,8 +256,9 @@ var List = Vue.extend({
 		loadEvents(){
 			var self = this;
 			console.log('loadEvents');
-					$('#calendar-box').fullCalendar( 'removeEventSource', self.events );
+			$('#calendar-box').fullCalendar( 'removeEventSource', self.events );
 			self.events = [];
+			self.changeDatesInputs();
 			if(self.formCreate.year > 1950 && self.formCreate.period > 0 && self.formCreate.group > 0)
 			{
 				MV.api.readList('/schedule', {
@@ -282,7 +281,6 @@ var List = Vue.extend({
 					self.events = events;
 					$('#calendar-box').fullCalendar( 'addEventSource', events );
 					$('#calendar-box').fullCalendar( 'gotoDate', self.startDatePicket );
-					
 				});				
 			}
 		},
@@ -468,10 +466,10 @@ var List = Vue.extend({
 						*/
 					}
 					
-					// console.log('lot ', eventObj.objectMV.microroute.lot.description);
+					// console.log('lot ', eventObj.objectMV.microroute.microroute.description);
 					element.popover({
-					  title: eventObj.title + ' | ' + eventObj.lot.address_text + ' | ' + eventObj.lot.area_m2.toLocaleString() + ' m2',
-					  content: eventObj.lot.description,
+					  title: eventObj.title + ' | ' + eventObj.microroute.address_text + ' | ' + eventObj.microroute.area_m2.toLocaleString() + ' m2',
+					  content: eventObj.microroute.description,
 					  trigger: 'hover',
 					  placement: 'top',
 					  container: 'body'
@@ -496,7 +494,7 @@ var List = Vue.extend({
 			var self = this;
 			//a.editable = (a.editable == 1) ? 1 : (a.created_by.id === undefined && a.created_by == '<?= $this->user->id; ?>') ? 1 : (a.created_by.id !== undefined && a.created_by.id == '<?= $this->user->id; ?>') ? 1 : 0;
 			//a['100_events_staff'].forEach(function(b){ a.editable = (b.isAdmin == 1) ? 1 : a.editable; });
-			a.title = (a.lot.microroute_name);
+			a.title = (a.microroute.name);
 			a.start = moment(a.date_executed_schedule);
 			a.end = moment(a.date_executed_schedule_end);
 			a.editable = self.intToboolean(0);
@@ -534,7 +532,7 @@ var List = Vue.extend({
 			var self = this;
 			try{
 				if(
-					self.formCreate.lot > 0
+					self.formCreate.microroute > 0
 					&& self.formCreate.year > 1950
 					&& self.formCreate.period > 0
 					&& self.formCreate.group > 0
@@ -546,32 +544,53 @@ var List = Vue.extend({
 					var asx = self.formCreate.date_executed_schedule_end;
 					self.formCreate.date_executed_schedule_end = moment(self.formCreate.date_executed_schedule_end).add({ days: 1 }).format('Y-MM-DD');
 					
-					MV.api.create('/schedule', self.formCreate, function(a){
-						if(parseInt(a) > 0){
-							self.createLogSchedule({
-								schedule: a,
-								action: 'create-event',
-								data: self.formCreate,
-								response: a,
-							}, function(w){
-								self.formCreate.date_executed_schedule_end = asx;
-								new PNotify({
-									"title": "¡Éxito!",
-									"text": "Creada con éxito",
-									"styling":"bootstrap3",
-									"type":"success",
-									"icon":true,
-									"animation":"zoom",
-									"hide":true
-								});
-								$( ".bs-new-calendar-modal-lg" ).modal('hide');
-								self.loadEvents();
-							})
-								
+					bootbox.confirm({
+						message: "Confirma antes de agregar.",
+						locale: 'es',
+						callback: function (result) {
+							if(result !== null){
+								if(result == true){
+					
+									MV.api.create('/schedule', self.formCreate, function(a){
+										if(parseInt(a) > 0){
+											self.createLogSchedule({
+												schedule: a,
+												action: 'create-event',
+												data: self.formCreate,
+												response: a,
+											}, function(w){
+												self.formCreate.date_executed_schedule_end = asx;
+												new PNotify({
+													"title": "¡Éxito!",
+													"text": "Creada con éxito",
+													"styling":"bootstrap3",
+													"type":"success",
+													"icon":true,
+													"animation":"zoom",
+													"hide":true
+												});
+												//$( ".bs-new-calendar-modal-lg" ).modal('hide');
+												self.loadEvents();
+											})
+												
+										}
+									});
+								} else {
+								}
+							}
 						}
-					})
+					});
 				} else {
 					console.log('Formulario incompleto');
+					new PNotify({
+						"title": "¡ups!",
+						"text": "Formulario incompleto",
+						"styling":"bootstrap3",
+						"type":"error",
+						"icon":true,
+						"animation":"zoom",
+						"hide":true
+					});
 				}
 			}catch(e){
 				console.error(e);
@@ -584,8 +603,8 @@ var List = Vue.extend({
 				closeButton: false
 			});
 			
-			MV.api.readList('emvarias_periods', {}, function(a){
-				self.options.emvarias_periods = a;
+			MV.api.readList('periods', {}, function(a){
+				self.options.periods = a;
 				a.forEach(function(x){
 					if(x.start_month == moment().format('M') || x.end_month == moment().format('M')){
 						var startDate   = moment(x.start + '/' + self.formCreate.year, "DD/MM/YYYY");
@@ -615,8 +634,8 @@ var List = Vue.extend({
 					}
 				});
 				
-				MV.api.readList('emvarias_groups', {}, function(b){				
-					self.options.emvarias_groups = b;
+				MV.api.readList('groups', {}, function(b){				
+					self.options.groups = b;
 					subDialog.modal('hide');
 					self.load();
 				});
@@ -653,7 +672,7 @@ var List = Vue.extend({
 							data: self.records.map(a => [
 								//a.id + 
 								"<button class=\"add-lot-in-programming\" data-lot=\"" + a.id + "\"><i class=\"fa fa-crosshairs\"></i></button>", 
-								a.microroute_name, 
+								a.name, 
 								a.id_ref, 
 								a.address_text, 
 								a.area_m2.toLocaleString(), 
@@ -698,18 +717,20 @@ var List = Vue.extend({
 								self.init_calendar();
 								var apiTables = this.api();
 								
-								apiTables.$('tr').click( function () {
+								apiTables.$('td:first-child').click( function () {
 									tds = $(this).find( ".add-lot-in-programming" );
 									selectedId = parseInt($(tds[0]).data('lot'));
-									self.formCreate.lot = ((parseInt(selectedId)>0) ? parseInt(selectedId) : 0);
-										$('.bs-new-calendar-modal-lg').modal('show');
-									self.changeDatesInputs();
+									self.formCreate.microroute = ((parseInt(selectedId)>0) ? parseInt(selectedId) : 0);
+									
+													self.createSchedule();
+										//$('.bs-new-calendar-modal-lg').modal('show');
+									//self.changeDatesInputs();
 								} );
 								
 								apiTables.$(".add-lot-in-programming").click(function() {
-									self.formCreate.lot = $(this).data('lot');
+									self.formCreate.microroute = $(this).data('lot');
 									try {
-										$('.bs-new-calendar-modal-lg').modal('show');
+										//$('.bs-new-calendar-modal-lg').modal('show');
 									} catch(e){
 										console.error(e);
 										return false;

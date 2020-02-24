@@ -36,13 +36,18 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-	  <div class="bs-example" data-example-id="simple-jumbotron">
-		<div class="jumbotron">
-		  <h1>Hola!, <?= $this->user->username; ?>!</h1>
-		  <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-		</div>
-	  </div>
+				  <div class="bs-example" data-example-id="simple-jumbotron">
+					<div class="jumbotron">
+					  <h1>Hola!, <?= $this->user->username; ?>!</h1>
+					  <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+					</div>
+				  </div>
 
+			</div>
+			<div class="x_content">
+				<?php 
+					# echo json_encode($this->user);
+				?>
 			</div>
 		</div>
 	</div>

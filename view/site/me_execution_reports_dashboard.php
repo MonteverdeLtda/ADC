@@ -605,8 +605,6 @@ var Home = Vue.extend({
 				$textPeriod = schedule.period.name +' de ' + schedule.year
 				$textBodyParr = schedule.in_novelty == 1 ? 'la programacion va ser movida por motivos ajenos.' : schedule.is_approved == 1 ? 'Ejecutado y Aprobado' : schedule.is_executed == 1 ? 'La programacion ya fue ejecutada, estamos esperando tu respuesta.' : 'Aún no hemos ejecutado la programacion.';
 				
-				
-				
 				$bodySchedulesModal = $('<div></div>').attr('class', 'row')
 					.append(
 						$('<div></div>').attr('class', 'col-xs-12')
@@ -648,48 +646,98 @@ var Home = Vue.extend({
 						$('<div></div>').attr('class', 'clearfix')
 					);
 				
-				/*
-				$itemBlock_content = $("<div></div>").attr("class", "block_content_modal")
-					.append($("<h5></h5>").append($("<a></a>").append($textPeriod)))
-					.append($("<div></div>").attr('class', 'byline').append($("<span></span>").append(schedule.date_executed_schedule + ' - ' + schedule.date_executed_schedule_end)))
-					.append($("<p></p>").attr('class', 'excerpt').append($bodySchedules));
-				$itemTags = $("<div></div>").attr("class", "tags")
-					.append($("<a></a>").attr("class", "tag " + $colorStatus).append($("<span></span>").text($textStatus)));
-				$itemBlock = $("<div></div>").attr('class', 'block').append($itemTags).append($itemBlock_content);
-				$item = $("<li></li>").append($itemBlock);
-				$ulList.append($item);
-				$htmlSchedules = $('<div></div>').append($ulList);*/
+				MV.api.readList('/reports_photographic', {
+					filter: [
+						'status,eq,1',
+						'schedule,in,' + schedule_id,
+					],
+					join: [
+						'schedule',
+					]
+				}, (AllGallerys) => {
+					
+					AllGallerys.forEach((file) => {
+						var $boxGallery = $( ".modal-gallery-microroute-" + file.schedule.microroute + '-schedule-' + file.schedule.id + "-" + file.type );
+						$boxGallery.append(
+							$('<div></div>').attr('class', 'col-xs-6 col-md-3 item-gallery')
+								.append($('<a></a>').append($('<img />').attr('class', 'thumbnail').attr('style', 'width: 100%;height: auto;').attr('data-action', 'zoom').attr('src', file.file_path_short)))
+						);
+					});
+					/*
+					selectedIds.forEach((a) => {
+						if($( ".gallery-microroute-" + microrouteId + '-schedule-' + a + "-A" ).html() == ""){
+							$( ".gallery-microroute-" + microrouteId + '-schedule-' + a + "-A" ).html("<div>No hay imagenes disponibles.</div>");
+						}
+						if($( ".gallery-microroute-" + microrouteId + '-schedule-' + a + "-D" ).html() == ""){
+							$( ".gallery-microroute-" + microrouteId + '-schedule-' + a + "-D" ).html("<div>No hay imagenes disponibles.</div>");
+						}
+					});*/
+				});
 				
+				btnsModal = {
+					cancel: {
+						label: "Cerrar",
+						className: 'btn-default',
+						callback: function(){
+							console.log('Custom cancel clicked');
+						}
+					},
+				};
+				
+				if(schedule.is_executed == 1 && schedule.in_novelty == 0 && schedule.is_approved == 0){
+					btnsModal.noclose = {
+						label: "¿Falta algo?",
+						className: 'btn-warning',
+						callback: function(){
+							console.log('Custom button clicked');
+							return false;
+						}
+					};
+					
+					btnsModal.ok = {
+						label: "Aprobar",
+						className: 'btn-success',
+						callback: function(){
+							console.log('Custom OK clicked');
+							bootbox.confirm({
+								message: "Confirma antes de realizar esta accion.",
+								locale: 'es',
+								callback: function (result) {
+									if(result !== null){
+										if(result == true){
+											MV.api.update('/schedule/' + schedule.id, {
+												updated_by: <?= $this->user->id;?>,
+												is_approved: 1,
+												date_approved: moment().format('YYYY-MM-DD'),
+												time_approved: moment().format('HH:mm:ss'),
+											}, (x) => {
+												console.log('response approved: ', x);
+												if(x > 0){
+													self.schedules[scheduleIndex].date_approved = moment().format('YYYY-MM-DD');
+													self.schedules[scheduleIndex].time_approved = moment().format('HH:mm:ss');
+													self.schedules[scheduleIndex].is_approved = 1;
+												}
+											});
+										} else {
+											var dialog = bootbox.dialog({
+												title: $textStatus + ' ' + $textPeriod + ' ' + schedule.microroute.name,
+												message: $bodySchedulesModal.html(),
+												size: 'large',
+												buttons: btnsModal
+											});
+										}
+									}
+								}
+							});
+						}
+					};
+				}
 				
 				var dialog = bootbox.dialog({
 					title: $textStatus + ' ' + $textPeriod + ' ' + schedule.microroute.name,
 					message: $bodySchedulesModal.html(),
 					size: 'large',
-					buttons: {
-						cancel: {
-							label: "Cerrar",
-							className: 'btn-danger',
-							callback: function(){
-								console.log('Custom cancel clicked');
-							}
-						},
-						/*
-						noclose: {
-							label: "I don't close the modal!",
-							className: 'btn-warning',
-							callback: function(){
-								console.log('Custom button clicked');
-								return false;
-							}
-						},
-						ok: {
-							label: "I'm an OK button!",
-							className: 'btn-info',
-							callback: function(){
-								console.log('Custom OK clicked');
-							}
-						}*/
-					}
+					buttons: btnsModal
 				});
 			}
 		},
@@ -871,31 +919,37 @@ var Home = Vue.extend({
 											
 											if(schedule.is_executed == 1){
 												indexDayExecuted = self.datas.xDays.findIndex((a) => a.label == schedule.date_executed);
-												indexExecuted = self.datas.xDays[indexDayExecuted].executed.data.findIndex((x) => x.id == schedule.id);
-												if(indexExecuted <= -1){
-													self.datas.xDays[indexDayExecuted].executed.data.push(schedule);
-													self.datas.xDays[indexDayExecuted].executed.totals.area_m2 += areaForDay;
-													self.datas.xDays[indexDayExecuted].executed.totals.count++;
+												if(self.datas.xDays[indexDayExecuted] !== undefined){
+													indexExecuted = self.datas.xDays[indexDayExecuted].executed.data.findIndex((x) => x.id == schedule.id);
+													if(indexExecuted <= -1){
+														self.datas.xDays[indexDayExecuted].executed.data.push(schedule);
+														self.datas.xDays[indexDayExecuted].executed.totals.area_m2 += areaForDay;
+														self.datas.xDays[indexDayExecuted].executed.totals.count++;
+													}
 												}
 											}
 											
 											if(schedule.is_approved == 1){
 												indexDayApproved = self.datas.xDays.findIndex((a) => a.label == schedule.date_approved);
-												indexApproved = self.datas.xDays[indexDayApproved].approved.data.findIndex((x) => x.id == schedule.id);
-												if(indexApproved <= -1){
-													self.datas.xDays[indexDayApproved].approved.data.push(schedule);
-													self.datas.xDays[indexDayApproved].approved.totals.area_m2 += schedule.microroute.area_m2;
-													self.datas.xDays[indexDayApproved].approved.totals.count++;
+												if(self.datas.xDays[indexDayApproved] !== undefined){
+													indexApproved = self.datas.xDays[indexDayApproved].approved.data.findIndex((x) => x.id == schedule.id);
+													if(indexApproved <= -1){
+														self.datas.xDays[indexDayApproved].approved.data.push(schedule);
+														self.datas.xDays[indexDayApproved].approved.totals.area_m2 += schedule.microroute.area_m2;
+														self.datas.xDays[indexDayApproved].approved.totals.count++;
+													}
 												}
 											}
 											
 											if(schedule.in_novelty == 1){
 												indexDayNovelty = self.datas.xDays.findIndex((a) => a.label == schedule.date_novelty);
-												indexNovelty = self.datas.xDays[indexDayNovelty].novelty.data.findIndex((x) => x.id == schedule.id);
-												if(indexNovelty <= -1){
-													self.datas.xDays[indexDayNovelty].novelty.data.push(schedule);
-													self.datas.xDays[indexDayNovelty].novelty.totals.area_m2 += schedule.microroute.area_m2;
-													self.datas.xDays[indexDayNovelty].novelty.totals.count++;
+												if(self.datas.xDays[indexDayNovelty] !== undefined){
+													indexNovelty = self.datas.xDays[indexDayNovelty].novelty.data.findIndex((x) => x.id == schedule.id);
+													if(indexNovelty <= -1){
+														self.datas.xDays[indexDayNovelty].novelty.data.push(schedule);
+														self.datas.xDays[indexDayNovelty].novelty.totals.area_m2 += schedule.microroute.area_m2;
+														self.datas.xDays[indexDayNovelty].novelty.totals.count++;
+													}
 												}
 											}
 											
@@ -1059,7 +1113,7 @@ var Home = Vue.extend({
 					trigger: 'axis'
 				},
 				legend: {
-					data: ['Programado', 'Ejecutado', 'Aprobado', 'Pospuesto']
+					data: ['Programado', 'Ejecutado', 'Pospuesto']
 					// data: ['Programado', 'Ejecutado', 'Aprobado', 'Ejecutado']
 					/*
 					data: [
@@ -1100,25 +1154,6 @@ var Home = Vue.extend({
 						name: 'Ejecutado',
 						type: 'line',
 						data: charters.totals.executed.area_m2,
-						/*
-						markPoint: {
-							data: dataNovelty
-						},*/
-						markLine: {
-							data: [{
-								type: 'average',
-								name: '???'
-							}]
-						}
-					},
-					{
-						name: 'Aprobado',
-						type: 'line',
-						data: charters.totals.approved.area_m2,
-						/*
-						markPoint: {
-							data: dataNovelty
-						},*/
 						markLine: {
 							data: [{
 								type: 'average',
@@ -1130,10 +1165,6 @@ var Home = Vue.extend({
 						name: 'Pospuesto',
 						type: 'line',
 						data: charters.totals.novelty.area_m2,
-						/*
-						markPoint: {
-							data: dataNovelty
-						},*/
 						markLine: {
 							data: [{
 								type: 'average',
@@ -1141,6 +1172,18 @@ var Home = Vue.extend({
 							}]
 						}
 					},
+					/*
+					{
+						name: 'Aprobado',
+						type: 'line',
+						data: charters.totals.approved.area_m2,
+						markLine: {
+							data: [{
+								type: 'average',
+								name: '???'
+							}]
+						}
+					},*/
 				]
 			});
 			
@@ -1198,36 +1241,28 @@ var Home = Vue.extend({
 						}
 					},	
 					{
-						name: 'Aprobado',
-						type: 'bar',
-						data: charters.day.approved.area_m2,
-						/*
-						markPoint: {
-							data: dataNovelty
-						},*/
-						markLine: {
-							data: [{
-								type: 'average',
-								name: '???'
-							}]
-						}
-					},	
-					
-					{
 						name: 'Pospuesto',
 						type: 'bar',
 						data: charters.day.novelty.area_m2,
-						/*
-						markPoint: {
-							data: dataNovelty
-						},*/
 						markLine: {
 							data: [{
 								type: 'average',
 								name: '???'
 							}]
 						}
-					},	 
+					},
+					/*
+					{
+						name: 'Aprobado',
+						type: 'bar',
+						data: charters.day.approved.area_m2,
+						markLine: {
+							data: [{
+								type: 'average',
+								name: '???'
+							}]
+						}
+					},	*/
 				]
 			});
 			
@@ -1333,22 +1368,8 @@ var Home = Vue.extend({
 								$ulList.append($item);
 							});
 							$htmlSchedule = $('<div></div>').append($ulList);
-							/*
-							
-								<div class="block_content">
-								  <h2 class="title">
-												  <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
-											  </h2>
-								  <div class="byline">
-									<span>13 hours ago</span> by <a>Jane Smith</a>
-								  </div>
-								  <p class="excerpt">Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a>
-								  </p>
-								</div>
-								*/
 							joinIdsSchedules = b.schedules.map((b) => { return b.id; });
 							
-							//console.log(joinIdsSchedules);
 							return [
 								//b.id,
 								"<font class=\"current-status-microroute\" data-microroute=\"" + b.id + "\" data-schedules=\"" + joinIdsSchedules.join(',') + "\">" + b.id + "</font>", 
@@ -1476,8 +1497,6 @@ var Home = Vue.extend({
 													}
 												});
 											});
-											
-											//subDialog.modal('hide');
 										}, 1000);
 									}
 								}

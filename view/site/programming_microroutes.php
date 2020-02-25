@@ -1,7 +1,5 @@
-
 <link href='https://unpkg.com/fullcalendar-scheduler@1.10.0/dist/scheduler.min.css' rel='stylesheet' /> 
 <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/redmond/jquery-ui.css" rel="stylesheet" />
-
 <script src='https://unpkg.com/fullcalendar@3.10.1/dist/fullcalendar.min.js'></script>
 <script src='https://unpkg.com/fullcalendar-scheduler@1.10.0/dist/scheduler.min.js'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
@@ -15,20 +13,17 @@
 }
 
 .fc-listMonth-view .fc-scroller, .fc-list-view .fc-scroller {
-	height: 500px !important;
+	min-height: 500px !important;
+}
+
+.popover-content {
+	zoom: 0.8;
 }
 
 </style>
 
 
-<div id="emvarias-lots">
-	<div class="page-title">
-		<div class="title_left">
-			<h3><?= $title; ?> <small></small></h3>
-		</div>
-		<div class="title_right">
-		</div>
-	</div>
+<div id="emvarias-microroutes">
 	<div class="clearfix"></div>
 	
 	<div class="row">
@@ -41,18 +36,7 @@
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="x_panel">
 				<div class="x_title">
-					<h2>Listado Completo <small>({{ total }})</small></h2>
-					<ul class="nav navbar-right panel_toolbox">
-						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="#">Settings 1</a></li>
-								<li><a href="#">Settings 2</a></li>
-							</ul>
-						</li>
-						<li><a class="close-link"><i class="fa fa-close"></i></a></li>
-					</ul>
+					<h2><?= $title; ?><small></small></h2>
 					<div class="clearfix"></div>
 				</div>
 				<div class="x_content">
@@ -85,81 +69,57 @@
 								</div>
 							</div>
 							<div class="clearfix"></div>
-						</div>
-					</div>
-					<div class="row">
-						<br>
-						<div class="col-md-6 col-sm-6 col-xs-6">
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha Inicio</label>
-								<div class="col-md-9 col-sm-9 col-xs-12">
+								<div class="col-md-4 col-sm-4 col-xs-12">
 									<div class='input-group date' id='datetimepicker1'>
 										<input type='text' class="form-control" name="start_date" id="example1" v-model="formCreate.date_executed_schedule" autocomplete="off" />
 										<span class="input-group-addon">
 											<span class="glyphicon glyphicon-calendar"></span>
 										</span>
 									</div>
+									<div class="clearfix"><br></div>
 								</div>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-						<div class="col-md-6 col-sm-6 col-xs-6">
-							<div class="form-group">
-								<label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha Fin</label>
-								<div class="col-md-9 col-sm-9 col-xs-12">
+								<label class="control-label col-md-1 col-sm-1 col-xs-12"> Hasta </label>
+								<div class="col-md-4 col-sm-4 col-xs-12">
 									<div class='input-group date' id='datetimepicker2'>
 										<input type='text' class="form-control" name="start_date" id="example2" autocomplete="off" />
 										<span class="input-group-addon">
 											<span class="glyphicon glyphicon-calendar"></span>
 										</span>
 									</div>
+									<div class="clearfix"><br></div>
 								</div>
 							</div>
 							<div class="clearfix"></div>
 						</div>
-						<div class="clearfix"></div>
-						<div class="col-md-8 col-sm-8 col-xs-8" style="zoom:0.8;">
-							<div class="x_content">	
-								<!-- // 
-								<p class="text-muted font-13 m-b-30">
-									The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. The core library provides the based framework upon which plug-ins can built.
-								</p>
-								-->
-								<table id="datatable-buttons2" class="table table-striped table-bordered"></table>
-								<div id="demo_info"></div>
-							</div>
-						</div>
-						<div class="col-md-4 col-sm-4 col-xs-12">
-							<div class="x_content">
-								<div id='calendar-box'></div>
-							</div>
-						</div>
 					</div>
+					
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4 col-sm-4 col-xs-12">
+			<div class="x_panel" style="zoom: 0.75">
+				<div class="x_content">
+					<table id="datatable-buttons2" class="table table-striped table-bordered"></table>
+					<div id="demo_info"></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-8 col-sm-8 col-xs-12">
+			<div class="x_panel">
+				<div class="x_content">
+					<div id='calendar-box'></div>
 				</div>
 			</div>
 		</div>
 		
-		
-		
-		
-		<div class="modal fade bs-new-calendar-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-			<div class="modal-dialog modal-sm">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-						</button>
-						<h4 class="modal-title" id="myModalLabel">Programar</h4>
-					</div>
-				</div>
-			</div>
-		</div>
-
-
 	</div>
-
 </template>
 
-
+<script>
+	
+</script>
 
 <script>
 function FormException(error, aviso){
@@ -179,7 +139,7 @@ var List = Vue.extend({
 			records: [],
 			dataTable: null,
 			formCreate: {
-				lot: 0,
+				microroute: 0,
 				year: moment().format('Y'),
 				period: 0,
 				group: 0,
@@ -215,11 +175,8 @@ var List = Vue.extend({
 	},
 	mounted: function () {
 		var self = this;
+		
 		self.loadOptions();
-		  
-		$( ".bs-new-calendar-modal-lg" ).on('shown.bs.modal', function(){
-			
-		});
 	},
 	methods: {
 		changeDatesInputs(){
@@ -258,7 +215,11 @@ var List = Vue.extend({
 			console.log('loadEvents');
 			$('#calendar-box').fullCalendar( 'removeEventSource', self.events );
 			self.events = [];
-			self.changeDatesInputs();
+			if(self.formCreate.year > 1950 && self.formCreate.period)
+			{
+				self.changeDatesInputs();
+				self.init_calendar();
+			}
 			if(self.formCreate.year > 1950 && self.formCreate.period > 0 && self.formCreate.group > 0)
 			{
 				MV.api.readList('/schedule', {
@@ -279,7 +240,7 @@ var List = Vue.extend({
 						events.push(self.jsonEvent(ab));
 					})
 					self.events = events;
-					$('#calendar-box').fullCalendar( 'addEventSource', events );
+					//$('#calendar-box').fullCalendar( 'addEventSource', events );
 					$('#calendar-box').fullCalendar( 'gotoDate', self.startDatePicket );
 				});				
 			}
@@ -318,24 +279,36 @@ var List = Vue.extend({
 				y = date.getFullYear(),
 				started,
 				categoryClass;
-
+				
+			if(self.calendar !== null){
+				self.calendar.fullCalendar('destroy')
+			}
 			var calendar = self.calendar = $('#calendar-box').fullCalendar({
 				dayNames: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
 				dayNamesShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sáb'],
 				monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
 				monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 				buttonText: { today:    'Hoy', month:    'Mes', week:     'Semana', day:      'Día', list:     'Lista' },
-				defaultButtonText: { prev: "Anterior", next: "Siguiente", prevYear: "Ant Año", nextYear: "Sig Año", today: 'Hoy', month: 'mes', week: 'Semana', day: 'Día' },
-				defaultView: 'listMonth',
+				defaultButtonText: { prev: "Anterior", next: "Siguiente", prevYear: "Ant Año", nextYear: "Sig Año", today: 'Hoy', month: 'mes', week: 'Semana', day: 'Día', timelineMonth: 'Gantt' },
+				defaultView: 'month',
 				timeZone: 'UTC',
 				editable: true,
 				droppable: true,
 				selectable: true,
 				selectHelper: true,
+				/*
+				visibleRange: {
+					start: self.startDatePicket,
+					end: self.endDatePicket
+				},*/
+				dateAlignment: self.startDatePicket,
+				defaultDate: self.startDatePicket,
 				header: {
-					left: 'prev,next today timelineDay,timelineWeek,timelineMonth,timelineYear',
+					// left: 'prev,next today timelineDay,timelineWeek,timelineMonth,timelineYear',
+					left: 'prev,next today timelineMonth',
 					center: 'title',
-					right: 'month,agendaWeek,agendaDay,listMonth'
+					// right: 'month,agendaWeek,listMonth,agendaDay'
+					right: 'month,agendaWeek,listMonth'
 				},
 				select: function(start, end, jsEvent, view) {
 					//console.log(view.dateProfile.isRangeAllDay);
@@ -349,6 +322,9 @@ var List = Vue.extend({
 					started = start;
 					ended = end;
 					*/
+				},
+				eventResize: function( event, delta, revertFunc, jsEvent, ui, view ) {
+					revertFunc();
 				},
 				eventClick: function(calEvent, jsEvent, view) {
 					var allDay = !calEvent.start.hasTime() && !calEvent.end.hasTime();
@@ -402,69 +378,61 @@ var List = Vue.extend({
 					});
 				},
 				eventRender: function(eventObj, element) {
-					//console.log('eventRender: eventObj', eventObj);
-					if(moment().diff(eventObj.start, 'days') > 0 || moment().diff(eventObj.end, 'days') > 0){
-						eventObj.resourceEditable = false;
-					} else {
-						// element.prepend( "<span class='closeon' style='z-index: 99999;position: relative;color: black;padding:2px;'><i class=\"fa fa-times\"></i></span>" );
-						// element.append( "<span class='closeon pull-right' style='z-index: 99999;position: relative;color: black;padding:2px;'><i class=\"fa fa-times\"></i></span>" );
-						
-						
-						/*
-						element.find(".closeon").click(function() {
-							if (confirm("Desea Eliminar este evento?")) {
-								/*
-								api.delete('/schedule/' + eventObj.id, {})
-								.then(function (b){
-									if(b.status == 200){
-										self.createLogSchedule({
-											action: 'delete',
-											data: { id: eventObj.id },
-											response: b,
-										}, function(w){
-											$('.popover.fade.top').remove();
-											$('#calendar-schedule').fullCalendar('removeEvents',eventObj._id);
-											
-											IndexOne = self.records.findIndex(x => (x.id == eventObj.id));
-											IndexTwo = self.records_org.findIndex(x => (x.id == eventObj.id));
-											if(IndexOne > -1){ self.records.splice(IndexOne, 1); }
-											if(IndexTwo > -1){ self.records_org.splice(IndexTwo, 1); }
-										
-											new PNotify({
-												"title": "Éxito!",
-												"text": "La programacion se eliminó con éxito.",
-												"styling":"bootstrap3",
-												"type":"error",
-												"icon":true,
-												"animation":"zoom",
-												"hide":true
-											});
-										});									
-									}
-								})
-								.catch(function (e) {
-									// console.log('Error al eliminar schedule');
+					// console.log('eventRender: eventObj', eventObj);
+					/*
+					element.find(".closeon").click(function() {
+						if (confirm("Desea Eliminar este evento?")) {
+							/*
+							api.delete('/schedule/' + eventObj.id, {})
+							.then(function (b){
+								if(b.status == 200){
 									self.createLogSchedule({
-										schedule: eventObj.id,
-										action: 'delete-error',
+										action: 'delete',
 										data: { id: eventObj.id },
-										response: e.response,
+										response: b,
 									}, function(w){
+										$('.popover.fade.top').remove();
+										$('#calendar-schedule').fullCalendar('removeEvents',eventObj._id);
+										
+										IndexOne = self.records.findIndex(x => (x.id == eventObj.id));
+										IndexTwo = self.records_org.findIndex(x => (x.id == eventObj.id));
+										if(IndexOne > -1){ self.records.splice(IndexOne, 1); }
+										if(IndexTwo > -1){ self.records_org.splice(IndexTwo, 1); }
+									
 										new PNotify({
-											"title": "Error eliminando",
-											"text": "La programacion no se puede modificar, posiblemente hay contanido anexido a ellá.",
+											"title": "Éxito!",
+											"text": "La programacion se eliminó con éxito.",
 											"styling":"bootstrap3",
 											"type":"error",
 											"icon":true,
 											"animation":"zoom",
 											"hide":true
 										});
+									});									
+								}
+							})
+							.catch(function (e) {
+								// console.log('Error al eliminar schedule');
+								self.createLogSchedule({
+									schedule: eventObj.id,
+									action: 'delete-error',
+									data: { id: eventObj.id },
+									response: e.response,
+								}, function(w){
+									new PNotify({
+										"title": "Error eliminando",
+										"text": "La programacion no se puede modificar, posiblemente hay contanido anexido a ellá.",
+										"styling":"bootstrap3",
+										"type":"error",
+										"icon":true,
+										"animation":"zoom",
+										"hide":true
 									});
-								}); * /
-							}
-						});
-						*/
-					}
+								});
+							}); * /
+						}
+					});
+					*/
 					
 					// console.log('lot ', eventObj.objectMV.microroute.microroute.description);
 					element.popover({
@@ -487,6 +455,96 @@ var List = Vue.extend({
 						}
 					});
 				},
+				dayClick: function (date, jsEvent, view, resourceOb) {
+					dateStart = dateEnd = date;
+					// dateEnd = date.add({ days: 1 });
+					self.formCreate.date_executed_schedule = dateStart.format('YYYY-MM-DD');
+					self.formCreate.date_executed_schedule_end = dateEnd.format('YYYY-MM-DD');
+					$('#example1').val(self.formCreate.date_executed_schedule);
+					$('#example2').val(self.formCreate.date_executed_schedule_end);
+				},
+				select: function( start, end, jsEvent, view, resourceOb){
+					dateStart = start;
+					dateEnd = end.subtract({ days: 1 });
+					self.formCreate.date_executed_schedule = dateStart.format('YYYY-MM-DD');
+					self.formCreate.date_executed_schedule_end = dateEnd.format('YYYY-MM-DD');
+					$('#example1').val(self.formCreate.date_executed_schedule);
+					$('#example2').val(self.formCreate.date_executed_schedule_end);
+				},
+				
+				eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
+					if (!confirm("Desea modificar la fecha de este evento?")) {
+						revertFunc();
+					} else {
+						if(moment().diff(event.start, 'days') > 0){
+							alert('No puedes modificar el evento antes de hoy.');
+							revertFunc();
+						} else {
+							var subDialog = bootbox.dialog({
+								message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Por favor espera mientras hacemos algo...</p>',
+								closeButton: false
+							});
+							if(event.id > 0){
+								event.color = 'gray';
+								event.date_executed_schedule = event.start.format('YYYY-MM-DD');
+								
+								MV.api.update('/schedule/' + event.id, {
+									id: event.id,
+									date_executed_schedule: event.start.format('YYYY-MM-DD'),
+									date_executed_schedule_end:  event.end.toISOString(),
+									updated_by: <?= $this->user->id; ?>
+								},(b) => {
+									if(b > 0){
+										self.createLogSchedule({
+											schedule: event.id,
+											action: 'edit',
+											data: {
+												id: event.id,
+												date_executed_schedule_end: event.end.format('YYYY-MM-DD'),
+												date_executed_schedule: event.start.format('YYYY-MM-DD'),
+												updated_by: <?= $this->user->id; ?>
+											},
+											response: b,
+										}, function(w){
+											event.date_executed_schedule = event.start.format('YYYY-MM-DD');
+											event.date_executed_schedule_end = event.end.format('YYYY-MM-DD');
+											
+											new PNotify({
+												"title": "¡Éxito!",
+												"text": "Modificado con éxito",
+												"styling":"bootstrap3",
+												"type":"success",
+												"icon":true,
+												"animation":"zoom",
+												"hide":true
+											});
+											
+										});
+									}
+									else {
+										self.createLogSchedule({
+											schedule: event.id,
+											action: 'edit-error',
+											data: {
+												id: event.id,
+												group: event.resourceId,
+												date_executed_schedule: event.start.format('YYYY-MM-DD'),
+												updated_by: <?= $this->user->id; ?>
+											},
+											response: e.response,
+										}, function(w){
+											revertFunc();
+										});
+									}
+									subDialog.modal('hide');
+								});
+								
+							} else {
+								revertFunc();
+							}
+						}
+					}
+				},
 				// events: [{title: 'All Day Event',start: new Date(y, m, 1)}, {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)}, {title: 'Meeting',start: new Date(y, m, d, 10, 30),allDay: false}, {title: 'Lunch',start: new Date(y, m, d + 14, 12, 0),end: new Date(y, m, d, 14, 0),allDay: false}, {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false}, {title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}]
 			});
 		},
@@ -497,7 +555,21 @@ var List = Vue.extend({
 			a.title = (a.microroute.name);
 			a.start = moment(a.date_executed_schedule);
 			a.end = moment(a.date_executed_schedule_end);
-			a.editable = self.intToboolean(0);
+			
+			totalDays = a.start.diff(moment(), 'days');
+			console.log('a.start', a.start.format('YYYY-MM-DD'));
+			console.log('totalDays', totalDays);
+			
+			if(totalDays > -1 || (a.is_executed == 0 && totalDays < -1)){
+				a.editable = self.intToboolean(1);
+			} else {
+				a.editable = self.intToboolean(0);
+			}
+			
+			
+			a.color = (a.is_executed == 0 && totalDays < -1) ? '#f44336' : a.is_approved == 1 ? '#8bc34a' : a.is_executed == 1 ? '#638bab' : 'gray';
+			
+			
 			a.allDay = self.intToboolean(0);
 			return a;
 		},
@@ -542,7 +614,7 @@ var List = Vue.extend({
 				){
 					console.log('Completo', self.formCreate);
 					var asx = self.formCreate.date_executed_schedule_end;
-					self.formCreate.date_executed_schedule_end = moment(self.formCreate.date_executed_schedule_end).add({ days: 1 }).format('Y-MM-DD');
+					self.formCreate.date_executed_schedule_end = moment(self.formCreate.date_executed_schedule_end).add({ days: 1 }).format('YYYY-MM-DD');
 					
 					bootbox.confirm({
 						message: "Confirma antes de agregar.",
@@ -569,7 +641,7 @@ var List = Vue.extend({
 													"animation":"zoom",
 													"hide":true
 												});
-												//$( ".bs-new-calendar-modal-lg" ).modal('hide');
+												
 												self.loadEvents();
 											})
 												
@@ -670,8 +742,8 @@ var List = Vue.extend({
 							// data: self.records,
 							fixedHeader: true,
 							data: self.records.map(a => [
-								//a.id + 
-								"<button class=\"add-lot-in-programming\" data-lot=\"" + a.id + "\"><i class=\"fa fa-crosshairs\"></i></button>", 
+								a.id,
+								"<button class=\"add-microroute-in-programming\" data-microroute=\"" + a.id + "\"><i class=\"fa fa-crosshairs\"></i></button>", 
 								a.name, 
 								a.id_ref, 
 								a.address_text, 
@@ -681,6 +753,7 @@ var List = Vue.extend({
 							]),
 							columns: [
 								{ title: "id" },
+								{ title: "" },
 								{ title: "Microruta" },
 								{ title: "Lote REF." },
 								{ title: "Direccion(es)" },
@@ -714,23 +787,23 @@ var List = Vue.extend({
 							responsive: true,
 							initComplete: function( settings, json ) {
 								//self.loadEvents();
-								self.init_calendar();
+								
 								var apiTables = this.api();
 								
-								apiTables.$('td:first-child').click( function () {
-									tds = $(this).find( ".add-lot-in-programming" );
-									selectedId = parseInt($(tds[0]).data('lot'));
+								apiTables.$('td:eq(1)').click( function () {
+									tds = $(this).find( ".add-microroute-in-programming" );
+									selectedId = parseInt($(tds[0]).data('microroute'));
 									self.formCreate.microroute = ((parseInt(selectedId)>0) ? parseInt(selectedId) : 0);
 									
 													self.createSchedule();
-										//$('.bs-new-calendar-modal-lg').modal('show');
+										
 									//self.changeDatesInputs();
 								} );
 								
-								apiTables.$(".add-lot-in-programming").click(function() {
-									self.formCreate.microroute = $(this).data('lot');
+								apiTables.$(".add-microroute-in-programming").click(function() {
+									self.formCreate.microroute = $(this).data('microroute');
 									try {
-										//$('.bs-new-calendar-modal-lg').modal('show');
+										
 									} catch(e){
 										console.error(e);
 										return false;
@@ -790,5 +863,5 @@ app = new Vue({
 			return sign + (j ? i.substr(0, j) + thouSep : "") + i.substr(j).replace(/(\decSep{3})(?=\decSep)/g, "$1" + thouSep) + (decPlaces ? decSep + Math.abs(number - i).toFixed(decPlaces).slice(2) : "");
 		},
 	}
-}).$mount('#emvarias-lots');
+}).$mount('#emvarias-microroutes');
 </script>

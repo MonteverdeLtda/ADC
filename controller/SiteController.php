@@ -392,15 +392,127 @@ class SiteController extends ControladorBase{
 		}
 	}
 	
+	// Reporte media - 
+	public function actionReport_Photo_Approve(){
+        if ($this->isGuest || ($this->checkPermission('reports:photographic:validation') !== true)){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$_get = (!empty($_GET)) ? $_GET : [];
+		$error = null;
+		$file_id = (isset($_GET['file_id']) && (int) $_GET['file_id'] > 0) ? (int) $_GET['file_id'] : 0;
+		$fileModel = new ReportPhotographicFile($this->adapter);
+		$fileModel->getById($file_id);
+		$ds          = DIRECTORY_SEPARATOR;
+		
+		
+		if($fileModel->status !== 1 && file_exists($fileModel->file_path_full)){
+			// echo "Vamos" . "\r\n";
+			
+			$path_full = $fileModel->file_path_full;
+			$parts_path_full = explode($ds, $path_full);
+			$array_finish_pf = [];
+			foreach($parts_path_full as $f){ if($f == 'en-revision' || $f == 'no-aprobado'){ $f = 'aprobado'; } $array_finish_pf[] = $f; }
+			$new_path_full = implode($ds, $array_finish_pf);
+			$nameDir = dirname($new_path_full);
+			
+			# echo $nameDir ."\r\n";
+			
+			
+			$path_short = $fileModel->file_path_short;
+			$parts_path_short = explode($ds, $path_short);
+			$array_finish_ps = [];
+			foreach($parts_path_short as $f){ if($f == 'en-revision' || $f == 'no-aprobado'){ $f = 'aprobado'; } $array_finish_ps[] = $f; }
+			$new_path_short = implode($ds, $array_finish_ps);
+			
+			# echo $new_path_short ."\r\n";
+			
+			if ( !file_exists($nameDir) && !is_dir($nameDir) ) { mkdir($nameDir, 0755, true); };
+			if ( file_exists($nameDir) && is_dir($nameDir) ) {
+				if ( is_writable($nameDir) ) {
+					echo "Podemos escribir en el directorio de destino.";
+					$success = (rename($path_full, $new_path_full));
+					if($success == true){
+						echo "Resultado 1 : " . json_encode($success);
+						
+						$fileModel->status = 1;
+						$fileModel->updated_by = $this->user->id;
+						$fileModel->file_path_full = $new_path_full;
+						$fileModel->file_path_short = $new_path_short;
+						$succes = $fileModel->saveFolders();
+						echo "Resultado 2 : " . json_encode($succes);
+					}
+				} else {
+					echo "No podemos escribir en el directorio de destino.";
+				}
+			} else {
+				echo "Compruebe si la carpeta se creo o si existe";
+			}
+		}
+	}
+	
+	// Reporte media - 
+	public function actionReport_Photo_NoPass(){
+        if ($this->isGuest || ($this->checkPermission('reports:photographic:validation') !== true)){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$_get = (!empty($_GET)) ? $_GET : [];
+		$error = null;
+		$file_id = (isset($_GET['file_id']) && (int) $_GET['file_id'] > 0) ? (int) $_GET['file_id'] : 0;
+		$fileModel = new ReportPhotographicFile($this->adapter);
+		$fileModel->getById($file_id);
+		$ds          = DIRECTORY_SEPARATOR;
+		
+		
+		if($fileModel->status !== 2 && file_exists($fileModel->file_path_full)){
+			// echo "Vamos" . "\r\n";
+			
+			$path_full = $fileModel->file_path_full;
+			$parts_path_full = explode($ds, $path_full);
+			$array_finish_pf = [];
+			foreach($parts_path_full as $f){ if($f == 'en-revision' || $f == 'aprobado'){ $f = 'no-aprobado'; } $array_finish_pf[] = $f; }
+			$new_path_full = implode($ds, $array_finish_pf);
+			$nameDir = dirname($new_path_full);
+			
+			# echo $nameDir ."\r\n";
+			
+			
+			$path_short = $fileModel->file_path_short;
+			$parts_path_short = explode($ds, $path_short);
+			$array_finish_ps = [];
+			foreach($parts_path_short as $f){ if($f == 'en-revision' || $f == 'aprobado'){ $f = 'no-aprobado'; } $array_finish_ps[] = $f; }
+			$new_path_short = implode($ds, $array_finish_ps);
+			
+			# echo $new_path_short ."\r\n";
+			
+			if ( !file_exists($nameDir) && !is_dir($nameDir) ) { mkdir($nameDir, 0755, true); };
+			if ( file_exists($nameDir) && is_dir($nameDir) ) {
+				if ( is_writable($nameDir) ) {
+					echo "Podemos escribir en el directorio de destino.";
+					$success = (rename($path_full, $new_path_full));
+					if($success == true){
+						echo "Resultado 1 : " . json_encode($success);
+						
+						$fileModel->status = 2;
+						$fileModel->updated_by = $this->user->id;
+						$fileModel->file_path_full = $new_path_full;
+						$fileModel->file_path_short = $new_path_short;
+						$succes = $fileModel->saveFolders();
+						echo "Resultado 2 : " . json_encode($succes);
+					}
+				} else {
+					echo "No podemos escribir en el directorio de destino.";
+				}
+			} else {
+				echo "Compruebe si la carpeta se creo o si existe";
+			}
+		}
+	}
+	
 	// Reporte media - Subir Archivo en Reporte
-	public function actionSend_Photo_eAAA(){
-		if ($this->isGuest || ($this->checkPermission('reports:photographic:offline') !== true)){ header('HTTP/1.0 403 Forbidden'); exit(); }
+	public function actionSend_File_Novelty(){
+		if ($this->isGuest || ($this->checkPermission('emvarias:beta:reports:offline') !== true)){ header('HTTP/1.0 403 Forbidden'); exit(); }
 		header('Content-Type: application/json');
 		$error = null;
 		$_get = (!empty($_GET)) ? $_GET : [];
 		$_post = (!empty($_POST)) ? $_POST : [];
-		$_files = (empty($_FILES['file'])) ? $this->getFiles() : ((is_array($_FILES['file']) && isset($_FILES['file'][0]) && is_array($_FILES['file'][0])) ? $_FILES['file'] : [$_FILES['file']]);
-       
+		$_files = (empty($_FILES['file'])) ? [] : ((is_array($_FILES['file']) && isset($_FILES['file'][0]) && is_array($_FILES['file'][0])) ? $_FILES['file'] : [$_FILES['file']]);
+        
 			
 		$ds          = DIRECTORY_SEPARATOR;
 		$storeFolder = 'uploads';
@@ -442,10 +554,10 @@ class SiteController extends ControladorBase{
 		){
 			$folderBase = [
 				"reports-photographics",
+				"programas-novedades",
 				"{$year}",
 				"{$period_name}",
 				"{$group_name}",
-				"observaciones",
 				$date_report,
 				"reporte-nro-" . $id_report,
 				// $date_executed
@@ -538,5 +650,98 @@ class SiteController extends ControladorBase{
 			echo json_encode($returning);
 			return json_encode($returning);
 		
+	}
+	
+	public function actionCreateReportPDFNovelty(){		
+		$ds          = DIRECTORY_SEPARATOR;
+		$request = $this->getRequest();
+		if(isset($request['novelty_general_id']) && $request['novelty_general_id'] > 0){
+			// Creación del objeto de la clase heredada
+			$model = new NoveltyGeneral($this->adapter);
+			$pdf = new BaseReportEmvariasNoveltiesGeneralsPDF();
+			$model->getById($request['novelty_general_id']);
+			
+			$folderBase = [
+				"reports-photographics",
+				"programas-novedades",
+				"{$model->year}",
+				"{$model->period->name}",
+				"{$model->group->name}",
+				$model->date_report,
+				"reporte-nro-" . $model->id,
+			];
+			$targetPath = PUBLIC_PATH . $ds . implode($ds, $folderBase) . $ds;
+			if ( !file_exists($targetPath) && !is_dir($targetPath) ) { mkdir($targetPath, 0777, true); }; // Compruebe si la carpeta de carga si existe sino se crea la carpeta
+			$filename   = $targetPath . $ds . "reporte-nro-{$model->id}.pdf";
+			
+			#echo "$targetPath";
+			#exit();
+			$pdf->AliasNbPages();
+			$pdf->AddPage();
+			$pdf->SetFont('Times','',12);
+			#$pdf->Cell(0,10,utf8_decode('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'));
+			$pdf->Ln(20);
+			$pdf->SetFont('Times','B',12);
+			$pdf->Cell(0,10,utf8_decode("Fecha del reporte: "));
+			$pdf->Ln();
+			$pdf->SetFont('Times','',12);
+			$pdf->Cell(0,10,utf8_decode($model->date_report));
+			$pdf->Ln();
+			$pdf->SetFont('Times','B',12);
+			$pdf->Cell(0,10,utf8_decode("Resumen de los hechos: "));
+			$pdf->Ln();
+			$pdf->SetFont('Times','',12);
+			$pdf->MultiCell(180,8, utf8_decode($model->notes));
+			
+			$pdf->Output($filename,'F');
+			$pdf->Output();
+					
+			/*
+			// $pdf->Cell(0,10,utf8_decode("Fecha de creacion: " . $model->created));
+			$pdf->Ln(20);
+			for($i=1;$i<=25;$i++)
+				$pdf->Cell(0,7,utf8_decode('Imprimiendo línea número ').$i,0,1);
+			*/
+		}
+	}
+		
+	public function actionCreateZipPhotos(){
+		$ds          = DIRECTORY_SEPARATOR;
+		$request = $this->getRequest();
+		$year = (isset($request['year']) && (int) $request['year'] >= date("Y")) ? (int) $request['year'] : date("Y");
+		$period_name = isset($request['period_name']) ? base64_decode((string) $request['period_name']) : false;
+		
+		if($period_name !== false){
+			$rootPath = realpath(PUBLIC_PATH . $ds . 'reports-photographics' . $ds .'aprobado' . $ds . $year . $ds . $period_name);
+			$zip = new ZipArchive;
+			$archive_file_name = "Download-{$year}-{$period_name}" . randomString(8) . '.zip';
+			$zipSave = PUBLIC_PATH . '/tmpZip/' . $archive_file_name;
+			$zip->open($zipSave, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+			$files = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator($rootPath),
+				RecursiveIteratorIterator::LEAVES_ONLY
+			);
+			
+			
+			foreach ($files as $name => $file){
+				// Skip directories (they would be added automatically)
+				if (!$file->isDir())
+				{
+					// Get real and relative path for current file
+					$filePath = $file->getRealPath();
+					$relativePath = substr($filePath, strlen($rootPath) + 1);
+
+					// Add current file to archive
+					$zip->addFile($filePath, $relativePath);
+				}
+			}
+			$zip->close();
+			header("Content-type: application/zip"); 
+			header("Content-Disposition: attachment; filename=$archive_file_name");
+			//header("Content-length: " . filesize($zip));
+			header("Pragma: no-cache"); 
+			header("Expires: 0"); 
+			readfile($zipSave);
+		}
 	}
 }

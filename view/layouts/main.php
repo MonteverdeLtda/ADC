@@ -90,7 +90,7 @@
 								
 								$inboxSuccess = PHPStrap\Util\Html::tag('li', 
 									FelipheGomez\Url::a(
-											'/index.php?controller=site&action=Photographic_Report_Tinder'
+											'/Microroutes/ValidatePhotos'
 											, PHPStrap\Util\Html::tag('i', '', ['fa fa-eye-slash']) . PHPStrap\Util\Html::tag('span', $total, ['badge bg-green'], ['id' => 'count-photografics-pending-revision'])
 											, ['dropdown-toggle-not info-number']
 											, ['data-toggle' => 'dropdown-not', 'aria-expanded' => 'false']
@@ -98,7 +98,6 @@
 									. PHPStrap\Util\Html::tag('ul', $html_notif_reports_create, ['dropdown-menu list-unstyled msg_list'], ['id' => 'menu-mails', 'role' => 'menu'], ['style' => 'max-height: 250px;overflow: auto;' ])
 								, ['dropdown-not menu-mails-box'], ['role' => 'presentation']);
 							}
-							
 							
 							
 							
@@ -175,7 +174,7 @@
 										, ['dropdown'], ['role' => 'presentation'])
 										*/
 										// Icono 2 - Notificaciones Reportes Fotograficos Creados o Pendientes
-										# . $inboxSuccess
+										. $inboxSuccess
 										
 									, ['nav navbar-nav navbar-right mail-navbar'])
 								);

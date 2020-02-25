@@ -51,7 +51,7 @@ var appNotifications = new Vue({
 					if(fileData.period !== undefined && fileData.period.id !== undefined){ url += "&period=" + (fileData.period.id); }
 					if(fileData.group !== undefined && fileData.group.id !== undefined){ url += "&group=" + (fileData.group.id); }
 					if(fileData.schedule !== undefined && fileData.schedule.id !== undefined){ url += "&schedule=" + (fileData.schedule.id); }
-					if(fileData.schedule !== undefined && fileData.schedule.lot !== undefined && fileData.schedule.lot.microroute_name !== undefined){ url += "&route_name=" + btoa(fileData.schedule.lot.microroute_name); }
+					if(fileData.schedule !== undefined && fileData.schedule.microroute !== undefined && fileData.schedule.microroute.name !== undefined){ url += "&route_name=" + btoa(fileData.schedule.microroute.name); }
 					if(fileData.schedule !== undefined && fileData.schedule !== undefined && fileData.schedule.date_executed_schedule !== undefined){ url += "&date_executed=" + (fileData.schedule.date_executed_schedule); }
 					if(fileData.type !== undefined){ url += "&type=" + (fileData.type); }
 					
@@ -79,11 +79,11 @@ var appNotifications = new Vue({
 				self.notActive = dataNot;
 				
 				if(dataNot.type == 'photographic-report-declined'){
-					MV.api.read('/emvarias_reports_photographic/' + dataNot.datajson.id, {}, function(img){
+					MV.api.read('/reports_photographic/' + dataNot.datajson.id, {}, function(img){
 						$messageTxt = $('<div></div>');
 						$title = 'Foto rechazada';
 						$parrOne = $('<p></p>')
-							.append("Se ha rechazado una fotografia tuya en la microruta <b>" + dataNot.datajson.schedule.lot.microroute_name + "</b>")
+							.append("Se ha rechazado una fotografia tuya en la microruta <b>" + dataNot.datajson.schedule.microroute.name + "</b>")
 							.append(
 								$('<b></b>').append($('<br />'))
 								.append("F. programacion: " )
@@ -289,12 +289,12 @@ var appNotifications = new Vue({
 				} 
 				else if(dataNot.type == 'schedule-executed'){
 					console.log('dataNot', dataNot);
-					$title = dataNot.datajson.lot.microroute_name;
+					$title = dataNot.datajson.microroute.name;
 					$parrOne = $('<p></p>')
 						.append('El gestor revisó el progreso y a cambiado el estado de una programacion a "<b>Ejecutado</b>".').append($('<br />'))
-						.append($('<br />')).append('<b>Microruta: </b>' + dataNot.datajson.lot.microroute_name)
-						.append($('<br />')).append('<b>Lote: </b>' + dataNot.datajson.lot.id_ref)
-						.append($('<br />')).append('<b>Lote Direccion(es): </b>' + dataNot.datajson.lot.address_text)
+						.append($('<br />')).append('<b>Microruta: </b>' + dataNot.datajson.microroute.name)
+						.append($('<br />')).append('<b>Lote: </b>' + dataNot.datajson.microroute.id_ref)
+						.append($('<br />')).append('<b>Lote Direccion(es): </b>' + dataNot.datajson.microroute.address_text)
 						.append($('<br />')).append('<b>Cuadrilla: </b>' + dataNot.datajson.group.name)
 						.append($('<br />')).append('<b>Periodo: </b>' + dataNot.datajson.period.name + ' ' + dataNot.datajson.year)
 						.append($('<br />')).append('<b>Fecha Programacion: </b>' + dataNot.datajson.date_executed_schedule)
@@ -338,7 +338,7 @@ var appNotifications = new Vue({
 					$create = true;
 				} 
 				else if(dataNot.type == 'novelty-execution-schedule'){
-					$title = dataNot.datajson.schedule.lot.microroute_name + ' | Necesita de tu gestion.';
+					$title = dataNot.datajson.schedule.microroute.name + ' | Necesita de tu gestion.';
 					$parrOne = $('<p></p>').append('Hay una observación, gestionala para continuar la aprobación.');
 					$parrTwo = $('<p></p>')
 						.append($('<b></b>').append('Observacion recibida: '))
@@ -351,12 +351,12 @@ var appNotifications = new Vue({
 					
 					$bodyBox = $('<p></p>').append($parrOne).append($parrTwo);
 					
-					MV.api.read('/emvarias_schedule_execution_novelties/' + dataNot.datajson.novelty.id, {
+					MV.api.read('/schedule_execution_novelties/' + dataNot.datajson.novelty.id, {
 					}, function(noveltyLive){
 						var isEditable = noveltyLive.status == 0 ? true : false;
 						console.log('noveltyLive',noveltyLive);
 						
-						MV.api.readList('/emvarias_groups_managers', {
+						MV.api.readList('/groups_managers', {
 							filter: [
 								'group,eq,' + dataNot.datajson.novelty.group
 							]
@@ -433,11 +433,11 @@ var appNotifications = new Vue({
 											buttons: { confirm: { label: 'Confirmar', }, },
 											callback: function (result) {
 												if(result === true){
-													MV.api.update('/emvarias_schedule_execution_novelties/' + dataNot.datajson.novelty.id, {
+													MV.api.update('/schedule_execution_novelties/' + dataNot.datajson.novelty.id, {
 														status: 1,
 														updated_by: <?= ($this->user->id); ?>
 													},function(xs){
-														MV.api.update('/emvarias_schedule/' + dataNot.datajson.schedule.id, {
+														MV.api.update('/schedule/' + dataNot.datajson.schedule.id, {
 															in_novelty: 0,
 															updated_by: <?= ($this->user->id); ?>
 														},function(xs2){
@@ -1026,7 +1026,7 @@ var appNotifications = new Vue({
 				send.data_out = JSON.stringify(data.response);
 				send.created_by = <?= $this->user->id; ?>;
 				// console.log('send LOG: ', send);
-				api.post('/records/emvarias_schedule_log', send)
+				api.post('/records/schedule_log', send)
 				.then(function (l){
 					// console.log('log', l);
 					if(l.status == 200){
@@ -1068,16 +1068,16 @@ var appNotifications = new Vue({
 						
 						if(b.type == 'photographic-report-declined'){
 							$title = 'Foto rechazada';
-							$messageTxt = "Se ha rechazado una fotografia tuya en la microruuta "+ b.datajson.schedule.lot.microroute_name +".<br><b>F. programacion: </b>" + b.datajson.schedule.date_executed_schedule;
+							$messageTxt = "Se ha rechazado una fotografia tuya en la microruuta "+ b.datajson.schedule.microroute.name +".<br><b>F. programacion: </b>" + b.datajson.schedule.date_executed_schedule;
 							$messageTxt += (moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD') == b.datajson.schedule.date_executed_schedule) ? '' : '/' + moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD');
 							$create = true;
 						} else if(b.type == 'schedule-executed'){
-							$title = b.datajson.lot.microroute_name;
+							$title = b.datajson.microroute.name;
 							$messageTxt = 'se ha cambiado el estado a "Ejecutado".';						
 							$create = true;
 						} else if(b.type == 'novelty-execution-schedule'){
 							$title = 'Hay una observación';
-							$messageTxt = b.datajson.schedule.lot.microroute_name + ' necesita gestion, gestionala para continuar la aprobación.';
+							$messageTxt = b.datajson.schedule.microroute.name + ' necesita gestion, gestionala para continuar la aprobación.';
 							$create = true;
 						} else if(b.type == 'new-communication-client'){
 							$title = 'Nuevo mensaje';

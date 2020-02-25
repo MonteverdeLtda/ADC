@@ -102,9 +102,9 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 			<div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
 				<div class="tile-stats" style="zoom:0.8;">
 					<div class="icon"><i class="fa fa-share"></i></div>
-					<div class="count">{{ totals.area_m2.novelty.toLocaleString() }}</div>
-					<h3>Pospuesto</h3>
-					<p>La sumatoria se origina por un total de {{ totals.microroutes.novelty }} microrutas.</p>
+					<div class="count">{{ totals.novelty.count }}</div>
+					<h3>Observaciones</h3>
+					<p>La sumatoria se origina por un total de XXX reportes.</p>
 				</div>
 			</div>
 		</div>
@@ -154,11 +154,6 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 														<td>{{ item.executed.totals.area_m2.toLocaleString() }} m2</td>
 													</tr>
 													<tr>
-														<th>T. Posp:</th>
-														<td>{{ item.novelty.totals.count }}</td>
-														<td>{{ item.novelty.totals.area_m2.toLocaleString() }} m2</td>
-													</tr>
-													<tr>
 														<th>T. Apro:</th>
 														<td>{{ item.approved.totals.count }}</td>
 														<td>{{ item.approved.totals.area_m2.toLocaleString() }} m2</td>
@@ -185,8 +180,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 														<td>{{ schedule.date_executed_schedule }}</td>
 														<td>{{ schedule.date_executed_schedule_end }}</td>
 														<td>
-															<i title="Pospuesto" class="fa fa-times" v-if="schedule.in_novelty == 1"></i>
-															<i title="Aprobado" class="fa fa-check" v-else-if="schedule.is_approved == 1"></i>
+															<i title="Aprobado" class="fa fa-check" v-if="schedule.is_approved == 1"></i>
 															<i title="Ejecutado" class="fa fa-check-square-o" v-else-if="schedule.is_executed == 1"></i>
 															<i title="Pendiente" class="fa fa-clock-o" v-else></i>
 														</td>
@@ -213,8 +207,8 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 						<ul class="list-inline prod_color">
 						  <li v-for="(schedule, schedule_i) in schedules">
 							<div @click="openScheduleInModal(schedule.id)"
-								:class="'color bg-' + (schedule.in_novelty == 1 ? 'red' : schedule.is_approved == 1 ? 'green' : schedule.is_executed == 1 ? 'blue' : 'gray')"
-								:title="schedule.microroute.name + ': ' + (schedule.in_novelty == 1 ? 'Pospuesto' : schedule.is_approved == 1 ? 'Completo' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado')"
+								:class="classSonar(schedule)"
+								:title="schedule.microroute.name + ': ' + (schedule.is_approved == 1 ? 'Completo' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado')"
 							></div>
 						  </li>
 						  
@@ -329,6 +323,9 @@ var Home = Vue.extend({
 			},
 			
 			totals: {
+				novelty: {
+					count: 0,
+				},
 				microroutes: {
 					schedule: 0,
 					executed: 0,
@@ -591,6 +588,15 @@ var Home = Vue.extend({
 	computed: {
 	},
 	methods: {
+		classSonar(a){
+			var self = this;
+			// 'color bg-' + (schedule.is_approved == 1 ? 'green' : schedule.is_executed == 1 ? 'blue' : 'gray')
+			
+			a.start = moment(a.date_executed_schedule);
+			a.end = moment(a.date_executed_schedule_end);
+			totalDays = a.start.diff(moment(), 'days');
+			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.is_executed == 1 ? 'blue' : 'gray');
+		},
 		openScheduleInModal(schedule_id){
 			var self = this;
 			scheduleIndex = self.schedules.findIndex((x) => x.id == schedule_id);
@@ -600,10 +606,10 @@ var Home = Vue.extend({
 			
 			$ReadListInModal = $('<div></div>');
 			if(schedule.id == schedule_id && $ReadListInModal.text() == ''){
-				$textStatus = schedule.in_novelty == 1 ? 'Con observacion' : schedule.is_approved == 1 ? 'Aprobado' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado';
-				$colorStatus = schedule.in_novelty == 1 ? 'tag-danger' : schedule.is_approved == 1 ? 'tag-success' : schedule.is_executed == 1 ? 'tag-primary' : 'tag-default';
+				$textStatus = schedule.is_approved == 1 ? 'Aprobado' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado';
+				$colorStatus = schedule.is_approved == 1 ? 'tag-success' : schedule.is_executed == 1 ? 'tag-primary' : 'tag-default';
 				$textPeriod = schedule.period.name +' de ' + schedule.year
-				$textBodyParr = schedule.in_novelty == 1 ? 'la programacion va ser movida por motivos ajenos.' : schedule.is_approved == 1 ? 'Ejecutado y Aprobado' : schedule.is_executed == 1 ? 'La programacion ya fue ejecutada, estamos esperando tu respuesta.' : 'Aún no hemos ejecutado la programacion.';
+				$textBodyParr = schedule.is_approved == 1 ? 'Ejecutado y Aprobado' : schedule.is_executed == 1 ? 'La programacion ya fue ejecutada, estamos esperando tu respuesta.' : 'Aún no hemos ejecutado la programacion.';
 				
 				$bodySchedulesModal = $('<div></div>').attr('class', 'row')
 					.append(
@@ -684,12 +690,128 @@ var Home = Vue.extend({
 					},
 				};
 				
-				if(schedule.is_executed == 1 && schedule.in_novelty == 0 && schedule.is_approved == 0){
+				if(schedule.is_executed == 1 && schedule.is_approved == 0){
 					btnsModal.noclose = {
 						label: "¿Falta algo?",
 						className: 'btn-warning',
 						callback: function(){
 							console.log('Custom button clicked');
+							/*
+							bootbox.prompt({
+								title: "Cuentanos que observación(es) tienes para solucionarla y poder termina esté trabajo.",
+								inputType: 'textarea',
+								locale: 'es',
+								buttons: {
+									confirm: {
+										label: 'Enviar Mensaje',
+										className: 'btn-success'
+									},
+									cancel: {
+										label: 'Cerrar',
+										className: 'btn-default'
+									}
+								},
+								callback: function (result) {
+									console.log(x.group.group_notification);
+									if(result !== null && result.length > 3){
+										var novelty = {
+											schedule: x.id,
+											group: x.group.id,
+											period: x.period.id,
+											year: x.year,
+											comment: result,
+											created_by: <?= ($this->user->id); ?>
+										};
+										
+										MV.api.readList('/notifications_groups_users', {
+											filter: [
+												'group,eq,' + x.group.group_notification
+											],
+										},function(IdsNots){
+											MV.api.create('/emvarias_schedule_execution_novelties', novelty,function(xs){
+												self.createLogSchedule({
+													schedule: x.id,
+													action: 'execution-novelties',
+													data: novelty,
+													response: xs,
+												}, function(idNoveltyCreateLog){
+													novelty.id = xs;
+													$elementThis.remove();
+													
+													MV.api.update('/emvarias_schedule/' + x.id, {
+														in_novelty: 1,
+														updated_by: <?= ($this->user->id); ?>
+													},function(xs2){
+														self.createLogSchedule({
+															schedule: x.id,
+															action: 'event-in-novelty',
+															data: {
+																in_novelty: 1,
+																updated_by: <?= ($this->user->id); ?>
+															},
+															response: xs2,
+														}, function(w){
+															$elementThis.remove();
+															new PNotify({
+																"title": "¡Éxito!",
+																"text": "Actualizado con exito.",
+																"styling":"bootstrap3",
+																"type":"success",
+																"icon":true,
+																"animation":"zoom",
+																"hide":true
+															});
+														});
+														
+														IdsNots.forEach(function(abc){
+															self.createNotification({
+																user: abc.user,
+																type: 'novelty-execution-schedule',
+																data: {
+																	novelty: novelty,
+																	schedule: x
+																},
+															}, function(wsa){
+																console.log(wsa)
+																console.log('ID NOTIFICADO: ', abc.user);
+															});
+														
+															new PNotify({
+																"title": "¡Éxito!",
+																"text": "Actualizado con exito.",
+																"styling":"bootstrap3",
+																"type":"success",
+																"icon":true,
+																"animation":"zoom",
+																"hide":true
+															});
+														});
+														
+														
+													});
+													
+													
+												});
+											});
+											
+										});
+									} else {
+										new PNotify({
+											"title": "¡Ups!",
+											"text": "El mensaje debe contener más de 4 caracteres.",
+											"styling":"bootstrap3",
+											"type":"error",
+											"icon":true,
+											"animation":"zoom",
+											"hide":true
+										});
+									}
+									
+									$elementThis.removeAttr('disabled');
+								}
+							});
+							
+							*/
 							return false;
 						}
 					};
@@ -829,6 +951,23 @@ var Home = Vue.extend({
 						rStart = moment(contract.end) >= moment(self.filter.dates.end) && moment(self.filter.dates.start) >= moment(contract.start) ? true : false;
 						if(rStart == true){ idsContracts.push(contract.id); }
 					});
+					MV.api.readList('/novelties_generals', {
+						filter: [
+							'date_report,bt,' + self.filter.dates.start + ',' + self.filter.dates.end
+						],
+					}, (novelties_generals) => {
+						
+						novelties_generals.forEach((a) => {
+							textFormatAdd = moment(a.date_report).format('YYYY-MM-DD');
+							indexDay = self.datas.xDays.findIndex((a) => a.label == textFormatAdd);
+							
+							if(self.datas.xDays[indexDay]){
+								self.datas.xDays[indexDay].novelty.data.push(a);
+								self.datas.xDays[indexDay].novelty.totals.count++;
+								self.totals.novelty.count++;
+							}
+						});
+					});
 					
 					MV.api.readList('/microroutes', {
 						filter: [
@@ -891,12 +1030,6 @@ var Home = Vue.extend({
 										self.microroutes[micRIndex].repeats.approved++;
 										self.microroutes[micRIndex].totals.approved += schedule.microroute.area_m2;
 									};
-									if(schedule.in_novelty == 1){
-										self.totals.microroutes.novelty++;
-										self.totals.area_m2.novelty += schedule.microroute.area_m2;
-										self.microroutes[micRIndex].repeats.novelty++;
-										self.microroutes[micRIndex].totals.novelty += schedule.microroute.area_m2;
-									};
 								}
 								
 								
@@ -937,18 +1070,6 @@ var Home = Vue.extend({
 														self.datas.xDays[indexDayApproved].approved.data.push(schedule);
 														self.datas.xDays[indexDayApproved].approved.totals.area_m2 += schedule.microroute.area_m2;
 														self.datas.xDays[indexDayApproved].approved.totals.count++;
-													}
-												}
-											}
-											
-											if(schedule.in_novelty == 1){
-												indexDayNovelty = self.datas.xDays.findIndex((a) => a.label == schedule.date_novelty);
-												if(self.datas.xDays[indexDayNovelty] !== undefined){
-													indexNovelty = self.datas.xDays[indexDayNovelty].novelty.data.findIndex((x) => x.id == schedule.id);
-													if(indexNovelty <= -1){
-														self.datas.xDays[indexDayNovelty].novelty.data.push(schedule);
-														self.datas.xDays[indexDayNovelty].novelty.totals.area_m2 += schedule.microroute.area_m2;
-														self.datas.xDays[indexDayNovelty].novelty.totals.count++;
 													}
 												}
 											}
@@ -1103,7 +1224,20 @@ var Home = Vue.extend({
 			
 			tempTotal = 0; charters.totals.novelty.area_m2 = charters.day.novelty.area_m2.map((z) => { z = tempTotal = (z + tempTotal); return z; });
 			tempTotal = 0; charters.totals.novelty.count  =  charters.day.novelty.count.map( (z)  => { z = tempTotal = (z + tempTotal); return z; });
-						
+			
+			dataNoveltyList = [];
+			charters.day.novelty.count.forEach((z, index) => {
+				// console.log(charters.day.schedule.area_m2[index]);
+				console.log(z);
+				if(z > 0){
+					dataNoveltyList.push({
+					  name: 'Novedades',
+					  value: z,
+					  xAxis: labels[index],
+					  yAxis: z
+					});
+				}
+			});
 			self.echartBar.setOption({
 				title: {
 					text: 'Grafico # 1',
@@ -1113,15 +1247,7 @@ var Home = Vue.extend({
 					trigger: 'axis'
 				},
 				legend: {
-					data: ['Programado', 'Ejecutado', 'Pospuesto']
-					// data: ['Programado', 'Ejecutado', 'Aprobado', 'Ejecutado']
-					/*
-					data: [
-						'Programado x Dia', 'Programado',
-						'Ejecutado x Dia', 'Ejecutado',
-						'Aprobado x Dia', 'Aprobado',
-						'Pospuesto x Dia', 'Pospuesto',
-					]*/
+					data: ['Programado', 'Ejecutado']
 				},
 				toolbox: {
 					show: false
@@ -1161,29 +1287,6 @@ var Home = Vue.extend({
 							}]
 						}
 					},
-					{
-						name: 'Pospuesto',
-						type: 'line',
-						data: charters.totals.novelty.area_m2,
-						markLine: {
-							data: [{
-								type: 'average',
-								name: '???'
-							}]
-						}
-					},
-					/*
-					{
-						name: 'Aprobado',
-						type: 'line',
-						data: charters.totals.approved.area_m2,
-						markLine: {
-							data: [{
-								type: 'average',
-								name: '???'
-							}]
-						}
-					},*/
 				]
 			});
 			
@@ -1196,7 +1299,7 @@ var Home = Vue.extend({
 					trigger: 'axis'
 				},
 				legend: {
-					data: ['Programado', 'Ejecutado', 'Aprobado', 'Pospuesto']
+					data: ['Programado', 'Ejecutado', 'Observaciones']
 				},
 				toolbox: {
 					show: false
@@ -1239,11 +1342,18 @@ var Home = Vue.extend({
 								name: '???'
 							}]
 						}
-					},	
+					},
 					{
-						name: 'Pospuesto',
+						name: 'Observaciones',
 						type: 'bar',
 						data: charters.day.novelty.area_m2,
+						/*
+						markPoint: {
+							data: dataNovelty
+						},*/
+						markPoint: {
+							data: dataNoveltyList
+						},
 						markLine: {
 							data: [{
 								type: 'average',
@@ -1266,6 +1376,70 @@ var Home = Vue.extend({
 				]
 			});
 			
+			self.echartBarS.on('click', function (params) {
+				if (params.componentType === 'markPoint') {
+					console.log('clicked on markPoint');
+					console.log('date_report,eq,' + params.data.xAxis);
+					MV.api.readList('/novelties_generals', {
+						filter: [
+							'date_report,eq,' + params.data.xAxis
+						], 
+						join: [
+							'groups',
+							'periods',
+							'novelties_files'
+						]
+					}, (a) => {
+						console.log(a);
+						$htmlUl = $('<ul></ul>').attr('class', 'messages');
+						
+						a.forEach(b => {
+							$filesBox = $('<p></p>').attr('class', 'url');
+							$filesBox.append(
+								$('<a></a>').attr('target', '_blank').attr('href', '/public/reports-photographics/programas-novedades/' + b.year + '/' + b.period.name + '/' + b.group.name + '/' + b.date_report + '/reporte-nro-' + b.id + '/reporte-nro-' + b.id + '.pdf').append($('<i></i>').attr('class', 'fa fa-pdf')).append('reporte-nro-' + b.id + '.pdf').append($('<br />'))
+							);
+							b.novelties_files.forEach(c => {
+								// console.log(c);
+								$filesBox.append(
+									$('<a></a>').attr('target', '_blank').attr('href', c.file_path_short).append($('<i></i>').attr('class', 'fa fa-paperclip')).append(' ' + c.file_name).append($('<br />'))
+								)
+							});
+							
+							$htmlUl.append(
+								$('<li></li>')
+									.append(
+										$('<div></div>').attr('class', 'message_date')
+											.append($('<h3></h3>').attr('class', 'date text-info').text(moment(b.date_report).format('DD')))
+											.append($('<p></p>').attr('class', 'month').text(moment(b.date_report).format('MM')))
+									)
+									.append(
+										$('<div></div>').attr('class', 'message_wrapper')
+											.append($('<h4></h4>').attr('class', 'heading').text(b.date_report))
+											.append($('<blockquote></blockquote>').attr('class', 'message').text(b.notes))
+											.append($('<br />'))
+											.append($filesBox)
+									)
+							);
+						});
+						$htmlBody = $('<div></div>').append($htmlUl);
+						
+						var dialog = bootbox.dialog({
+							title: 'Observaciones | Día: ' + params.data.xAxis,
+							message: $htmlBody.html(),
+							size: 'large',
+							buttons: {
+								cancel: {
+									label: "Cerrar",
+									className: 'btn-default',
+									callback: function(){
+										console.log('Custom cancel clicked');
+									}
+								},
+							}
+						});
+					});
+				}
+			});
 			
 			$('#datatable-buttons-microroutes-dashboard').html('');
 				$('.datatable').DataTable({
@@ -1310,10 +1484,10 @@ var Home = Vue.extend({
 							$ulList = $('<ul></ul>').attr("class", "list-unstyled timeline");
 							// console.log(b);
 							b.schedules.forEach((c) => {
-								$textStatus = c.in_novelty == 1 ? 'Con observacion' : c.is_approved == 1 ? 'Aprobado' : c.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado';
-								$colorStatus = c.in_novelty == 1 ? 'tag-danger' : c.is_approved == 1 ? 'tag-success' : c.is_executed == 1 ? 'tag-primary' : 'tag-default';
+								$textStatus = c.is_approved == 1 ? 'Aprobado' : c.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado';
+								$colorStatus = c.is_approved == 1 ? 'tag-success' : c.is_executed == 1 ? 'tag-primary' : 'tag-default';
 								$textPeriod = c.period.name +' de ' + c.year
-								$textBodyParr = c.in_novelty == 1 ? 'la programacion va ser movida por motivos ajenos.' : c.is_approved == 1 ? 'Ejecutado y Aprobado' : c.is_executed == 1 ? 'La programacion ya fue ejecutada, estamos esperando tu respuesta.' : 'Aún no hemos ejecutado la programacion.';
+								$textBodyParr = c.is_approved == 1 ? 'Ejecutado y Aprobado' : c.is_executed == 1 ? 'La programacion ya fue ejecutada, estamos esperando tu respuesta.' : 'Aún no hemos ejecutado la programacion.';
 								
 								$bodySchedules = $('<div></div>').attr('class', 'row')
 									.append(
@@ -1379,19 +1553,18 @@ var Home = Vue.extend({
 								//b.area_m2.toLocaleString(),
 								b.repeats.schedule,
 								b.repeats.executed,
-								b.repeats.novelty,
-								(b.repeats.schedule - (b.repeats.executed + b.repeats.novelty)),
-								(100 - (((b.repeats.schedule - (b.repeats.executed + b.repeats.novelty)) * 100) / b.repeats.schedule)) + '%',
+								(b.repeats.schedule - (b.repeats.executed)),
+								(100 - (((b.repeats.schedule - (b.repeats.executed)) * 100) / b.repeats.schedule)) + '%',
 								b.totals.schedule.toLocaleString(),
 								b.totals.executed.toLocaleString(),
-								(b.totals.schedule - (b.totals.executed + b.totals.novelty)).toLocaleString(),
-								(100 - (((b.totals.schedule - (b.totals.executed + b.totals.novelty)) * 100) / b.totals.schedule)) + '%',
+								(b.totals.schedule - (b.totals.executed)).toLocaleString(),
+								(100 - (((b.totals.schedule - (b.totals.executed)) * 100) / b.totals.schedule)) + '%',
 								//(b.obs.length <= 3) ? 'Sin Observaciones' : b.obs.length, 
 								// b.contract.name,
 								//b.description,
 								/*
 								JSON.stringify(b.schedules.map(b=>{
-									return [b.id, b.date_executed_schedule, b.date_executed_schedule_end, b.is_executed, b.is_approved, b.in_novelty];
+									return [b.id, b.date_executed_schedule, b.date_executed_schedule_end, b.is_executed, b.is_approved];
 								})),*/
 								$htmlSchedule.html(),
 							]
@@ -1404,7 +1577,6 @@ var Home = Vue.extend({
 							// { title: "Area m2" },
 							{ title: "Frec." },
 							{ title: "Frec. Ejec." },
-							{ title: "Frec. Pos." },
 							{ title: "Frec. Pdtes." },
 							{ title: "Progreso Frec" },
 							{ title: "Total Prog." },

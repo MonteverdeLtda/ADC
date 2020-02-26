@@ -69,7 +69,6 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 			<router-view :key="$route.fullPath" ></router-view>
 		</div>
 	</div>
-
 </div>
 
 <template id="home">
@@ -103,8 +102,8 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 				<div class="tile-stats" style="zoom:0.8;">
 					<div class="icon"><i class="fa fa-share"></i></div>
 					<div class="count">{{ totals.novelty.count }}</div>
-					<h3>Observaciones</h3>
-					<p>La sumatoria se origina por un total de XXX reportes.</p>
+					<h3>Incidentes</h3>
+					<p>Causas ajenas que pueden causar un cambio en la(s) fecha(s) del agendamiento.</p>
 				</div>
 			</div>
 		</div>
@@ -208,7 +207,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 						  <li v-for="(schedule, schedule_i) in schedules">
 							<div @click="openScheduleInModal(schedule.id)"
 								:class="classSonar(schedule)"
-								:title="schedule.microroute.name + ': ' + (schedule.is_approved == 1 ? 'Completo' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado')"
+								:title="schedule.microroute.name + ': ' + (schedule.is_approved == 1 ? 'Completo' : schedule.in_novelty == 1 ? 'Con Observaciones' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado')"
 							></div>
 						  </li>
 						  
@@ -321,6 +320,7 @@ var Home = Vue.extend({
 				xDays: [],
 				// forDate: [],
 			},
+			markPointModal: null,
 			
 			totals: {
 				novelty: {
@@ -595,7 +595,7 @@ var Home = Vue.extend({
 			a.start = moment(a.date_executed_schedule);
 			a.end = moment(a.date_executed_schedule_end);
 			totalDays = a.start.diff(moment(), 'days');
-			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.is_executed == 1 ? 'blue' : 'gray');
+			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.in_novelty == 1 ? 'purple' : a.is_executed == 1 ? 'blue' : 'gray');
 		},
 		openScheduleInModal(schedule_id){
 			var self = this;
@@ -606,14 +606,15 @@ var Home = Vue.extend({
 			
 			$ReadListInModal = $('<div></div>');
 			if(schedule.id == schedule_id && $ReadListInModal.text() == ''){
-				$textStatus = schedule.is_approved == 1 ? 'Aprobado' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado';
+				$textStatus = schedule.is_approved == 1 ? 'Aprobado' : schedule.in_novelty == 1 ? 'Con Obs' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado';
 				$colorStatus = schedule.is_approved == 1 ? 'tag-success' : schedule.is_executed == 1 ? 'tag-primary' : 'tag-default';
 				$textPeriod = schedule.period.name +' de ' + schedule.year
-				$textBodyParr = schedule.is_approved == 1 ? 'Ejecutado y Aprobado' : schedule.is_executed == 1 ? 'La programacion ya fue ejecutada, estamos esperando tu respuesta.' : 'Aún no hemos ejecutado la programacion.';
+				$textBodyParr = schedule.is_approved == 1 ? 'Ejecutado y Aprobado' : schedule.in_novelty == 1 ? '<b>Se está gestionando tu observación, te responderemos pronto.</b>' : schedule.is_executed == 1 ? '<b>La programacion ya fue ejecutada, estamos esperando tu respuesta.</b>' : '<b>Aún no hemos ejecutado la programacion.</b>';
 				
 				$bodySchedulesModal = $('<div></div>').attr('class', 'row')
 					.append(
 						$('<div></div>').attr('class', 'col-xs-12')
+							.append($('<p></p>').append($('<b></b>').append('Microruta: ')).append(schedule.microroute.name))
 							.append($('<p></p>').append($('<b></b>').append('Contrato: ')).append(schedule.microroute.contract.name))
 							.append($('<p></p>').append($('<b></b>').append('Direccion(es): ')).append(schedule.microroute.address_text))
 							.append($('<p></p>').append($('<b></b>').append('Lote REF: ')).append(schedule.microroute.id_ref))
@@ -690,13 +691,12 @@ var Home = Vue.extend({
 					},
 				};
 				
-				if(schedule.is_executed == 1 && schedule.is_approved == 0){
+				if(schedule.is_executed == 1 && schedule.is_approved == 0 && schedule.in_novelty == 0){
 					btnsModal.noclose = {
 						label: "¿Falta algo?",
 						className: 'btn-warning',
 						callback: function(){
 							console.log('Custom button clicked');
-							/*
 							bootbox.prompt({
 								title: "Cuentanos que observación(es) tienes para solucionarla y poder termina esté trabajo.",
 								inputType: 'textarea',
@@ -712,89 +712,114 @@ var Home = Vue.extend({
 									}
 								},
 								callback: function (result) {
-									console.log(x.group.group_notification);
 									if(result !== null && result.length > 3){
-										var novelty = {
-											schedule: x.id,
-											group: x.group.id,
-											period: x.period.id,
-											year: x.year,
-											comment: result,
-											created_by: <?= ($this->user->id); ?>
-										};
+										// console.log('schedule', schedule);
 										
-										MV.api.readList('/notifications_groups_users', {
-											filter: [
-												'group,eq,' + x.group.group_notification
+										MV.api.read('/schedule/' + schedule.id, {
+											join: [
+												'microroutes',
+												'periods',
 											],
-										},function(IdsNots){
-											MV.api.create('/emvarias_schedule_execution_novelties', novelty,function(xs){
-												self.createLogSchedule({
-													schedule: x.id,
-													action: 'execution-novelties',
-													data: novelty,
-													response: xs,
-												}, function(idNoveltyCreateLog){
-													novelty.id = xs;
-													$elementThis.remove();
-													
-													MV.api.update('/emvarias_schedule/' + x.id, {
-														in_novelty: 1,
-														updated_by: <?= ($this->user->id); ?>
-													},function(xs2){
+										}, (f) => {
+											MV.api.read('/groups_managers', {
+												filter: [
+													'group,eq,' + f.group
+												],
+											}, (IdsNots) => {
+												console.log('groups_managers', IdsNots);
+
+												var novelty = {
+													schedule: f.id,
+													group: f.group,
+													period: f.period.id,
+													year: f.year,
+													comment: result,
+													created_by: <?= ($this->user->id); ?>
+												};
+												
+												MV.api.create('/schedule_execution_novelties', novelty, (xs) => {
+													if(xs > 0){
+														novelty.id = xs;
+														console.log('novelty', novelty);
+														
 														self.createLogSchedule({
-															schedule: x.id,
-															action: 'event-in-novelty',
-															data: {
+															schedule: f.id,
+															action: 'execution-novelties',
+															data: novelty,
+															response: xs,
+														}, function(idNoveltyCreateLog){
+															MV.api.update('/schedule/' + f.id, {
 																in_novelty: 1,
+																date_novelty: moment().format('YYYY-MM-DD'),
+																time_novelty: moment().format('HH:mm:ss'),
 																updated_by: <?= ($this->user->id); ?>
-															},
-															response: xs2,
-														}, function(w){
-															$elementThis.remove();
-															new PNotify({
-																"title": "¡Éxito!",
-																"text": "Actualizado con exito.",
-																"styling":"bootstrap3",
-																"type":"success",
-																"icon":true,
-																"animation":"zoom",
-																"hide":true
+															},function(xs2){
+																self.createLogSchedule({
+																	schedule: f.id,
+																	action: 'event-in-novelty',
+																	data: {
+																		in_novelty: 1,
+																		date_novelty: moment().format('YYYY-MM-DD'),
+																		time_novelty: moment().format('HH:mm:ss'),
+																		updated_by: <?= ($this->user->id); ?>
+																	},
+																	response: xs2,
+																}, function(w){
+																	self.schedules[scheduleIndex].date_approved = moment().format('YYYY-MM-DD');
+																	self.schedules[scheduleIndex].time_approved = moment().format('HH:mm:ss');
+																	self.schedules[scheduleIndex].in_novelty = 1;
+																	dialog.modal('hide')
+																	
+																	new PNotify({
+																		"title": "¡Éxito!",
+																		"text": "Actualizado con exito.",
+																		"styling":"bootstrap3",
+																		"type":"success",
+																		"icon":true,
+																		"animation":"zoom",
+																		"hide":true
+																	});
+																});
+																
+																IdsNots.forEach(function(abc){
+																	self.createNotification({
+																		user: abc.user,
+																		type: 'novelty-execution-schedule',
+																		data: {
+																			novelty: novelty,
+																			schedule: f
+																		},
+																	}, function(wsa){
+																		console.log(wsa)
+																		console.log('ID NOTIFICADO: ', abc.user);
+																	});
+																
+																	new PNotify({
+																		"title": "¡Éxito!",
+																		"text": "Actualizado con exito.",
+																		"styling":"bootstrap3",
+																		"type":"success",
+																		"icon":true,
+																		"animation":"zoom",
+																		"hide":true
+																	});
+																});
+																
+																
 															});
+															
+															
 														});
 														
-														IdsNots.forEach(function(abc){
-															self.createNotification({
-																user: abc.user,
-																type: 'novelty-execution-schedule',
-																data: {
-																	novelty: novelty,
-																	schedule: x
-																},
-															}, function(wsa){
-																console.log(wsa)
-																console.log('ID NOTIFICADO: ', abc.user);
-															});
 														
-															new PNotify({
-																"title": "¡Éxito!",
-																"text": "Actualizado con exito.",
-																"styling":"bootstrap3",
-																"type":"success",
-																"icon":true,
-																"animation":"zoom",
-																"hide":true
-															});
-														});
-														
-														
-													});
-													
+													}
 													
 												});
 											});
-											
 										});
+											
+											
+											
 									} else {
 										new PNotify({
 											"title": "¡Ups!",
@@ -807,11 +832,9 @@ var Home = Vue.extend({
 										});
 									}
 									
-									$elementThis.removeAttr('disabled');
+									// $elementThis.removeAttr('disabled');
 								}
 							});
-							
-							*/
 							return false;
 						}
 					};
@@ -863,6 +886,52 @@ var Home = Vue.extend({
 				});
 			}
 		},
+		createNotification(data, callb){
+			var self = this;
+			try{
+				send = {};
+					
+				send.type = data.type;
+				send.datajson = JSON.stringify(data.data);
+				send.user = data.user;
+				send.created_by = <?= $this->user->id; ?>;
+				
+				MV.api.create('/notifications', send, function (l){
+					callb(l);
+				});
+			}
+			catch(e){
+				console.error(e);
+				callb(e)
+			}
+		},
+		createLogSchedule(data, callb){
+			var self = this;
+			try{
+				send = {};
+				send.schedule = data.schedule;
+				send.action = data.action;
+				send.data_in = JSON.stringify(data.data);
+				send.data_out = JSON.stringify(data.response);
+				send.created_by = <?= $this->user->id; ?>;
+				api.post('/records/schedule_log', send)
+				.then(function (l){
+					if(l.status == 200){
+						callb(l);
+					} else {
+						throw new FormException('error_create_log', 'No se pudo crear el LOG.');
+					}
+				})
+				.catch(function (e) {
+					callb(e);
+					return e;
+				});
+			}
+			catch(e){
+				console.error(e);
+				callb(e)
+			}
+		},
 		recordsFilter(){
 			var self = this;
 			try {
@@ -870,6 +939,7 @@ var Home = Vue.extend({
 				// self.datas.forDate = [];
 				self.datas.xDays = [];
 				self.totals.area_m2.schedule = self.totals.area_m2.executed = self.totals.area_m2.approved = self.totals.area_m2.novelty = 0;
+				self.totals.novelty.count =  0;
 				self.totals.microroutes.schedule = self.totals.microroutes.executed = self.totals.microroutes.approved = self.totals.microroutes.novelty = 0;
 				
 				const diffRange = moment(self.filter.dates.end).diff(moment(self.filter.dates.start), 'days');
@@ -1423,20 +1493,24 @@ var Home = Vue.extend({
 						});
 						$htmlBody = $('<div></div>').append($htmlUl);
 						
-						var dialog = bootbox.dialog({
-							title: 'Observaciones | Día: ' + params.data.xAxis,
-							message: $htmlBody.html(),
-							size: 'large',
-							buttons: {
-								cancel: {
-									label: "Cerrar",
-									className: 'btn-default',
-									callback: function(){
-										console.log('Custom cancel clicked');
-									}
+						if(self.markPointModal == null){
+							self.markPointModal = bootbox.confirm({
+								title: 'Observaciones | Día: ' + params.data.xAxis,
+								message: $htmlBody.html(),
+								size: 'large',
+								buttons: {
+									cancel: {
+										label: "Cerrar",
+										className: 'btn-default',
+									},
 								},
-							}
-						});
+								callback: function(res){
+									console.log('Custom cancel clicked', res);
+									self.markPointModal = null;
+								}
+							});
+							
+						}
 					});
 				}
 			});

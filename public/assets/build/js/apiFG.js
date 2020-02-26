@@ -39,7 +39,7 @@ MV.api = {
 		paramsIn = paramsIn !== null ? paramsIn : {};
 		
 		
-		MV.apiFG.get('/api.php' + urlIn, { params: paramsIn})
+		MV.apiFG.get('/api.php' + urlIn + '/' + id, { params: paramsIn})
 		.then(function (c){ if(c.status == 200){ callback(c.data); } else { return callback(null); } })
 		.catch(function (e) {
 			console.error(e);

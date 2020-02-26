@@ -714,7 +714,7 @@ class SiteController extends ControladorBase{
 		if($period_name !== false){
 			$rootPath = realpath(PUBLIC_PATH . $ds . 'reports-photographics' . $ds .'aprobado' . $ds . $year . $ds . $period_name);
 			$zip = new ZipArchive;
-			$archive_file_name = "Download-{$year}-{$period_name}" . randomString(8) . '.zip';
+			$archive_file_name = "Fotografias-reporte-{$year}-{$period_name}" . randomString(8) . '.zip';
 			$zipSave = PUBLIC_PATH . '/tmpZip/' . $archive_file_name;
 			$zip->open($zipSave, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 			$files = new RecursiveIteratorIterator(

@@ -103,8 +103,8 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 				<div class="tile-stats" style="zoom:0.8;">
 					<div class="icon"><i class="fa fa-share"></i></div>
 					<div class="count">{{ totals.novelty.count }}</div>
-					<h3>Observaciones</h3>
-					<p>La sumatoria se origina por un total de XXX reportes.</p>
+					<h3>Incidentes</h3>
+					<p>Causas ajenas que pueden causar un cambio en la(s) fecha(s) del agendamiento.</p>
 				</div>
 			</div>
 		</div>
@@ -208,7 +208,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before, table.dataT
 						  <li v-for="(schedule, schedule_i) in schedules">
 							<div @click="openScheduleInModal(schedule.id)"
 								:class="classSonar(schedule)"
-								:title="schedule.microroute.name + ': ' + (schedule.is_approved == 1 ? 'Completo' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado')"
+								:title="schedule.microroute.name + ': ' + (schedule.is_approved == 1 ? 'Completo' : schedule.in_novelty == 1 ? 'Con Observaciones' : schedule.is_executed == 1 ? 'Ejecutado' : 'No Ejecutado')"
 							></div>
 						  </li>
 						  
@@ -595,8 +595,9 @@ var Home = Vue.extend({
 			a.start = moment(a.date_executed_schedule);
 			a.end = moment(a.date_executed_schedule_end);
 			totalDays = a.start.diff(moment(), 'days');
-			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.is_executed == 1 ? 'blue' : 'gray');
+			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.is_executed == 1 ? 'blue' : a.in_novelty == 1 ? 'purple' : 'gray');
 		},
+		
 		createNotification(data, callb){
 			var self = this;
 			try{
@@ -633,6 +634,7 @@ var Home = Vue.extend({
 				$bodySchedulesModal = $('<div></div>').attr('class', 'row')
 					.append(
 						$('<div></div>').attr('class', 'col-xs-12')
+							.append($('<p></p>').append($('<b></b>').append('Microruta: ')).append(schedule.microroute.name))
 							.append($('<p></p>').append($('<b></b>').append('Contrato: ')).append(schedule.microroute.contract.name))
 							.append($('<p></p>').append($('<b></b>').append('Direccion(es): ')).append(schedule.microroute.address_text))
 							.append($('<p></p>').append($('<b></b>').append('Lote REF: ')).append(schedule.microroute.id_ref))

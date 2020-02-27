@@ -42,3 +42,4 @@ config/settings.php
 public/attachments/*
 public/files/*
 public/reports-photographics/*
+public/tmpZip/*

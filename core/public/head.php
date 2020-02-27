@@ -11,7 +11,7 @@
 <link rel="manifest" href="/public/assets/manifest.json">
 <!-- <script src='/public/assets/build/js/apiFG.js'></script> -->
 <script>
-/*
+
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', function() {
 		navigator.serviceWorker.register('/?controller=sw&action=service_worker').then(function(registration) {
@@ -22,7 +22,8 @@ if ('serviceWorker' in navigator) {
 			console.log('ServiceWorker registration failed: ', err);
 		});
 	});
-}*/
+}
+
 /*
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {

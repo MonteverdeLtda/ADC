@@ -28,12 +28,14 @@ var appNotifications = new Vue({
 				},
 			},
 			myDropzone: null,
-			notActive: null
+			notActive: null,
+			notificacionLocale: false,
 		};
 	},
 	mounted(){
 		var self = this;
 		self.load();
+		self.notifyMe();
 	},
 	directives: {
 	},
@@ -69,6 +71,100 @@ var appNotifications = new Vue({
 		},
 	},
 	methods: {
+		notifyMe() {
+            var self = this;
+			// Let's check if the browser supports notifications
+			if (!("Notification" in window)) {
+				alert("This browser does not support desktop notification");
+			}
+			
+			// Let's check whether notification permissions have already been granted
+			else if (Notification.permission === "granted") {
+				// If it's okay let's create a notification
+				self.notificacionLocale = true;
+				self.syncNotifications();
+				// var notification = new Notification("Ahora veras tus notificaciones en esta parte");
+			}
+			
+			// Otherwise, we need to ask the user for permission
+			else if (Notification.permission !== 'denied') {
+				Notification.requestPermission(function (permission) {
+					// If the user accepts, let's create a notification
+					if (permission === "granted") {
+						// var notification = new Notification("granted");
+						self.notificacionLocale = true;
+						self.syncNotifications();
+					}
+				});
+			}
+			// At last, if the user has denied notifications, and you 
+			// want to be respectful there is no need to bother them any more.
+		},
+		syncNotifications(){
+            var self = this;
+			if(localStorage.lastNotificationMV){
+				date = moment(localStorage.lastNotificationMV);
+				if(date.isValid()){
+					totalDays = moment().diff(date, 'minutes');
+					if(totalDays >= 5){
+						loadSyncNots();
+					}
+				} else {
+					self.loadSyncNots();
+				}
+			} else {
+				self.loadSyncNots();
+			}
+		},
+		loadSyncNots(){
+            var self = this;
+			console.log('loadSyncNots');
+			self.meNotificationsPendings(function(a){
+				(Array.isArray(a) === true ? a : []).forEach(function(b){
+					b.datajson = JSON.parse(b.datajson);
+					$create = false;
+					$title = 'Nueva notificacion';
+					$messageTxt = 'Tienes una nueva notificacion.';
+					$buttonsBox = $('<div></div>');
+					
+					if(b.type == 'photographic-report-declined'){
+						$title = 'Foto rechazada';
+						$messageTxt = "Se ha rechazado una fotografia tuya en una microruta. "+ b.datajson.schedule.microroute.name;
+						$create = true;
+					} else if(b.type == 'schedule-executed'){
+						$title = b.datajson.microroute.name;
+						$messageTxt = 'se ha cambiado el estado a "Ejecutado".';						
+						$create = true;
+					} else if(b.type == 'novelty-execution-schedule'){
+						$title = 'Hay una observación';
+						$messageTxt = b.datajson.schedule.microroute.name + ' necesita gestion, gestionala para continuar la aprobación.';
+						$create = true;
+					} else if(b.type == 'new-communication-client'){
+						$title = 'Nuevo mensaje';
+						$messageTxt = b.datajson.message.substr(0,65);
+						$create = true;
+					} else if(b.type == 'response-communication-client'){
+						$title = 'Respondimos tu solicitud.';
+						$messageTxt = b.datajson.message.substr(0,65);
+						$create = true;
+					}
+					
+					if($create == true){
+						console.log('title', $title);
+						console.log('messageTxt', $messageTxt);
+						
+						var notification = new Notification($title, {
+							id: b.id,
+							body: $messageTxt,
+							data: b,
+						}).onclick = function(event) {
+							window.open('<?= $this->urlServer(); ?>');
+						};
+					}
+				});
+				localStorage.lastNotificationMV = new Date();
+			});
+		},
 		addToTask: function(){
             var self = this;
             setTimeout(self.load, 300000); // 300000 == 5 Minutos || 1Min = 60000 || 1Seg = 1000
@@ -1068,7 +1164,7 @@ var appNotifications = new Vue({
 						
 						if(b.type == 'photographic-report-declined'){
 							$title = 'Foto rechazada';
-							$messageTxt = "Se ha rechazado una fotografia tuya en la microruuta "+ b.datajson.schedule.microroute.name +".<br><b>F. programacion: </b>" + b.datajson.schedule.date_executed_schedule;
+							$messageTxt = "Se ha rechazado una fotografia tuya en la microruta "+ b.datajson.schedule.microroute.name +".<br><b>F. programacion: </b>" + b.datajson.schedule.date_executed_schedule;
 							$messageTxt += (moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD') == b.datajson.schedule.date_executed_schedule) ? '' : '/' + moment(b.datajson.schedule.date_executed_schedule_end).subtract({ days: 1 }).format('Y-MM-DD');
 							$create = true;
 						} else if(b.type == 'schedule-executed'){

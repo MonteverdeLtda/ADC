@@ -1,18 +1,18 @@
 <?php header('Content-Type: text/javascript'); ?>
+
 self.addEventListener('install', function(event) {
 	// Instalar de inmediato
 	if (self.skipWaiting) { self.skipWaiting(); }
-	/*
 	event.waitUntil(
 		caches.open(
-			'cache0000000' + new Date().getFullYear()+new Date().getMonth()+new Date().getDate()
+			'cacheMVLTDA-' + new Date().getFullYear()+new Date().getMonth()+new Date().getDate()
 		).then(function(cache) {
+			
 			return cache.addAll([
 				'/favicon.ico',
-				'/public/assets/build/js/apiFG.js',
 			]);
 		})
-	);*/
+	);
 });
 
 // Cache, falling back to network
@@ -39,4 +39,21 @@ caches.keys().then(function(cacheNames) {
 			}
 		})
 	);
+});
+
+self.addEventListener('notificationSync', function(e) {
+	consola.log('notificationSync');
+});
+
+self.addEventListener('notificationclick', function(e) {
+  var notification = e.notification;
+  var primaryKey = notification.data.primaryKey;
+  var action = e.action;
+
+  if (action === 'close') {
+    notification.close();
+  } else {
+    clients.openWindow('http://www.example.com');
+    notification.close();
+  }
 });

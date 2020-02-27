@@ -40,6 +40,59 @@
 								. PHPStrap\Util\Html::tag('h2', $this->user->username)
 							, ['profile_info']);
 							
+							
+							// Correos - Boxes
+							$mailBoxes = $this->user->getEmailBoxes();
+							$boxes_html = [];
+							if(count($mailBoxes) > 0){
+								foreach($mailBoxes as $box){
+									$box = is_array($box) ? (object) $box : $box;
+									
+									$boxes_html[] = FelipheGomez\Url::a('/Me/BusinessEmail?boxId=' . $box->id, 
+										PHPStrap\Util\Html::tag('i', ' ', ["fa fa-envelope-o"]) . $box->label
+									, ['sub_menu'], ["title" => $box->user]);
+									
+									/*$boxes_html[] = FelipheGomez\Url::a(['site/my_email', ["V" => "#/{$box->id}/folder/inbox/1"]], 
+										PHPStrap\Util\Html::tag('i', ' ', ["fa fa-envelope"]) . $box->label
+									, ['sub_menu'], ["title" => $box->user]);*/
+								}
+							}
+							// Mis correos
+                            $menu_section_emails = ($this->checkPermission('me:business:email') == true) ? (PHPStrap\Util\Html::tag('div', 
+                                PHPStrap\Util\Html::tag('h3', 'Correo Electronico')
+								
+								. ((count($mailBoxes) <= 1) ? PHPStrap\Util\Html::ul($boxes_html, ['nav side-menu']) : PHPStrap\Util\Html::ul([
+									PHPStrap\Util\Html::tag('a', PHPStrap\Util\Html::tag('i', ' ', ["fa fa-envelope-o"]) . "Mis Correos" . PHPStrap\Util\Html::tag('span', '', ["fa fa-chevron-down"]))
+										. PHPStrap\Util\Html::ul($boxes_html, ['nav child_menu'])
+								], ['nav side-menu']))
+								
+								. PHPStrap\Util\Html::ul([($this->checkPermission('system:emails:manage') == true) ? 
+										PHPStrap\Util\Html::tag('a', PHPStrap\Util\Html::tag('i', ' ', ["fa fa-shield"]) . "Gestionar" . PHPStrap\Util\Html::tag('span', '', ["fa fa-chevron-down"]))
+										. PHPStrap\Util\Html::ul([
+											($this->checkPermission('emails:accounts:manage') == true) ? FelipheGomez\Url::a(['site/AdminEmailsBoxesVue'], PHPStrap\Util\Html::tag('i', ' ', ["fa fa-at"]) . "Cuentas") : ""
+											, ($this->checkPermission('emails:accounts_in_users:manage') == true) ? FelipheGomez\Url::a(['site/AdminEmailsBoxesInUserVue'], PHPStrap\Util\Html::tag('i', ' ', ["fa fa-random"]) . "Relacion usuarios") : ""
+											, ($this->checkPermission('emails:attachments:manage') == true) ? FelipheGomez\Url::a(['site/AdminEmailsAttachmentsVue'], PHPStrap\Util\Html::tag('i', ' ', ["fa fa-paperclip"]) . "Admin. Adjuntos") : ""
+										], ['nav child_menu']) : ""], ['nav side-menu'])
+                                
+                            , ['menu_section'])) : "";
+							
+							
+							// Roles y permisos
+							if($this->checkPermission('system:permissions:manage')){
+								$menu_section_roles = PHPStrap\Util\Html::tag('div', 
+								   PHPStrap\Util\Html::tag('h3', 'Roles y Permisos') . 
+									PHPStrap\Util\Html::ul([										
+										// MENU NUEVO
+										($this->checkPermission('system:permissions:manage') == true) ? FelipheGomez\Url::a(['site/AdminPermissionsVue'], PHPStrap\Util\Html::tag('i', ' ', ["fa fa-lock"]) . "Permisos") : ""
+										, ($this->checkPermission('system:permissions:manage') == true) ? FelipheGomez\Url::a(['site/AdminPermissionsGroupVue'], PHPStrap\Util\Html::tag('i', ' ', ["fa fa-unlock"]) . "Roles") : ""
+										
+									], ['nav side-menu'])
+								, ['menu_section']);
+							} else {
+								$menu_section_roles = "";
+							}
+							
+							
 							# PHPStrap\Util\Html::tag('div', $profile_pic . $profile_info . PHPStrap\Util\Html::clearfix(), ['profile clearfix']);
 							echo PHPStrap\Util\Html::tag('div', '<br>' . PHPStrap\Util\Html::clearfix(), ['profile clearfix']);
 							
@@ -50,6 +103,8 @@
 							
                             echo PHPStrap\Util\Html::tag('div', 
 								$sidebarItems->menu
+								. $menu_section_emails
+								. $menu_section_roles
 								. PHPStrap\Util\Html::clearfix(), 
 							['main_menu_side hidden-print main_menu'], ['id' => 'sidebar-menu']);
 							

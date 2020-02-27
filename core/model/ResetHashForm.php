@@ -5,7 +5,7 @@
  *
  * ******************************/
 
-class RegisterForm extends ModeloBase
+class ResetHashForm extends ModeloBase
 {
     public $rememberMe = true;
     private $_user;
@@ -25,30 +25,33 @@ class RegisterForm extends ModeloBase
     public function rules(){
         return [
             // username and password are both required
-            new PHPStrap\Form\Text([
+            /*
+			new PHPStrap\Form\Text([
                     "name" => "register_username", 
-                    "placeholder" => "Usuario"
+                    "placeholder" => "Usuario",
+                    "disabled" => "true",
+                    "readonly" => "true",
+					"value" => isset($this->username) ? $this->username : ''
                 ], [
                     new PHPStrap\Form\Validation\RequiredValidation('Ingresa tu usuario.')
                     , new PHPStrap\Form\Validation\LengthValidation(32)
-					, new PHPStrap\Form\Validation\LambdaValidation("El usuario ya existe", function($value){
+					, new PHPStrap\Form\Validation\LambdaValidation("El usuario no existe", function($value){
 						$model = new Usuario($this->adapter);
 						$exist = $model->getBy('username', $value);
-						return (isset($exist[0]) && isset($exist[0]->id) && $exist[0]->id > 0) ? false : true;
+						return (isset($exist[0]) && isset($exist[0]->id) && $exist[0]->id > 0) ? true : false;
 					})
                 ])
-            , new PHPStrap\Form\Text([
-                    "name" => "register_email", 
-                    "placeholder" => "Correo Electronico"
+            ,  new PHPStrap\Form\Text([
+                    "name" => "key_recovery", 
+                    "placeholder" => "key_recovery",
+					"value" => isset($this->key_recovery) ? $this->key_recovery : ''
                 ], [
-                    new PHPStrap\Form\Validation\EmailValidation('Ingrese un email.')
-					, new PHPStrap\Form\Validation\LambdaValidation("El correo ya existe", function($value){
-						$model = new Usuario($this->adapter);
-						$exist = $model->getBy('email', $value);
-						return (isset($exist[0]) && isset($exist[0]->id) && $exist[0]->id > 0) ? false : true;
-					})
+                    new PHPStrap\Form\Validation\RequiredValidation('Ingresa tu Contraseña')
+					, new PHPStrap\Form\Validation\MinLengthValidation(32)
                 ])
-            , new PHPStrap\Form\Password([
+            , 
+			*/
+			new PHPStrap\Form\Password([
                     "name" => "register_password", 
                     "placeholder" => "Contraseña"
                 ], [
@@ -66,23 +69,51 @@ class RegisterForm extends ModeloBase
     }
 	
     public function setFormRegisterResult($data = []){
-		if(isset($data['register_username']) && isset($data['register_email']) && isset($data['register_password'])){
-			$this->set('username', $data['register_username']);
-			$this->set('email', $data['register_email']);
+		if(isset($data['register_password'])){
 			$this->set('password', password_hash($data['register_password'], PASSWORD_DEFAULT));
 		}
     }
 	
+    public function resetHash(){
+		try {
+			$sql = "UPDATE `{$this->getTableUse()}` SET `password`=?, `key_recovery`=NULL WHERE `username`='{$this->username}' AND `key_recovery`='{$this->key_recovery}';";
+			$query = $this->db->prepare($sql);
+			$success = $query->execute([
+				$this->password
+			]);
+			return (boolean) $success;
+		}catch (Exception $e){
+			//throw $e;
+			#echo "\n {$sql} \n";
+			echo $e->getMessage();
+			return false;
+		}
+    }
+	/*
     public function crearMin(){
-        $sql = "INSERT INTO {$this->getTableUse()} (username, password, email) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO {$this->getTableUse()} (password) VALUES (?, ?, ?)";
         $id = (int) parent::getInsert($sql, [
 			$this->username,
 			$this->password,
-			$this->email
 		]);
 		$this->id = ($id > 0) ? $id : 0;
 		return ($this->id > 0) ? true : false;
     }
+    public function resetHash(){
+		try {
+			$sql = "UPDATE `{$this->getTableUse()}` SET `key_recovery`=? WHERE `email`='{$this->email}';";
+			$query = $this->db->prepare($sql);
+			$success = $query->execute([
+				$this->key_recovery
+			]);
+			return (boolean) $success;
+		}catch (Exception $e){
+			//throw $e;
+			#echo "\n {$sql} \n";
+			echo $e->getMessage();
+			return false;
+		}
+    }*/
 
     public function setData($data = []){
 		if(is_array($data)){

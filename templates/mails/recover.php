@@ -139,78 +139,27 @@
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td>
-                                    <!-- HERO IMAGE -->
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                        <tbody>
-                                             <tr>
-                                                  <td class="padding-copy">
-                                                      <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                                          <tr>
-                                                              <td>
-                                                                  <a href="#" target="_blank">
-																	<img src="https://areadeclientes.monteverdeltda.com/templates/mails/images/monteverde-operarios-600x350.png" width="500px" height="auto" border="0" alt="Can an email really be responsive?" style="display: block; padding: 0; color: #666666; text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px; width: 500px; height: auto;" class="img-max" />
-																</a>
-                                                              </td>
-                                                            </tr>
-                                                        </table>
-                                                  </td>
-                                              </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
                                     <!-- COPY -->
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                         <tr>
                                             <td align="center" style="font-size: 25px; font-family: Helvetica, Arial, sans-serif; color: #333333; padding-top: 30px;" class="padding-copy">
-												Bienvenido/a %username%
+												Restablecimiento de contraseña
 											</td>
                                         </tr>
                                         <tr>
-                                            <td align="center" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding-copy">
+                                            <td align="left" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding-copy">
 												<p>
-													Gracias por unirse a Monteverde. Su nombre de usuario es %username%.
-													Nos complace darle la bienvenida como miembro de nuestra creciente comunidad y esperamos que este sea el comienzo de una larga y fructífera relación.
+													Hola %username%.
+												</p>
+												<p>
+													Recibimos una solicitud para restablecer la contraseña de tu Area de clientes, si fuiste tú, haz clic sobre el siguiente botón.
 												</p>
 											</td>
                                         </tr>
                                     </table>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <!-- COPY -->
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                                        <tr>
-                                            <td align="center" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding-copy">
-												<table>
-													<tr>
-														<th>Usuario: </th>
-														<td>%username%</td>
-													</tr>
-													<tr>
-														<th>Correo Electronico: </th>
-														<td>%email%</td>
-													</tr>
-													<tr>
-														<th>Contraseña: </th>
-														<td>%password%</td>
-													</tr>
-												</table>
-											</td>
-                                        </tr>
-                                        <tr>
-                                            <td align="center" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding-copy">
-												<p>
-													¡Anímate a cambiar tu forma de vivir!
-												</p>
-											</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
+							
                             <tr>
                                 <td>
                                     <!-- BULLETPROOF BUTTON -->
@@ -220,13 +169,41 @@
                                                 <table border="0" cellspacing="0" cellpadding="0" class="responsive-table">
                                                     <tr>
                                                         <td align="center">
-															<a href="https://areadeclientes.monteverdeltda.com" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; font-weight: normal; color: #ffffff; text-decoration: none; background-color: #5D9CEC; border-top: 15px solid #5D9CEC; border-bottom: 15px solid #5D9CEC; border-left: 25px solid #5D9CEC; border-right: 25px solid #5D9CEC; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; display: inline-block;" class="mobile-button">
-																Ingresar &rarr;
+															<a href="https://areadeclientes.monteverdeltda.com/index.php?action=RecoverAccount&key_recov=%key_recovery%&key_user=%key_user%" target="_blank" style="font-size: 16px; font-family: Helvetica, Arial, sans-serif; font-weight: normal; color: #ffffff; text-decoration: none; background-color: #5D9CEC; border-top: 15px solid #5D9CEC; border-bottom: 15px solid #5D9CEC; border-left: 25px solid #5D9CEC; border-right: 25px solid #5D9CEC; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; display: inline-block;" class="mobile-button">
+																Restablecer contraseña &rarr;
 															</a>
 														</td>
 													</tr>
                                                 </table>
                                             </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <!-- COPY -->
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding-copy">
+												<p>
+													Si no quieres restablecer tu contraseña, ignora este mensaje y continúa ingresando con tu contraseña actual.
+												</p>
+											</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <!-- COPY -->
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="center" style="padding: 20px 0 0 0; font-size: 16px; line-height: 25px; font-family: Helvetica, Arial, sans-serif; color: #666666;" class="padding-copy">
+												<p>
+													¡Anímate a cambiar tu forma de vivir!
+												</p>
+											</td>
                                         </tr>
                                     </table>
                                 </td>

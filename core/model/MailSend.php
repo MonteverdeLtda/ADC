@@ -16,6 +16,7 @@ class MailSend {
 	public $reply_name = MAIL_DEFAULT_REPLY_NAME;
 	public $subject = MAIL_DEFAULT_SUBJECT;
 	public $message = MAIL_DEFAULT_MESSAGE;
+	public $altMessage = MAIL_DEFAULT_MESSAGE;
 	public $MessageID = null;
 	public $isHtml = false;
 	public $attachments = [];
@@ -47,6 +48,7 @@ class MailSend {
 	public function setMessage($message = null){
 		if($message !== null){
 			$this->message = ($message);
+			$this->altMessage = $this->strip_html_tags($message);
 		}
 	}
 	
@@ -122,12 +124,59 @@ class MailSend {
 			$this->mail->isHTML($this->isHtml);                                  // Set email format to HTML
 			$this->mail->Subject = $this->subject;
 			$this->mail->Body    = $this->message;
-			$this->mail->AltBody = strip_tags($this->message);
+			$this->mail->AltBody    = $this->altMessage;
 			$this->mail->send();
 			$this->MessageID = $this->mail->getLastMessageID();
 			return true;
 		} catch (Exception $e) {
 			return false;
 		}
+	}
+
+	/**
+	 * Remove HTML tags, including invisible text such as style and
+	 * script code, and embedded objects.  Add line breaks around
+	 * block-level tags to prevent word joining after tag removal.
+	 */
+	public function strip_html_tags( $text ) {
+	    $text = preg_replace(
+	        array(
+	          // Remove invisible content
+	            '@<head[^>]*?>.*?</head>@siu',
+	            '@<style[^>]*?>.*?</style>@siu',
+	            '@<script[^>]*?.*?</script>@siu',
+	            '@<object[^>]*?.*?</object>@siu',
+	            '@<embed[^>]*?.*?</embed>@siu',
+	            '@<noscript[^>]*?.*?</noscript>@siu',
+	            '@<noembed[^>]*?.*?</noembed>@siu',
+		        '@\t+@siu',
+		        '@\n+@siu'
+	        ),
+	        '',
+	        $text );
+
+		// replace certain elements with a line-break
+		$text = preg_replace(
+			array(
+				'@</?((div)|(h[1-9])|(/tr)|(p)|(pre))@iu'
+			),
+			"\n\$0",
+			$text );
+
+		// replace other elements with a space
+		$text = preg_replace(
+			array(
+				'@</((td)|(th))@iu'
+			),
+			" \$0",
+			$text );
+
+		// strip all remaining HTML tags
+	    $text = strip_tags( $text );
+
+		// trim text
+		$text = trim( $text );
+
+		return $text;
 	}
 }

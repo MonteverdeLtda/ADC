@@ -49,16 +49,16 @@
 						<img src="/public/assets/logo-w-monteverde-280x145.png" alt="" />
 						<h3>Bienvenido(a)</h3>
 						<p>
-							Portal <?= BUSSINES_NAME_SM; ?> en donde usted puede acceder a información de <?= BUSSINES_NAME_MD; ?>. sólo debe ingresar su <b>Usuario</b> o <b>Correo electronico</b> y su contraseña de acceso, si ha olvidado su contraseña dirijáse al menú inferior click en "Restablecer Contraseña".
+							<?= $description_text; ?>
 						</p>
 					</div>
 					<!-- // <p>*</p>-->
-					<?= $model->formulario; ?>
+					<?= $recover->formulario; ?>
 					<div class="clearfix"></div>
 					<div class="separator">
 						<p class="change_link"> 
-							¿No Tienes Cuenta? <a href="#signup" class="to_register"> Crear una cuenta </a>
-							<br> <a href="<?= linkRoute('site', 'RecoverAccount'); ?>" class="to_register"> Restablecer Contraseña </a>
+							nuevo en el sitio? <a href="#signup" class="to_register"> Crear una cuenta </a>
+							<br> <a href="#" class="to_register"> Restablecer Contraseña </a>
 						</p>
 						<div class="clearfix"></div>
 						<br />
@@ -70,26 +70,6 @@
 				</section>
 			</div>
 			
-			<div id="register" class="animate form registration_form">
-				<section class="login_content">
-					<h1>Crear Cuenta</h1>
-					<p>Al pulsar en el botón confirmas haber leído la política de privacidad y aceptas los términos y condiciones.</p>
-					<?= $register->formulario; ?>
-						<div class="clearfix"></div>
-						<div class="separator">
-							<p class="change_link">
-								¿Ya tienes cuenta?
-								<a href="#signin" class="to_register"> Ingresar </a>
-							</p>
-							<div class="clearfix"></div>
-							<br />
-							<div>
-								<!-- // <h1><i class="fa fa-paw"></i> C&CMS </h1>
-								<!-- // <p><?= ControladorBase::PowerBy(); ?>. Privacy and Terms</p> -->
-							</div>
-						</div>
-				</section>
-			</div>
 		</div>
 		<div class="clearfix"></div>
 	</div>

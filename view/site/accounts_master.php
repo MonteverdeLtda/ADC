@@ -860,19 +860,11 @@
 								</ul>
 								<div class="tab-content">
 									<div class="tab-pane active" id="home">
-<<<<<<< HEAD
-										<form class="form" action="javascript:false;" v-on:submit="saveContactModal" method="post">
-											<div class="form-group">
-												<div class="col-xs-12">
-													<label for="first_name"><h4>Relacion / Parentesco</h4></label>
-													<select class="form-control" v-model="edit.contact.type" name="contact_identification_identification_type"  required="true">
-=======
 										<form class="form" action="javascript:false;" v-on:submit="saveContactModal" method="post" id="registrationForm">
 											<div class="form-group">
 												<div class="col-xs-12">
 													<label for="first_name"><h4>Relacion / Parentesco</h4></label>
 													<select class="form-control" v-model="edit.contact.type" name="contact_identification_identification_type" id="contact_identification_type" required="true">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 														<option value="0">Seleccione una opcion</option>
 														<option v-for="(item, index_item) in options.contacts_types" :key="item.id" :value="item.id">{{ item.name }}</option>
 													</select>
@@ -881,11 +873,7 @@
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Tipo Documento</h4></label>
-<<<<<<< HEAD
-													<select class="form-control" v-model="edit.contact.contact.identification_type" name="contact_identification_identification_type"  required="true">
-=======
 													<select class="form-control" v-model="edit.contact.contact.identification_type" name="contact_identification_identification_type" id="contact_identification_type" required="true">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 														<option value="">Seleccione una opcion</option>
 														<option v-for="(item, index_item) in options.identifications_types" :key="item.id" :value="item.id">{{ item.name }}</option>
 													</select>
@@ -894,61 +882,37 @@
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4># Documento</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_identification_number"  placeholder="Numero documento de identidad" title="Ingrese el numero de documento de identificación." v-model="edit.contact.contact.identification_number">
-=======
 													<input type="text" class="form-control" name="contact_identification_number" id="contact_identification_number" placeholder="Numero documento de identidad" title="Ingrese el numero de documento de identificación." v-model="edit.contact.contact.identification_number">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Nombres</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_names"  placeholder="Nombres" title="Ingrese el/los nombre(s) completo." v-model="edit.contact.contact.names">
-=======
 													<input type="text" class="form-control" name="contact_names" id="contact_names" placeholder="Nombres" title="Ingrese el/los nombre(s) completo." v-model="edit.contact.contact.names">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Apellidos</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_surname"  placeholder="Apellidos" title="Ingrese el/los apellidos." v-model="edit.contact.contact.surname">
-=======
 													<input type="text" class="form-control" name="contact_surname" id="contact_surname" placeholder="Apellidos" title="Ingrese el/los apellidos." v-model="edit.contact.contact.surname">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Correo Electronico</h4></label>
-<<<<<<< HEAD
-													<input type="email" class="form-control" name="contact_email"  placeholder="" title="Ingrese el correo electronico." v-model="edit.contact.contact.email">
-=======
 													<input type="email" class="form-control" name="contact_email" id="contact_email" placeholder="" title="Ingrese el correo electronico." v-model="edit.contact.contact.email">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Telefono Fijo</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_"  placeholder="" title="Ingrese el teléfono fijo." v-model="edit.contact.contact.phone">
-=======
 													<input type="text" class="form-control" name="contact_" id="contact_" placeholder="" title="Ingrese el teléfono fijo." v-model="edit.contact.contact.phone">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Telefono Móvil</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_mobile"  placeholder="Telefono Celular / Movil" title="Ingrese el teléfono móvil." v-model="edit.contact.contact.mobile">
-=======
 													<input type="text" class="form-control" name="contact_mobile" id="contact_mobile" placeholder="Telefono Celular / Movil" title="Ingrese el teléfono móvil." v-model="edit.contact.contact.mobile">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
@@ -1040,19 +1004,11 @@
 								</ul>
 								<div class="tab-content">
 									<div class="tab-pane active" id="home">
-<<<<<<< HEAD
-										<form class="form" action="javascript:false;" v-on:submit="createContactModalAndInclude" method="post">
-											<div class="form-group">
-												<div class="col-xs-12">
-													<label for="first_name"><h4>Relacion / Parentesco</h4></label>
-													<select class="form-control" v-model="news.contact.type" name="contact_identification_identification_type"  required="true">
-=======
 										<form class="form" action="javascript:false;" v-on:submit="createContactModalAndInclude" method="post" id="registrationForm">
 											<div class="form-group">
 												<div class="col-xs-12">
 													<label for="first_name"><h4>Relacion / Parentesco</h4></label>
 													<select class="form-control" v-model="news.contact.type" name="contact_identification_identification_type" id="contact_identification_type" required="true">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 														<option value="0">Seleccione una opcion</option>
 														<option v-for="(item, index_item) in options.contacts_types" :key="item.id" :value="item.id">{{ item.name }}</option>
 													</select>
@@ -1061,11 +1017,7 @@
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Tipo Documento (*)</h4></label>
-<<<<<<< HEAD
-													<select class="form-control" v-model="contactModalCreate.identification_type" name="contact_identification_identification_type"  required="true">
-=======
 													<select class="form-control" v-model="contactModalCreate.identification_type" name="contact_identification_identification_type" id="contact_identification_type" required="true">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 														<option value="">Seleccione una opcion</option>
 														<option v-for="(item, index_item) in options.identifications_types" :key="item.id" :value="item.id">{{ item.name }}</option>
 													</select>
@@ -1074,72 +1026,44 @@
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4># Documento (*)</h4></label>
-<<<<<<< HEAD
-													<input type="text" required="" class="form-control" name="contact_identification_number"  placeholder="Numero documento de identidad" title="Ingrese el numero de documento de identificación." v-model="contactModalCreate.identification_number">
-=======
 													<input type="text" required="" class="form-control" name="contact_identification_number" id="contact_identification_number" placeholder="Numero documento de identidad" title="Ingrese el numero de documento de identificación." v-model="contactModalCreate.identification_number">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Nombres (*)</h4></label>
-<<<<<<< HEAD
-													<input type="text" required="" class="form-control" name="contact_names"  placeholder="Nombres" title="Ingrese el/los nombre(s) completo." v-model="contactModalCreate.names">
-=======
 													<input type="text" required="" class="form-control" name="contact_names" id="contact_names" placeholder="Nombres" title="Ingrese el/los nombre(s) completo." v-model="contactModalCreate.names">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Apellidos (*)</h4></label>
-<<<<<<< HEAD
-													<input type="text" required="" class="form-control" name="contact_surname"  placeholder="Apellidos" title="Ingrese el/los apellidos." v-model="contactModalCreate.surname">
-=======
 													<input type="text" required="" class="form-control" name="contact_surname" id="contact_surname" placeholder="Apellidos" title="Ingrese el/los apellidos." v-model="contactModalCreate.surname">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Correo Electronico (*)</h4></label>
-<<<<<<< HEAD
-													<input type="email" required="" class="form-control" name="contact_email"  placeholder="" title="Ingrese el correo electronico." v-model="contactModalCreate.email">
-=======
 													<input type="email" required="" class="form-control" name="contact_email" id="contact_email" placeholder="" title="Ingrese el correo electronico." v-model="contactModalCreate.email">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Telefono Fijo</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_"  placeholder="" title="Ingrese el teléfono fijo." v-model="contactModalCreate.phone">
-=======
 													<input type="text" class="form-control" name="contact_" id="contact_" placeholder="" title="Ingrese el teléfono fijo." v-model="contactModalCreate.phone">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Telefono Móvil</h4></label>
-<<<<<<< HEAD
-													<input type="text" class="form-control" name="contact_mobile"  placeholder="Telefono Celular / Movil" title="Ingrese el teléfono móvil." v-model="contactModalCreate.mobile">
-=======
 													<input type="text" class="form-control" name="contact_mobile" id="contact_mobile" placeholder="Telefono Celular / Movil" title="Ingrese el teléfono móvil." v-model="contactModalCreate.mobile">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Fecha de cumpleaños</h4></label>
-<<<<<<< HEAD
-													<input type="date" class="form-control" name="contact_birthday"  placeholder="" title="Cumpleaños." v-model="contactModalCreate.birthday">
-=======
 													<input type="date" class="form-control" name="contact_birthday" id="contact_birthday" placeholder="" title="Cumpleaños." v-model="contactModalCreate.birthday">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 													Formato: AÑO-MES-DÍA
 												</div>
 											</div>
@@ -1223,19 +1147,11 @@
 								</ul>
 								<div class="tab-content">
 									<div class="tab-pane active" id="home">
-<<<<<<< HEAD
-										<form class="form" action="javascript:false;" v-on:submit="searchContactModal" method="post">
-											<div class="form-group">
-												<div class="col-xs-5">
-													<label for="first_name"><h4>Tipo Documento (*)</h4></label>
-													<select class="form-control" v-model="contactModalSearch.identification_type" name="contact_identification_identification_type"  required="true">
-=======
 										<form class="form" action="javascript:false;" v-on:submit="searchContactModal" method="post" id="registrationForm">
 											<div class="form-group">
 												<div class="col-xs-5">
 													<label for="first_name"><h4>Tipo Documento (*)</h4></label>
 													<select class="form-control" v-model="contactModalSearch.identification_type" name="contact_identification_identification_type" id="contact_identification_type" required="true">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 														<option value="">Seleccione una opcion</option>
 														<option v-for="(item, index_item) in options.identifications_types" :key="item.id" :value="item.id">{{ item.name }}</option>
 													</select>
@@ -1244,11 +1160,7 @@
 											<div class="form-group">
 												<div class="col-xs-5">
 													<label for="first_name"><h4># Documento (*)</h4></label>
-<<<<<<< HEAD
-													<input type="text" required="" class="form-control" name="contact_identification_number"  placeholder="Numero documento de identidad" title="Ingrese el numero de documento de identificación." v-model="contactModalSearch.identification_number">
-=======
 													<input type="text" required="" class="form-control" name="contact_identification_number" id="contact_identification_number" placeholder="Numero documento de identidad" title="Ingrese el numero de documento de identificación." v-model="contactModalSearch.identification_number">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 
@@ -1266,11 +1178,7 @@
 												<div class="form-group">
 													<div class="col-xs-12">
 														<label for="first_name"><h4>Relacion / Parentesco</h4></label>
-<<<<<<< HEAD
-														<select class="form-control" v-model="search.contact.type" name="contact_identification_identification_type"  required="true">
-=======
 														<select class="form-control" v-model="search.contact.type" name="contact_identification_identification_type" id="contact_identification_type" required="true">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 															<option value="0">Seleccione una opcion</option>
 															<option v-for="(item, index_item) in options.contacts_types" :key="item.id" :value="item.id">{{ item.name }}</option>
 														</select>
@@ -1291,62 +1199,38 @@
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Nombres (*)</h4></label>
-<<<<<<< HEAD
-													<input readonly="" type="text" required="" class="form-control" name="contact_names"  placeholder="Nombres" title="Ingrese el/los nombre(s) completo." v-model="contactModalSearch.names">
-=======
 													<input readonly="" type="text" required="" class="form-control" name="contact_names" id="contact_names" placeholder="Nombres" title="Ingrese el/los nombre(s) completo." v-model="contactModalSearch.names">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Apellidos (*)</h4></label>
-<<<<<<< HEAD
-													<input readonly="" type="text" required="" class="form-control" name="contact_surname"  placeholder="Apellidos" title="Ingrese el/los apellidos." v-model="contactModalSearch.surname">
-=======
 													<input readonly="" type="text" required="" class="form-control" name="contact_surname" id="contact_surname" placeholder="Apellidos" title="Ingrese el/los apellidos." v-model="contactModalSearch.surname">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Correo Electronico (*)</h4></label>
-<<<<<<< HEAD
-													<input readonly="" type="email" required="" class="form-control" name="contact_email"  placeholder="" title="Ingrese el correo electronico." v-model="contactModalSearch.email">
-=======
 													<input readonly="" type="email" required="" class="form-control" name="contact_email" id="contact_email" placeholder="" title="Ingrese el correo electronico." v-model="contactModalSearch.email">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Telefono Fijo</h4></label>
-<<<<<<< HEAD
-													<input readonly="" type="text" class="form-control" name="contact_"  placeholder="" title="Ingrese el teléfono fijo." v-model="contactModalSearch.phone">
-=======
 													<input readonly="" type="text" class="form-control" name="contact_" id="contact_" placeholder="" title="Ingrese el teléfono fijo." v-model="contactModalSearch.phone">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Telefono Móvil</h4></label>
-<<<<<<< HEAD
-													<input readonly="" type="text" class="form-control" name="contact_mobile"  placeholder="Telefono Celular / Movil" title="Ingrese el teléfono móvil." v-model="contactModalSearch.mobile">
-=======
 													<input readonly="" type="text" class="form-control" name="contact_mobile" id="contact_mobile" placeholder="Telefono Celular / Movil" title="Ingrese el teléfono móvil." v-model="contactModalSearch.mobile">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 												</div>
 											</div>
 
 											<div class="form-group">
 												<div class="col-xs-6">
 													<label for="first_name"><h4>Fecha de cumpleaños</h4></label>
-<<<<<<< HEAD
-													<input readonly="" type="text" class="form-control" name="contact_birthday"  placeholder="" title="Cumpleaños." v-model="contactModalSearch.birthday">
-=======
 													<input readonly="" type="text" class="form-control" name="contact_birthday" id="contact_birthday" placeholder="" title="Cumpleaños." v-model="contactModalSearch.birthday">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 													Formato: AÑO-MES-DÍA
 												</div>
 											</div>
@@ -1395,22 +1279,14 @@
 						<form class="form" action="javascript:false;" v-on:submit="NormalizeAddressesModal" method="post">
 
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-								<select @change="loadCitys" v-model="addressNormalize.department" type="text" required="required" class="form-control has-feedback-left">
-=======
 								<select @change="loadCitys" v-model="addressNormalize.department" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<option value="">Elija un departamento...</option>
 									<option v-for="(item, index_item) in options.geo_departments" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
 								<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-								<select v-model="addressNormalize.city" type="text" required="required" class="form-control has-feedback-left">
-=======
 								<select v-model="addressNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<option value="">Elija una ciudad...</option>
 									<option v-for="(item, index_item) in options.geo_citys" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
@@ -1533,22 +1409,14 @@
 								</div>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-								<select @change="loadCitysHeadquarters" v-model="headquartersNormalize.department" type="text" required="required" class="form-control has-feedback-left">
-=======
 								<select @change="loadCitysHeadquarters" v-model="headquartersNormalize.department" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<option value="">Elija un departamento...</option>
 									<option v-for="(item, index_item) in options.geo_departments" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
 								<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-								<select v-model="headquartersNormalize.city" type="text" required="required" class="form-control has-feedback-left">
-=======
 								<select v-model="headquartersNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<option value="">Elija una ciudad...</option>
 									<option v-for="(item, index_item) in options.geo_citys" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
@@ -1751,11 +1619,7 @@
 								</div>
 
 								<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-									<input type="text" v-model="form.names" class="form-control has-feedback-left" required="required" :placeholder="(form.type == 1) ? 'Nombre(s)' : 'Razon social' + '(*)'" />
-=======
 									<input type="text" v-model="form.names" class="form-control has-feedback-left" id="inputSuccess2" required="required" :placeholder="(form.type == 1) ? 'Nombre(s)' : 'Razon social' + '(*)'" />
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 								</div>
 
@@ -1876,22 +1740,14 @@
 						<form class="form" action="javascript:false;" v-on:submit="NormalizeAddressesModal" method="post">
 
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-								<select @change="loadCitys" v-model="addressNormalize.department" type="text" required="required" class="form-control has-feedback-left">
-=======
 								<select @change="loadCitys" v-model="addressNormalize.department" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<option value="">Elija un departamento...</option>
 									<option v-for="(item, index_item) in options.geo_departments" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
 								<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-<<<<<<< HEAD
-								<select v-model="addressNormalize.city" type="text" required="required" class="form-control has-feedback-left">
-=======
 								<select v-model="addressNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 									<option value="">Elija una ciudad...</option>
 									<option v-for="(item, index_item) in options.geo_citys" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
@@ -3052,10 +2908,6 @@ var View = Vue.extend({
 						//.append($('<h3></h3>').append('# ' + contract.id))
 				);
 				
-<<<<<<< HEAD
-=======
-			
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 				bootbox.dialog({
 					title: "Creacion rapida de contratos",
 					message: $htmlBox.html(),
@@ -3790,10 +3642,6 @@ var View = Vue.extend({
 					'requests,users',
 				]
 			}, (a) => {
-<<<<<<< HEAD
-				console.log('a', a);
-=======
->>>>>>> 312f2d57aef84e5794c0f96a23eb0f0431f2f589
 				if(a.id){
 					self.record = a;
 					

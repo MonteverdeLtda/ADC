@@ -107,7 +107,7 @@ var appNotifications = new Vue({
 				if(date.isValid()){
 					totalDays = moment().diff(date, 'minutes');
 					if(totalDays >= 5){
-						loadSyncNots();
+						self.loadSyncNots();
 					}
 				} else {
 					self.loadSyncNots();
@@ -157,12 +157,14 @@ var appNotifications = new Vue({
 							id: b.id,
 							body: $messageTxt,
 							data: b,
-						}).onclick = function(event) {
+						});
+						/*.onclick = function(event) {
 							window.open('<?= $this->urlServer(); ?>');
-						};
+						}*/
 					}
 				});
-				localStorage.lastNotificationMV = new Date();
+				localStorage.lastNotificationMV = moment();
+				setTimeout(self.loadSyncNots, 300000); // 300000 == 5 Minutos || 1Min = 60000 || 1Seg = 1000
 			});
 		},
 		addToTask: function(){

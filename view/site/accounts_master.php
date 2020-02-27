@@ -234,6 +234,7 @@
 															<input type="text" class="form-control" v-model="record.names" required="true" />
 														</div>
 													</div>
+													
 													<div class="col-sm-6">
 														<div class="form-group">
 															<label class="control-label">Apellidos</label>
@@ -322,6 +323,13 @@
 														<span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
 														<input type="text" class="form-control" v-model="record.address" required="true" />
 													</div>
+												</div>
+												<div class="col-sm-12">
+													<label class="control-label">Grupo de notificaciones</label>
+													<select class="form-control select2_single2" v-model="record.notifications_group" data-options="notifications_groups" data-model="type" required="true">
+														<option value="0">Seleccione una opcion</option>
+														<option v-for="(item, index_item) in options.notifications_groups" :key="item.id" :value="item.id">{{ item.name }}</option>
+													</select>
 												</div>
 											
 											</div>
@@ -2693,6 +2701,7 @@ var View = Vue.extend({
 				geo_types_vias: [],
 				geo_types_quadrants: [],
 				contacts_types: [],
+				notifications_groups: [],
 			},
 			record: {
 				id: this.$route.params.account_id,
@@ -2705,6 +2714,7 @@ var View = Vue.extend({
 				email: '',
 				phone: '',
 				mobile: '',
+				notifications_group: 0,
 				gender: null,
 				address: 0,
 				update_by: <?= $this->user->id; ?>,
@@ -3615,8 +3625,12 @@ var View = Vue.extend({
 									MV.api.readList('/contacts_types', {}, (a) => {
 										self.options.contacts_types = a;
 										
-										self.load();
-										
+										MV.api.readList('/notifications_groups', {}, (a) => {
+											self.options.notifications_groups = a;
+											
+											self.load();
+											
+										});
 									});
 								});
 							});

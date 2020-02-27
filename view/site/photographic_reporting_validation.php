@@ -35,7 +35,7 @@
 	margin-left: -50px;
 }
 
-.tinder_love .fa-heart {
+.tinder_love .fa-check {
 	opacity: 0.7;
 	transform: scale(1);
 }
@@ -127,8 +127,8 @@
   vertical-align: middle;
 }
 
-.fa-heart {
-  color: #FFACE4;
+.fa-check {
+  color: #6ba74c;
 }
 
 .fa-remove {
@@ -146,7 +146,7 @@
 				<div class="tinder col-md-12">
 					<div class="tinder--status">
 						<i class="fa fa-remove"></i>
-						<i class="fa fa-heart"></i>
+						<i class="fa fa-check"></i>
 					</div>
 					<div class="tinder--cards col-md-12">
 						<div v-for="(record, record_i) in records" class="tinder--card" :id="record.id">
@@ -164,7 +164,7 @@
 					<div class="tinder--buttons col-md-12">
 						<button @click="declineReport" id="nope"> <i class="fa fa-remove"></i></button>
 						<button id="popup" data-toggle="modal" data-target=".bs-example-modal-sm"><i class="fa fa-info"></i></button>
-						<button @click="aprobeReport" id="love"><i class="fa fa-heart"></i></button>
+						<button @click="aprobeReport" id="love"><i class="fa fa-check"></i></button>
 					</div>
 				</div>
 			</div>

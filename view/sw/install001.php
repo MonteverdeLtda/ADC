@@ -5,7 +5,7 @@ self.addEventListener('install', function(event) {
 	if (self.skipWaiting) { self.skipWaiting(); }
 	event.waitUntil(
 		caches.open(
-			'cacheMVLTDA-' + new Date().getFullYear()+new Date().getMonth()+new Date().getDate()
+			'cacheMVLTDA_00001'
 		).then(function(cache) {
 			
 			return cache.addAll([
@@ -30,7 +30,8 @@ caches.keys().then(function(cacheKeys) {
 });
 
 // Elimina archivos de cache viejos
-var cacheWhitelist = ['cacheMVLTDA-' + new Date().getFullYear()+new Date().getMonth()+new Date().getDate()]; // 
+// var cacheWhitelist = ['cacheMVLTDA-' + new Date().getFullYear()+new Date().getMonth()+new Date().getDate()]; // 
+var cacheWhitelist = ['cacheMVLTDA_00001']; // 
 caches.keys().then(function(cacheNames) {
 	return Promise.all(
 		cacheNames.map(function(cacheName) {

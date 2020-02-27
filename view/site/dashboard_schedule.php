@@ -595,7 +595,7 @@ var Home = Vue.extend({
 			a.start = moment(a.date_executed_schedule);
 			a.end = moment(a.date_executed_schedule_end);
 			totalDays = a.start.diff(moment(), 'days');
-			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.is_executed == 1 ? 'blue' : a.in_novelty == 1 ? 'purple' : 'gray');
+			return 'color bg-' + ((a.is_executed == 0 && totalDays < -1) ? 'red' : a.is_approved == 1 ? 'green' : a.in_novelty == 1 ? 'purple' : a.is_executed == 1 ? 'blue' : 'gray');
 		},
 		
 		createNotification(data, callb){

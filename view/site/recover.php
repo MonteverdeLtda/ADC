@@ -57,8 +57,7 @@
 					<div class="clearfix"></div>
 					<div class="separator">
 						<p class="change_link"> 
-							nuevo en el sitio? <a href="#signup" class="to_register"> Crear una cuenta </a>
-							<br> <a href="#" class="to_register"> Restablecer Contraseña </a>
+							¿Ya tienes cuenta? <a href="<?= linkRoute('site', 'login'); ?>" class="to_register"> Ingresar </a>
 						</p>
 						<div class="clearfix"></div>
 						<br />

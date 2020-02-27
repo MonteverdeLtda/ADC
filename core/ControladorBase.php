@@ -175,14 +175,18 @@ class ControladorBase {
 	}
 	
     public function render($vista, $datos, $layout=null){
+		$vistaFolder = is_array($vista) && isset($vista[1]) ? $vista[1] : "view/{$this->getController()}";
+		$vista = is_array($vista) ? $vista[0] : "{$vista}";
+		
+		
 		$layout = !isset($layout) || $layout == null ? $this->theme['default'] : $layout;
 		$datos["title"] = !isset($datos["title"]) ? "Titulo de la página" : $datos["title"];
 		
-		$this->view("layouts/{$layout}", [
+		$this->view("view/layouts/{$layout}", [
 			"title" => $datos["title"],
 			"description" => [
 				// "vista" => $vista, 
-				"vista" => "{$this->getController()}/{$vista}", 
+				"vista" => "{$vistaFolder}/{$vista}", 
 				"datos" => $datos
 			]
 		]);
@@ -197,7 +201,7 @@ class ControladorBase {
         $helper=new AyudaVistas();
     
         //require_once "view/{$vista}.php";
-        require_once "view/{$vista}.php";
+        require_once "{$vista}.php";
     }
 	
 	public function getView($description){
@@ -312,8 +316,14 @@ EOF;
 					exit();
 				}
 			}
+		
+			$view = [];
+			$view[0] = $modelNode->view;
+			if($modelNode->type == 'system'){
+				$view[1] = dirname(dirname(__FILE__) . '/../') . '/view/system/';
+			};
 			
-			$this->render($modelNode->view, 
+			$this->render($view, 
 				[
 				"title"=> $modelNode->title,
 				

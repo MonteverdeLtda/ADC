@@ -1,15 +1,19 @@
 Options +Indexes
+Options +FollowSymLinks
 
 RewriteEngine On 
 
 RewriteCond %{SERVER_PORT} 80 
 RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R,L]
 
+RewriteRule ^ayudaysoporte$ https://%{SERVER_NAME}/ayudaysoporte/ [R,L,QSA]
+RewriteRule ^ayudaysoporte/(.*)$ /core/integrations/hesk/$1 [QSA,L]
 
-Options +FollowSymLinks
+RewriteCond %{REQUEST_FILENAME} !-f 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^integrations/(.*)$ core/integrations/$1 [QSA,L]
 
-RewriteRule ^integrations/(.*)$ core/integrations/$1 [L]
-
+#RewriteRule ^core/integrations/(.*)$ https://%{SERVER_NAME}/integrations/$1 [L]
 
 
 RewriteBase /

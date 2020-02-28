@@ -388,13 +388,27 @@
 
 
 <script>
-var access_token = 'a7e4b7bd46dcd75f8f71da9e8b002ce0'
-/*
+var access_token = 'a7e4b7bd46dcd75f8f71da9e8b002ce0';
 var request = new XMLHttpRequest();
-var url = 'https://help.dataservix.com/api/index.php/v1/tickets?trackingId=XSN-HWB-3EX8&email=andrea.higuita@monteverdeltda.com';
+var url = '/ayudaysoporte/api/index.php/v1/tickets?trackingId=XSN-HWB-3EX8&email=andrea.higuita@monteverdeltda.com';
 request.open('GET', url, true);
 request.setRequestHeader("Authorization", "Bearer " + access_token);
-request.send();*/
+request.send();
+
+/*
+var access_token = 'a7e4b7bd46dcd75f8f71da9e8b002ce0';
+var request = new XMLHttpRequest();
+var url = '/ayudaysoporte/api/index.php/v1/tickets?trackingId=XSN-HWB-3EX8&email=andrea.higuita@monteverdeltda.com';
+request.open('GET', url, true);
+request.setRequestHeader("Authorization", "Bearer " + access_token);
+request.send();
+*/
+var access_token = 'a7e4b7bd46dcd75f8f71da9e8b002ce0';
+var request = new XMLHttpRequest();
+var url = '/ayudaysoporte/api/index.php/v1/tickets?trackingId=XSN-HWB-3EX8&email=andrea.higuita@monteverdeltda.com';
+request.open('GET', url, true);
+// request.setRequestHeader("Authorization", "Bearer " + access_token);
+request.send();
 
 const apiTickets = axios.create({
 	baseURL: 'https://help.dataservix.com',

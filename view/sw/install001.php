@@ -1,4 +1,6 @@
-<?php header('Content-Type: text/javascript'); ?>
+<?php header('Content-Type: text/javascript'); 
+/*
+?>
 
 self.addEventListener('install', function(event) {
 	// Instalar de inmediato
@@ -7,7 +9,6 @@ self.addEventListener('install', function(event) {
 		caches.open(
 			'cacheMVLTDA_00001'
 		).then(function(cache) {
-			
 			return cache.addAll([
 				'/favicon.ico',
 			]);
@@ -31,7 +32,7 @@ caches.keys().then(function(cacheKeys) {
 
 // Elimina archivos de cache viejos
 // var cacheWhitelist = ['cacheMVLTDA-' + new Date().getFullYear()+new Date().getMonth()+new Date().getDate()]; // 
-var cacheWhitelist = ['cacheMVLTDA_00001']; // 
+var cacheWhitelist = []; // 
 caches.keys().then(function(cacheNames) {
 	return Promise.all(
 		cacheNames.map(function(cacheName) {
@@ -41,20 +42,4 @@ caches.keys().then(function(cacheNames) {
 		})
 	);
 });
-
-self.addEventListener('notificationSync', function(e) {
-	consola.log('notificationSync');
-});
-
-self.addEventListener('notificationclick', function(e) {
-  var notification = e.notification;
-  var primaryKey = notification.data.primaryKey;
-  var action = e.action;
-
-  if (action === 'close') {
-    notification.close();
-  } else {
-    clients.openWindow('http://www.example.com');
-    notification.close();
-  }
-});
+*/

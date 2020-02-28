@@ -7,68 +7,47 @@
 <link rel="icon" sizes="224x224" href="/favicon.ico">
 <meta name="theme-color" content="#6ba74c">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<script src='/public/assets/build/js/apiFG.js?updd=<?= date("Ymd") ?>'></script>
 <link rel="manifest" href="/public/assets/manifest.json">
+<script src='/public/assets/build/js/apiFG.js?updd=<?= date("Ymd") ?>'></script>
 <!-- <script src='/public/assets/build/js/apiFG.js'></script> -->
 <script>
+function initialiseState(reg){
+	if(reg.active) {
+		console.log('Trabajadora de servicio activo');
+		console.log('Reg: ', reg);
+	}
+};
 
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', function() {
 		navigator.serviceWorker.register('/?controller=sw&action=service_worker').then(function(registration) {
 			// Registration was successful
-			console.log('ServiceWorker registration successful with scope: ', registration.scope);
+			if(registration.installing) {
+				console.log('Service worker installing');
+			} else if(registration.waiting) {
+				console.log('Service worker installed');
+			} else if(registration.active) {
+				console.log('Service worker active');
+			}
+			
+			initialiseState(registration);
 		}, function(err) {
 			// registration failed :(
 			console.log('ServiceWorker registration failed: ', err);
 		});
 	});
-}
 
-/*
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-	//navigator.serviceWorker.register('/?controller=sw&action=service_worker&updd=' + Math.random())
-	navigator.serviceWorker.register('/?controller=sw&action=service_worker')
-  });
-}*/
-	/*
-	let deferredPrompt;
+	window.addEventListener('notificationclick', function(e) {
+	  var notification = e.notification;
+	  var primaryKey = notification.data.primaryKey;
+	  var action = e.action;
 
-	window.addEventListener('beforeinstallprompt', (e) => {
-	  // Prevent Chrome 67 and earlier from automatically showing the prompt
-	  e.preventDefault();
-	  // Stash the event so it can be triggered later.
-	  deferredPrompt = e;
+	  if (action === 'close') {
+		notification.close();
+	  } else {
+		clients.openWindow('http://www.example.com');
+		notification.close();
+	  }
 	});
-
-	if ('serviceWorker' in navigator) {
-	  window.addEventListener('load', function() {
-		navigator.serviceWorker.register('/sw.js').then(function(registration) {
-		  // Registration was successful
-		  console.log('ServiceWorker registration successful with scope: ', registration.scope);
-		}, function(err) {
-		  // registration failed :(
-		  console.log('ServiceWorker registration failed: ', err);
-		});
-
-		  // Independent of the registration, let's also display
-		  // information about whether the current page is controlled
-		  // by an existing service worker, and when that
-		  // controller changes.
-
-		  // First, do a one-off check if there's currently a
-		  // service worker in control.
-		  if (navigator.serviceWorker.controller) {
-			console.log('This page is currently controlled by:', navigator.serviceWorker.controller);
-		  }
-
-		  // Then, register a handler to detect when a new or
-		  // updated service worker takes control.
-		  navigator.serviceWorker.oncontrollerchange = function() {
-			console.log('This page is now controlled by:', navigator.serviceWorker.controller);
-		  };
-	  });
-	}
-
-	*/
+}
 </script>

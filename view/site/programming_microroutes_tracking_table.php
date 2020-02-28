@@ -37,80 +37,48 @@
 
 <template id="list">
 	<div>
-		<div class="row">
-			<div class="col-xs-12" v-for="(group, group_i) in groups">
-				<div class="x_panel">
-					<div class="x_title">
-						<h2>{{ group.name }} <small>( {{ group.schedules.length }} )</small></h2>
-						<div class="clearfix"></div>
-					</div>
-					<div class="x_content">
-					
-						<div class="table-responsive">
-							
-								<table class="table table-bordered">
-									<thead>
-										<tr>
-											<th></th>
-											<th>Microruta</th>
-											<th>Lote</th>
-											<th>F. Inicio</th>
-											<th>F. Fin</th>
-											<th>F. Area</th>
-											<th>Fotos Req.</th>
-											<th>Fotos Ant.</th>
-											<th>Proc Ant.</th>
-											<th>Fotos Desp.</th>
-											<th>Proc Desp.</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.classText">
-											<td>{{ schedule.id }}</td>
-											<td>{{ schedule.microroute.name }}</td>
-											<td>{{ schedule.microroute.id_ref }}</td>
-											<td>{{ schedule.date_executed_schedule }}</td>
-											<td>{{ schedule.date_executed_schedule_end }}</td>
-											<td>{{ schedule.microroute.area_m2 }}</td>
-											<td>{{ schedule.photosReq }}</td>
-											<td :class="schedule.activeColors == true ? (schedule.totals['A'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["A"].approved }}</td>
-											<td>
-												<ul v-if="schedule.activeColors == true" class="list-inline prod_color">
-													<li><div :title="schedule.porcCurA + '%'" :class="'color bg-' + (schedule.porcCurA >= 100 ? 'green' : schedule.porcCurA >= 50 ? 'orange' : 'red')"></div></li>
-												</ul>
-											</td>
-											<td :class="schedule.activeColors == true ? (schedule.totals['D'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["D"].approved }}</td>
-											<td>
-												<ul v-if="schedule.activeColors == true" class="list-inline prod_color">
-													<li><div :title="schedule.porcCurD + '%'" :class="'color bg-' + (schedule.porcCurD >= 100 ? 'green' : schedule.porcCurD >= 50 ? 'orange' : 'red')"></div></li>
-												</ul>
-											</td>
-											<td>
-												<a @click="scheduleToExecuted(schedule, schedule.group.group_notification)" class="btn btn-primary btn-xs send-to-executed" data-schedule="' + schedule.id + '" data-group_notificacions="' + schedule.group.group_notification + '">
-													<i class="fa fa-bullhorn"></i> Cambiar a Ejecutado
-												</a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							
-						</div>
-						
-					</div>
-				</div>
-			</div>
-		</div>
-		
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="x_panel">
 				<div class="x_title">
 					<h2>Listado Completo <small>({{ total }})</small></h2>
+					<!-- // 
+					<ul class="nav navbar-right panel_toolbox">
+						<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="#">Settings 1</a></li>
+								<li><a href="#">Settings 2</a></li>
+							</ul>
+						</li>
+						<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+					</ul>
+					-->
 					<div class="clearfix"></div>
 				</div>
 				<div class="x_content">
 					<div class="row">
-					
+						<div class="col-md-12 col-sm-12 col-xs-12">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Periodo</label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<select @change="load" v-model="filter.period" class="select2_single form-control" tabindex="-1">
+										<option value="0">Seleccione una opcion</option>
+										<option v-for="(option, i_option) in options.periods" :value="option.id">{{ option.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Año <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input @change="load" v-model="filter.year" id="birthday" class="date-picker form-control col-md-7 col-xs-12" min="2018" required="required" type="number">
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<div class="ln_solid"></div>
+							<div class="clearfix"></div>
+						</div>
 						<div class="col-md-12 col-sm-12 col-xs-12" style="zoom:0.8;">
 							<div class="x_content">
 								<table class="table table-striped table-bordered projects">
@@ -208,9 +176,7 @@
 </template>
 
 <script>
-	
-</script>
-<script>
+
 function FormException(error, aviso){
 	this.name = error;
 	this.message = aviso;
@@ -220,7 +186,7 @@ var List = Vue.extend({
 	template: '#list',
 	data(){
 		return {
-			baseAreaCalc_m2_photos: 0.000986,
+			baseAreaCalc_m2_photos: 0.0065,
 			minPhotosSpaceSmall: 8,
 			options: {
 				groups: [],
@@ -238,22 +204,16 @@ var List = Vue.extend({
 			calendar: null,
 			events: [],
 			modalGallery: [],
-			
-			
-			
-			groups: [],
-			dateStart: moment(),
-			dateEnd: moment(),
 		};
 	},
-	created() {
-		
-	},
-	mounted() {
+	created: function () {},
+	mounted: function () {
 		var self = this;
 		
 		self.loadOptions();
-		//$( "#menu_toggle" ).click(function(event){ self.load();  });
+		$( "#menu_toggle" ).click(function(event){
+			self.load();
+		});
 		
 		$( ".bs-gallery-photos-status-modal-lg" ).on('shown.bs.modal', function(event){
 			var subDialog = bootbox.dialog({
@@ -287,104 +247,14 @@ var List = Vue.extend({
 		});
 	},
 	methods: {
-		scheduleToExecuted(scheduleData, group_notificacions){
-			var self = this;
-			// console.log('schedule', scheduleData);
-			schedule = (scheduleData.id !== undefined) ? scheduleData.id : 0;
-			
-			
-			bootbox.confirm({
-				message: "Deseas cambiar a ejecutado?.",
-				locale: 'es',
-				buttons: {
-					confirm: {
-						label: 'Pasar a Ejecutado',
-						className: 'btn-success'
-					},
-					cancel: {
-						label: 'Cerrar',
-						className: 'btn-default'
-					}
-				},
-				callback: function (result) {
-					if(result === true){
-					
-						MV.api.readList('/notifications_groups_users', {
-							filter: [
-								'group,eq,' + group_notificacions
-							],
-						},function(IdsNots){
-							MV.api.update('/schedule/' + schedule, {
-								is_executed: 1,
-								is_approved: 0,
-								date_executed: moment().format('Y-MM-DD'),
-								time_executed: moment().format('HH:mm:ss'),
-								updated_by: <?= ($this->user->id); ?>
-							},function(xs){
-								self.createLogSchedule({
-									schedule: schedule,
-									action: 'event-executed',
-									data: {
-										is_executed: 1,
-										is_approved: 0,
-										date_executed: moment().format('Y-MM-DD'),
-										time_executed: moment().format('HH:mm:ss'),
-										updated_by: <?= ($this->user->id); ?>
-									},
-									response: xs,
-								}, function(w){
-									new PNotify({
-										"title": "¡Éxito!",
-										"text": "Actualizado con exito.",
-										"styling":"bootstrap3",
-										"type":"success",
-										"icon":true,
-										"animation":"zoom",
-										"hide":true
-									});
-									
-									MV.api.read('/schedule/' + schedule, {
-										join: [
-											'groups',
-											'periods',
-											'microroutes',
-										]
-									}, function(scheduleObj){
-										IdsNots.forEach(function(abc){
-											self.createNotification({
-												user: abc.user,
-												type: 'schedule-executed',
-												data: scheduleObj,
-											}, function(wsa){
-												console.log(wsa)
-												console.log('ID NOTIFICADO: ', abc.user);
-											});
-											
-										});
-										
-										indexGroup = self.groups.findIndex((z) => z.id == scheduleData.group.id);
-										if(indexGroup > -1){
-											indexSchedule = self.groups[indexGroup].schedules.findIndex((x) => x.id == scheduleData.id);
-											if(indexSchedule > -1){
-												self.groups[indexGroup].schedules.splice(indexSchedule, 1);
-											}
-										}
-										// self.load();
-									});
-								});
-							});
-						});
-					}
-				}
-			});
-			
-		},
 		progressHtml(total, color){
 			var self = this;
 			total = (total > 100) ? 100 : total;
 			$html = '';
 			try {
 				$html += '<div title="' + parseInt(total) + '" class="progress-bar progress-bar-striped progress-bar-animated bg-' + color + '" role="progressbar" data-transitiongoal="' + total + '" aria-valuenow="' + total + '" aria-valuemin="0" aria-valuemax="100" style="width: ' + total + '%;height: 17px;"></div>';
+				
+				//$html += '<div class="progress progress_sm"></div><small>' + parseInt(total) + '%</small>';
 				return $html;
 			} catch(e){
 				console.log(e);
@@ -659,10 +529,6 @@ var List = Vue.extend({
 						result = compareDate.isBetween(startDate, endDate);
 						if(result == true){
 							self.filter.period = x.id;
-							dateStart = moment(x.start + '/' + moment().format('YYYY'));
-							// console.log('dateStart', dateStart);
-							self.dateStart = startDate;
-							self.dateEnd = endDate;
 						}
 					}
 				});
@@ -678,18 +544,14 @@ var List = Vue.extend({
 			self.loading = true;
 			self.records = [];
 			self.total = 0;
+			window.scrollTo(0, 0);
 			
 			var dialog = bootbox.dialog({
 				message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Por favor espera mientras hacemos algo...</p>',
 				closeButton: false
 			});
 			
-			dateSt = self.dateStart.format('YYYY-MM-DD');
-			dataEn = self.dateEnd.subtract({ days: 1 }).format('YYYY-MM-DD');
-			// console.log('Filtro inicio. ', dateSt);
-			// console.log('Filtro fin. ', dataEn);
-			
-			MV.api.readList('/schedule', {
+			api.get('/records/schedule', { params: {
 				join: [
 					'microroutes',
 					'microroutes,groups',
@@ -700,223 +562,158 @@ var List = Vue.extend({
 				],
 				filter: [
 					'period,eq,' + self.filter.period,
-					'year,eq,' + self.filter.year,
-					'is_executed,in,0',
-					// 'date_executed_schedule,ge,' + ,
-					'date_executed_schedule,ge,' + dateSt,
-					'date_executed_schedule_end,le,' + dataEn,
-				],
-				order: 'group,asc'
-			}, (a) => {
-				dialog.modal('hide');
-				self.total = a.length;
-				self.records = a;
-				dialog.modal('hide');
-				// console.log('a', a);
-				
-				a.forEach((b) => {
-					b_i = self.groups.findIndex((z) => z.id == b.group.id);
-					// console.log(b_i);
-					if(b_i > -1){
-						// self.groups[b_i].schedules.push(b);
-					} 
-					else {
-						MeSchedules = [];
-						self.groups.push({
-							id: b.group.id,
-							name: b.group.name,
-							group_notification: b.group.group_notification,
-							schedules: []
-						});
-						
-					}
-					b_i = self.groups.findIndex((z) => z.id == b.group.id);
-					if(b_i > -1){
-						var totalAntesPendientes = 0;
-						var totalDespuesPendientes = 0;
-						var totalAntesAprobadas = 0;
-						var totalDespuesAprobadas = 0;
-						var totalAntesDeclinadas = 0;
-						var totalDespuesDeclinadas = 0;
-						var totalProg = 0;
-						var photosReq = (parseInt(parseFloat(b.microroute.area_m2) * self.baseAreaCalc_m2_photos) < self.minPhotosSpaceSmall) ? self.minPhotosSpaceSmall : parseInt(parseFloat(b.microroute.area_m2) * self.baseAreaCalc_m2_photos);
-						b.photosReq = photosReq;
-						
-						b.reports_photographic.forEach(function(c){
-							sumaAp = (c.type.toUpperCase() == 'A' && c.status == 0) ? 1 : 0;
-							sumaAa = (c.type.toUpperCase() == 'A' && c.status == 1) ? 1 : 0;
-							sumaAd = (c.type.toUpperCase() == 'A' && c.status == 2) ? 1 : 0;
-							sumaDp = (c.type.toUpperCase() == 'D' && c.status == 0) ? 1 : 0;
-							sumaDa = (c.type.toUpperCase() == 'D' && c.status == 1) ? 1 : 0;
-							sumaDd = (c.type.toUpperCase() == 'D' && c.status == 2) ? 1 : 0;
+					'year,eq,' + self.filter.year
+				]
+			} }).then(function (ra) {
+				if(ra.status === 200){
+					self.total = ra.data.records.length;
+					self.records = [];
+					dialog.modal('hide');
+					self.dataTable = $('.projects')
+						.DataTable({
+							destroy: true,
+							//responsive: true,
+							dom: "Blfrtip",
+							buttons: [ { extend: "copy", className: "btn-sm" }, { extend: "csv", className: "btn-sm" }, { extend: "excel", className: "btn-sm" }, { extend: "pdfHtml5", className: "btn-sm" }, { extend: "print", className: "btn-sm" }, ],
+							language: { "url": "/public/assets/build/js/lang-datatable.json" },
+							// data: self.records,
+							fixedHeader: true,
+							data: ra.data.records.map(function(a){
+								return self.jsonEvent(a);
+							}),
+							rowReorder: true,
+							/*
+							"columnDefs": [
+								{ responsivePriority: 1, targets: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] },
+								{ responsivePriority: 2, targets: [] }
+							],*/
+							columns: [
+								{ title: "#" },
+								{ title: "Microruta" },
+								{ title: "Lote" },
+								{ title: "Cuadrilla" },
+								{ title: "Fec. Inicio" },
+								{ title: "Fec. Fin" },
+								{ title: "Area m2" },
+								{ title: "Req." },
+								{ title: "% Ant." },
+								{ title: "Proceso Ant." },
+								{ title: "F. Ant" },
+								{ title: "% Desp." },
+								{ title: "Proceso Desp." },
+								{ title: "T. Desp" },
+								{ title: "Acciones" },
+								// { title: "Direccion(es)" },
+								// { title: "Obs." },
+								// { title: "Descripcion" },
+							],
+							initComplete: function( settings, json ) {
+								//self.loadEvents();
+								var apiTables = this.api();
+								
+							}
+						}).on( 'order.dt', function () {
 
-							totalAntesPendientes += sumaAp;
-							totalDespuesPendientes += sumaDp;
-							totalAntesAprobadas += sumaAa;
-							totalDespuesAprobadas += sumaDa;
-							totalAntesDeclinadas += sumaAd;
-							totalDespuesDeclinadas += sumaDd;
-						});
-						var porcCurA = ((totalAntesAprobadas * 100) / photosReq);
-						//var porcColorA = (porcCurA <= 49) ? 'gray' : (porcCurA <= 65) ? 'red' : (porcCurA < 100) ? 'orange' : 'green'; // 4 Colores
-						var porcColorA = (porcCurA >= 100) ? 'green' : (porcCurA >= 50) ? 'orange' : 'red'; // 3 Colores
-						
-						var porcCurD = ((totalDespuesAprobadas * 100) / photosReq);
-						//var porcColorD = (porcCurD <= 49) ? 'gray' : (porcCurD <= 65) ? 'red' : (porcCurD < 100) ? 'orange' : 'green'; // 4 Colores
-						var porcColorD = (porcCurD >= 100) ? 'green' : (porcCurD >= 50) ? 'orange' : 'red'; // 3 Colores
-						
-						b.porcCurA = porcCurA;
-						b.porcCurD = porcCurD;
-						b.totals = {
-							"A": {
-								pending: totalAntesPendientes,
-								approved: totalAntesAprobadas,
-								declined: totalAntesDeclinadas,
-							},
-							"D": {
-								pending: totalDespuesPendientes,
-								approved: totalDespuesAprobadas,
-								declined: totalDespuesDeclinadas,
-							},
-						};
-						
-						totalDays = moment(b.date_executed_schedule).diff(moment(), 'days');
-						// b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? 'danger' : b.is_approved == 1 ? 'success' : b.in_novelty == 1 ? 'secondary' : b.is_executed == 1 ? 'primary' : 'default');
-						b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'success' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'warning' : 'danger') : (b.is_executed == 0 && totalDays < 0) ? 'info' : 'default');
-						b.activeColors = (b.is_executed == 0 && totalDays < 0) ? true : false;
-						
-
-						self.groups[b_i].schedules.push(b);
-					}
-					
-				});
-				
-				self.dataTable = $('.projects')
-					.DataTable({
-						destroy: true,
-						//responsive: true,
-						dom: "Blfrtip",
-						buttons: [ { extend: "copy", className: "btn-sm" }, { extend: "csv", className: "btn-sm" }, { extend: "excel", className: "btn-sm" }, { extend: "pdfHtml5", className: "btn-sm" }, { extend: "print", className: "btn-sm" }, ],
-						language: { "url": "/public/assets/build/js/lang-datatable.json" },
-						// data: self.records,
-						fixedHeader: true,
-						data: a.map(function(v){ return self.jsonEvent(v); }),
-						rowReorder: true,
-						columns: [
-							{ title: "#" },
-							{ title: "Microruta" },
-							{ title: "Lote" },
-							{ title: "Cuadrilla" },
-							{ title: "Fec. Inicio" },
-							{ title: "Fec. Fin" },
-							{ title: "Area m2" },
-							{ title: "Req." },
-							{ title: "% Ant." },
-							{ title: "Proceso Ant." },
-							{ title: "F. Ant" },
-							{ title: "% Desp." },
-							{ title: "Proceso Desp." },
-							{ title: "T. Desp" },
-							{ title: "Acciones" },
-						],
-						initComplete: function( settings, json ) {
-							//self.loadEvents();
-							var apiTables = this.api();
-							
-						}
-					}).on( 'order.dt', function () {
-
-						$.each( $(".send-to-executed"), function(i,o) {
-							$(o).attr("onclick", "").unbind("click");
-							$(o).click(function(event){								
-								var schedule_obj = null;
-								var schedule = $(this).data('schedule');
-								var group_notificacions = $(this).data('group_notificacions');
-								if(schedule !== undefined && schedule > 0 && schedule !== undefined && schedule > 0){
-									bootbox.confirm({
-										message: "Deseas cambiar a ejecutado?.",
-										locale: 'es',
-										buttons: {
-											confirm: {
-												label: 'Pasar a Ejecutado',
-												className: 'btn-success'
+							$.each( $(".send-to-executed"), function(i,o) {
+								$(o).attr("onclick", "").unbind("click");
+								$(o).click(function(event){								
+									var schedule_obj = null;
+									var schedule = $(this).data('schedule');
+									var group_notificacions = $(this).data('group_notificacions');
+									if(schedule !== undefined && schedule > 0 && schedule !== undefined && schedule > 0){
+										bootbox.confirm({
+											message: "Deseas cambiar a ejecutado?.",
+											locale: 'es',
+											buttons: {
+												confirm: {
+													label: 'Pasar a Ejecutado',
+													className: 'btn-success'
+												},
+												cancel: {
+													label: 'Cerrar',
+													className: 'btn-default'
+												}
 											},
-											cancel: {
-												label: 'Cerrar',
-												className: 'btn-default'
-											}
-										},
-										callback: function (result) {
-											if(result === true){
-											
-												MV.api.readList('/notifications_groups_users', {
-													filter: [
-														'group,eq,' + group_notificacions
-													],
-												},function(IdsNots){
-													MV.api.update('/schedule/' + schedule, {
-														is_executed: 1,
-														is_approved: 0,
-														date_executed: moment().format('Y-MM-DD'),
-														time_executed: moment().format('HH:mm:ss'),
-														updated_by: <?= ($this->user->id); ?>
-													},function(xs){
-														self.createLogSchedule({
-															schedule: schedule,
-															action: 'event-executed',
-															data: {
-																is_executed: 1,
-																is_approved: 0,
-																date_executed: moment().format('Y-MM-DD'),
-																time_executed: moment().format('HH:mm:ss'),
-																updated_by: <?= ($this->user->id); ?>
-															},
-															response: xs,
-														}, function(w){
-															new PNotify({
-																"title": "¡Éxito!",
-																"text": "Actualizado con exito.",
-																"styling":"bootstrap3",
-																"type":"success",
-																"icon":true,
-																"animation":"zoom",
-																"hide":true
-															});
-															
-															MV.api.read('/schedule/' + schedule, {
-																join: [
-																	'groups',
-																	'periods',
-																	'microroutes',
-																]
-															}, function(scheduleObj){
-																IdsNots.forEach(function(abc){
-																	self.createNotification({
-																		user: abc.user,
-																		type: 'schedule-executed',
-																		data: scheduleObj,
-																	}, function(wsa){
-																		// console.log(wsa)
-																		console.log('ID NOTIFICADO: ', abc.user);
-																	});
+											callback: function (result) {
+												if(result === true){
+												
+													MV.api.readList('/notifications_groups_users', {
+														filter: [
+															'group,eq,' + group_notificacions
+														],
+													},function(IdsNots){
+														MV.api.update('/schedule/' + schedule, {
+															is_executed: 1,
+															is_approved: 0,
+															date_executed: moment().format('Y-MM-DD'),
+															time_executed: moment().format('HH:mm:ss'),
+															updated_by: <?= ($this->user->id); ?>
+														},function(xs){
+															self.createLogSchedule({
+																schedule: schedule,
+																action: 'event-executed',
+																data: {
+																	is_executed: 1,
+																	is_approved: 0,
+																	date_executed: moment().format('Y-MM-DD'),
+																	time_executed: moment().format('HH:mm:ss'),
+																	updated_by: <?= ($this->user->id); ?>
+																},
+																response: xs,
+															}, function(w){
+																new PNotify({
+																	"title": "¡Éxito!",
+																	"text": "Actualizado con exito.",
+																	"styling":"bootstrap3",
+																	"type":"success",
+																	"icon":true,
+																	"animation":"zoom",
+																	"hide":true
 																});
-															
-																self.load();
+																
+																MV.api.read('/schedule/' + schedule, {
+																	join: [
+																		'groups',
+																		'periods',
+																		'microroutes',
+																	]
+																}, function(scheduleObj){
+																	IdsNots.forEach(function(abc){
+																		self.createNotification({
+																			user: abc.user,
+																			type: 'schedule-executed',
+																			data: scheduleObj,
+																		}, function(wsa){
+																			console.log(wsa)
+																			console.log('ID NOTIFICADO: ', abc.user);
+																		});
+																	});
+																
+																	self.load();
+																});
 															});
 														});
 													});
-												});
+												}
 											}
-										}
-									});
-									
-								}
+										});
+										
+									}
+								});
 							});
+
+
+							
 						});
-						
-					});
+				} else {
+					alert("Ocurrio un error cargando la lista.");
+					console.log(a);
+				}
+			}).catch(function (error) {
+				console.error(error);
+				console.log(error);
+				self.loading = false;
 			});
-			
 		},
 	}
 });
@@ -934,6 +731,27 @@ app = new Vue({
 		return {};
 	},
 	methods: {
+		zfill(number, width) {
+			var numberOutput = Math.abs(number);
+			var length = number.toString().length;
+			var zero = "0";
+			if (width <= length) {
+				if (number < 0) { return ("-" + numberOutput.toString()); }
+				else { return numberOutput.toString(); }
+			} else {
+				if (number < 0) { return ("-" + (zero.repeat(width - length)) + numberOutput.toString()); }
+				else { return ((zero.repeat(width - length)) + numberOutput.toString()); }
+			}
+		},
+		formatMoney(number, decPlaces, decSep, thouSep) {
+			decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
+			decSep = typeof decSep === "undefined" ? "." : decSep;
+			thouSep = typeof thouSep === "undefined" ? "," : thouSep;
+			var sign = number < 0 ? "-" : "";
+			var i = String(parseInt(number = Math.abs(Number(number) || 0).toFixed(decPlaces)));
+			var j = (j = i.length) > 3 ? j % 3 : 0;
+			return sign + (j ? i.substr(0, j) + thouSep : "") + i.substr(j).replace(/(\decSep{3})(?=\decSep)/g, "$1" + thouSep) + (decPlaces ? decSep + Math.abs(number - i).toFixed(decPlaces).slice(2) : "");
+		},
 	}
 }).$mount('#emvarias-microroutes');
 </script>

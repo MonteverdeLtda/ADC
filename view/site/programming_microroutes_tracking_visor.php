@@ -17,6 +17,10 @@
 .modal {
 	overflow: auto !important;
 }
+
+.prod_color li {
+	margin: 0 -3px;
+}
 </style>
 
 
@@ -31,126 +35,81 @@
 	<div class="clearfix"></div>
 	
 	<div class="row">
-		<router-view :key="$route.fullPath" ></router-view>
-	</div>
-</div>
-
-<template id="list">
-	<div>
 		<div class="row">
-			<div class="col-xs-12" v-for="(group, group_i) in groups">
+			<div class="col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Consola rapida <small>( {{ records.length }} )</small></h2>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content" style="zoom: 0.8;">
+						<ul class="list-inline prod_color">
+							<li v-for="(record, record_i) in records">
+								<p></p>
+								<a :href="'#schedule-row-' + record.id"><div :title="record.microroute.name" data-toggle="tooltip" :class="'color ' + record.colorText"></div></a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-xs-6" v-for="(group, group_i) in groups">
 				<div class="x_panel">
 					<div class="x_title">
 						<h2>{{ group.name }} <small>( {{ group.schedules.length }} )</small></h2>
 						<div class="clearfix"></div>
 					</div>
-					<div class="x_content">
+					<div class="x_content" style="zoom: 0.8;">
 					
 						<div class="table-responsive">
 							
 								<table class="table table-bordered">
 									<thead>
 										<tr>
-											<th></th>
 											<th>Microruta</th>
 											<th>Lote</th>
+											<th>Proc Ant.</th>
+											<th>Proc Ant.</th>
 											<th>F. Inicio</th>
 											<th>F. Fin</th>
-											<th>F. Area</th>
-											<th>Fotos Req.</th>
 											<th>Fotos Ant.</th>
-											<th>Proc Ant.</th>
-											<th>Fotos Desp.</th>
-											<th>Proc Desp.</th>
-											<th></th>
+											<th>Fotos Ant.</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.classText">
-											<td>{{ schedule.id }}</td>
+										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.classText" :id="'schedule-row-' + schedule.id">
 											<td>{{ schedule.microroute.name }}</td>
 											<td>{{ schedule.microroute.id_ref }}</td>
-											<td>{{ schedule.date_executed_schedule }}</td>
-											<td>{{ schedule.date_executed_schedule_end }}</td>
-											<td>{{ schedule.microroute.area_m2 }}</td>
-											<td>{{ schedule.photosReq }}</td>
-											<td :class="schedule.activeColors == true ? (schedule.totals['A'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["A"].approved }}</td>
 											<td>
 												<ul v-if="schedule.activeColors == true" class="list-inline prod_color">
 													<li><div :title="schedule.porcCurA + '%'" :class="'color bg-' + (schedule.porcCurA >= 100 ? 'green' : schedule.porcCurA >= 50 ? 'orange' : 'red')"></div></li>
 												</ul>
 											</td>
-											<td :class="schedule.activeColors == true ? (schedule.totals['D'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["D"].approved }}</td>
 											<td>
 												<ul v-if="schedule.activeColors == true" class="list-inline prod_color">
 													<li><div :title="schedule.porcCurD + '%'" :class="'color bg-' + (schedule.porcCurD >= 100 ? 'green' : schedule.porcCurD >= 50 ? 'orange' : 'red')"></div></li>
 												</ul>
+												<!-- // 
+												
+													<div v-if="schedule.activeColors == true"
+														:title="schedule.totals['D'].approved + ' Fotos'" 
+														:class="'progress-bar progress-bar-striped progress-bar-animated bg-' + (schedule.porcCurD >= 100 ? 'green' : schedule.porcCurD >= 50 ? 'orange' : 'red')" 
+														role="progressbar" 
+														:data-transitiongoal="schedule.porcCurD" 
+														:aria-valuenow="schedule.porcCurD" 
+														aria-valuemin="0" aria-valuemax="100" :style="'width: ' + schedule.porcCurD + '%;height: 17px;'"></div>
+												-->
 											</td>
-											<td>
-												<a @click="scheduleToExecuted(schedule, schedule.group.group_notification)" class="btn btn-primary btn-xs send-to-executed" data-schedule="' + schedule.id + '" data-group_notificacions="' + schedule.group.group_notification + '">
-													<i class="fa fa-bullhorn"></i> Cambiar a Ejecutado
-												</a>
-											</td>
+											<td>{{ schedule.date_executed_schedule }}</td>
+											<td>{{ schedule.date_executed_schedule_end }}</td>
+											<td :class="schedule.activeColors == true ? (schedule.totals['A'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["A"].approved }}</td>
+											<td :class="schedule.activeColors == true ? (schedule.totals['D'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["D"].approved }}</td>
 										</tr>
 									</tbody>
 								</table>
 							
 						</div>
 						
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<div class="x_panel">
-				<div class="x_title">
-					<h2>Listado Completo <small>({{ total }})</small></h2>
-					<div class="clearfix"></div>
-				</div>
-				<div class="x_content">
-					<div class="row">
-					
-						<div class="col-md-12 col-sm-12 col-xs-12" style="zoom:0.8;">
-							<div class="x_content">
-								<table class="table table-striped table-bordered projects">
-									<!-- // 
-									<thead>
-										<tr>
-											<th style="width: 1%">#</th>
-											<th style="width: 20%">Microruta</th>
-											<th>Lote</th>
-											<th>Area</th>
-											<th>Direccion(es)</th>
-											<th>Cuadrilla</th>
-											<th>????</th>
-											<th>Proceso</th>
-											<th>Estado</th>
-											<th style="width: 20%">Acciones</th>
-										</tr>
-									</thead>
-									-->
-									<tbody>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col-md-12 col-sm-12 col-xs-12" style="zoom:0.8;">
-							<div class="x_content">	
-								<!-- // 
-								<p class="text-muted font-13 m-b-30">
-									The Buttons extension for DataTables provides a common set of options, API methods and styling to display buttons on a page that will interact with a DataTable. The core library provides the based framework upon which plug-ins can built.
-								</p>
-								-->
-								<table id="datatable-buttons2" class="table table-striped table-bordered"></table>
-								<div id="demo_info"></div>
-							</div>
-						</div>
-						<div class="col-md-12 col-sm-12 col-xs-12">
-							<div class="x_content">
-								<div id='calendar-box'></div>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -203,9 +162,8 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
-</template>
+</div>
 
 <script>
 	
@@ -216,8 +174,7 @@ function FormException(error, aviso){
 	this.message = aviso;
 };
 
-var List = Vue.extend({
-	template: '#list',
+app = new Vue({
 	data(){
 		return {
 			baseAreaCalc_m2_photos: 0.000986,
@@ -765,8 +722,10 @@ var List = Vue.extend({
 						//var porcColorD = (porcCurD <= 49) ? 'gray' : (porcCurD <= 65) ? 'red' : (porcCurD < 100) ? 'orange' : 'green'; // 4 Colores
 						var porcColorD = (porcCurD >= 100) ? 'green' : (porcCurD >= 50) ? 'orange' : 'red'; // 3 Colores
 						
-						b.porcCurA = porcCurA;
-						b.porcCurD = porcCurD;
+						b.porcCurA = porcCurA > 100 ? 100 : porcCurA;
+						b.porcCurD = porcCurD > 100 ? 100 : porcCurD;
+						
+						
 						b.totals = {
 							"A": {
 								pending: totalAntesPendientes,
@@ -783,6 +742,7 @@ var List = Vue.extend({
 						totalDays = moment(b.date_executed_schedule).diff(moment(), 'days');
 						// b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? 'danger' : b.is_approved == 1 ? 'success' : b.in_novelty == 1 ? 'secondary' : b.is_executed == 1 ? 'primary' : 'default');
 						b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'success' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'warning' : 'danger') : (b.is_executed == 0 && totalDays < 0) ? 'info' : 'default');
+						b.colorText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'green' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'orange' : 'red') : (b.is_executed == 0 && totalDays < 0) ? 'blue' : 'default');
 						b.activeColors = (b.is_executed == 0 && totalDays < 0) ? true : false;
 						
 
@@ -790,150 +750,9 @@ var List = Vue.extend({
 					}
 					
 				});
-				
-				self.dataTable = $('.projects')
-					.DataTable({
-						destroy: true,
-						//responsive: true,
-						dom: "Blfrtip",
-						buttons: [ { extend: "copy", className: "btn-sm" }, { extend: "csv", className: "btn-sm" }, { extend: "excel", className: "btn-sm" }, { extend: "pdfHtml5", className: "btn-sm" }, { extend: "print", className: "btn-sm" }, ],
-						language: { "url": "/public/assets/build/js/lang-datatable.json" },
-						// data: self.records,
-						fixedHeader: true,
-						data: a.map(function(v){ return self.jsonEvent(v); }),
-						rowReorder: true,
-						columns: [
-							{ title: "#" },
-							{ title: "Microruta" },
-							{ title: "Lote" },
-							{ title: "Cuadrilla" },
-							{ title: "Fec. Inicio" },
-							{ title: "Fec. Fin" },
-							{ title: "Area m2" },
-							{ title: "Req." },
-							{ title: "% Ant." },
-							{ title: "Proceso Ant." },
-							{ title: "F. Ant" },
-							{ title: "% Desp." },
-							{ title: "Proceso Desp." },
-							{ title: "T. Desp" },
-							{ title: "Acciones" },
-						],
-						initComplete: function( settings, json ) {
-							//self.loadEvents();
-							var apiTables = this.api();
-							
-						}
-					}).on( 'order.dt', function () {
-
-						$.each( $(".send-to-executed"), function(i,o) {
-							$(o).attr("onclick", "").unbind("click");
-							$(o).click(function(event){								
-								var schedule_obj = null;
-								var schedule = $(this).data('schedule');
-								var group_notificacions = $(this).data('group_notificacions');
-								if(schedule !== undefined && schedule > 0 && schedule !== undefined && schedule > 0){
-									bootbox.confirm({
-										message: "Deseas cambiar a ejecutado?.",
-										locale: 'es',
-										buttons: {
-											confirm: {
-												label: 'Pasar a Ejecutado',
-												className: 'btn-success'
-											},
-											cancel: {
-												label: 'Cerrar',
-												className: 'btn-default'
-											}
-										},
-										callback: function (result) {
-											if(result === true){
-											
-												MV.api.readList('/notifications_groups_users', {
-													filter: [
-														'group,eq,' + group_notificacions
-													],
-												},function(IdsNots){
-													MV.api.update('/schedule/' + schedule, {
-														is_executed: 1,
-														is_approved: 0,
-														date_executed: moment().format('Y-MM-DD'),
-														time_executed: moment().format('HH:mm:ss'),
-														updated_by: <?= ($this->user->id); ?>
-													},function(xs){
-														self.createLogSchedule({
-															schedule: schedule,
-															action: 'event-executed',
-															data: {
-																is_executed: 1,
-																is_approved: 0,
-																date_executed: moment().format('Y-MM-DD'),
-																time_executed: moment().format('HH:mm:ss'),
-																updated_by: <?= ($this->user->id); ?>
-															},
-															response: xs,
-														}, function(w){
-															new PNotify({
-																"title": "¡Éxito!",
-																"text": "Actualizado con exito.",
-																"styling":"bootstrap3",
-																"type":"success",
-																"icon":true,
-																"animation":"zoom",
-																"hide":true
-															});
-															
-															MV.api.read('/schedule/' + schedule, {
-																join: [
-																	'groups',
-																	'periods',
-																	'microroutes',
-																]
-															}, function(scheduleObj){
-																IdsNots.forEach(function(abc){
-																	self.createNotification({
-																		user: abc.user,
-																		type: 'schedule-executed',
-																		data: scheduleObj,
-																	}, function(wsa){
-																		// console.log(wsa)
-																		console.log('ID NOTIFICADO: ', abc.user);
-																	});
-																});
-															
-																self.load();
-															});
-														});
-													});
-												});
-											}
-										}
-									});
-									
-								}
-							});
-						});
-						
-					});
 			});
 			
 		},
-	}
-});
-
-var router = new VueRouter({
-	linkActiveClass: 'active',
-	routes:[
-		{ path: '/', component: List, name: 'Home' },
-	]
-});
-
-app = new Vue({
-	router: router,
-	data: function () {
-		return {};
-	},
-	methods: {
 	}
 }).$mount('#emvarias-microroutes');
 </script>

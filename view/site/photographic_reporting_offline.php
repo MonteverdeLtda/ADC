@@ -141,7 +141,7 @@
 								
 							</div>
 						</div>
-						<div class="dropzone1 hide"></div>
+						<div class="dropzone1 "></div>
 						<!-- // <form action="/file-upload" class="dropzone1" id="my-awesome-dropzone" method="post" enctype="multipart/form-data"> -->
 						<!-- // 
 						<form action="/file-upload" class="dropzone1" id="my-awesome-dropzone" method="post" enctype="multipart/form-data">
@@ -504,10 +504,6 @@ var app = new Vue({
 						this.options.url = self.urlForm;
 						console.log(this.options);
 					});
-					
-					
-
-
 				},
 				// acceptedFiles: 'image/*;capture=camera'
 				acceptedFiles: 'image/*'

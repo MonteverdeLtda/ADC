@@ -61,7 +61,7 @@ var appNotifications = new Vue({
 					url += "&lng=" + (self.geo.lng);
 					
 					//return url + "&type=";
-					console.log('url final: ', url);
+					// console.log('url final: ', url);
 				}
 				return url;
 			} catch(e){
@@ -118,7 +118,7 @@ var appNotifications = new Vue({
 		},
 		loadSyncNots(){
             var self = this;
-			console.log('loadSyncNots');
+			// console.log('loadSyncNots');
 			self.meNotificationsPendings(function(a){
 				(Array.isArray(a) === true ? a : []).forEach(function(b){
 					b.datajson = JSON.parse(b.datajson);
@@ -150,8 +150,8 @@ var appNotifications = new Vue({
 					}
 					
 					if($create == true){
-						console.log('title', $title);
-						console.log('messageTxt', $messageTxt);
+						// console.log('title', $title);
+						// console.log('messageTxt', $messageTxt);
 						
 						var notification = new Notification($title, {
 							id: b.id,
@@ -258,7 +258,7 @@ var appNotifications = new Vue({
 									label: "Subir todo",
 									className: 'btn-warning',
 									callback: function(){
-										console.log('Custom button clicked');
+										// console.log('Custom button clicked');
 										self.myDropzone.enqueueFiles(self.myDropzone.getFilesWithStatus(Dropzone.ADDED));
 										return false;
 									}
@@ -267,24 +267,24 @@ var appNotifications = new Vue({
 									label: "Marcar como leida",
 									className: 'btn-default',
 									callback: function(){
-										console.log('Custom OK clicked');
-											bootbox.confirm({
-												message: "Marcar notificacion como leida?.",
-												locale: 'es',
-												buttons: { confirm: { label: 'Marcar', }, },
-												callback: function (result) {
-													if(result === true){
-														MV.api.update('/notifications/' + dataNot.id, {
-															read: 1,
-															updated_by: <?= ($this->user->id); ?>
-														},function(xs){
-															eljQuery.remove();
-															$count.text(parseInt($count.text())-1);
-														});
-													}
+										// console.log('Custom OK clicked');
+										bootbox.confirm({
+											message: "Marcar notificacion como leida?.",
+											locale: 'es',
+											buttons: { confirm: { label: 'Marcar', }, },
+											callback: function (result) {
+												if(result === true){
+													MV.api.update('/notifications/' + dataNot.id, {
+														read: 1,
+														updated_by: <?= ($this->user->id); ?>
+													},function(xs){
+														eljQuery.remove();
+														$count.text(parseInt($count.text())-1);
+													});
 												}
-											});
-										
+											}
+										});
+									
 									}
 								},
 							}
@@ -307,20 +307,11 @@ var appNotifications = new Vue({
 								clickable: "#fileinput-button-modal-notifications", // Define the element that should be used as click trigger to select files.
 								init: function() {
 									this.on("processing", function(file) {
-										console.log('processing');
+										// console.log('processing');
 										this.options.url = self.urlFormSendFilePhotographicReport;
 									});
 								},
 								acceptedFiles: 'image/*'
-								/*onDropHandler(files) {      
-									  var file = files[0]
-									  const reader = new FileReader();
-									  reader.onload = (event) => {
-										console.log(event.target.result);
-									  };
-									  reader.readAsDataURL(file);
-								}
-								*/
 							});
 
 							myDropzone.on("error", function(file,errorMessage,xhr){

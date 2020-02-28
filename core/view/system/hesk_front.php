@@ -1,5 +1,5 @@
 <?php 
-	$url = 'https://areadeclientes.monteverdeltda.com/ayudaysoporte/admin/';
+	$url = 'https://areadeclientes.monteverdeltda.com/ayudaysoporte/';
 ?>
 
 <div class="row">

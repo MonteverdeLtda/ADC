@@ -101,9 +101,12 @@
 							echo PHPStrap\Util\Html::tag('div', '<br>' . PHPStrap\Util\Html::clearfix(), ['profile clearfix']);
 							
 							$sidebarItems = new Menus($this->adapter);
-							$sidebarItems->setPermissions($this->user->permissions->list);
+							if(isset($this->user->permissions) && isset($this->user->permissions->list)){
+								$sidebarItems->setPermissions($this->user->permissions->list);
+							} else {
+								$sidebarItems->setPermissions('');
+							}
 							$sidebarItems->getBySlug("sidebar");
-							// Sistema
 							
                             echo PHPStrap\Util\Html::tag('div', 
 								 $menu_section_emails

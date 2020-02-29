@@ -50,4 +50,12 @@ if ('serviceWorker' in navigator) {
 	  }
 	});
 }
+
+const apiTickets = MV.apiFG.create({
+	baseURL: '/core/integrations/hesk/api/index.php/v1',
+	// baseURL: '/ayudaysoporte/api/index.php/v1',
+	withCredentials: true
+});
+
+apiTickets.defaults.headers['X-Auth-Token'] = '<?= X_AUTH_TOKEN_API_HESK; ?>';
 </script>

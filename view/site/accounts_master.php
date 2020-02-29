@@ -304,9 +304,7 @@
 											</div>
 										</div>
 									</div>
-
-
-
+									
 									<hr />
 									<div class="card card-default">
 										<div class="card-header">
@@ -325,11 +323,29 @@
 													</div>
 												</div>
 												<div class="col-sm-12">
-													<label class="control-label">Grupo de notificaciones</label>
-													<select class="form-control select2_single2" v-model="record.notifications_group" data-options="notifications_groups" data-model="type" required="true">
-														<option value="0">Seleccione una opcion</option>
-														<option v-for="(item, index_item) in options.notifications_groups" :key="item.id" :value="item.id">{{ item.name }}</option>
-													</select>
+													<div class="form-group">
+														<label class="col-sm-3 control-label">Grupo de notificaciones</label>
+														<div class="col-sm-9">
+															<div class="input-group">
+																<select class="form-control select2_single2" v-model="record.notifications_group" data-options="notifications_groups" data-model="type" required="true">
+																	<option value="0">Seleccione una opcion</option>
+																	<option v-for="(item, index_item) in options.notifications_groups" :key="item.id" :value="item.id">{{ item.name }}</option>
+																</select>
+																<div class="input-group-btn">
+																	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action <span class="caret"></span></button>
+																	<ul class="dropdown-menu dropdown-menu-right" role="menu">
+																		<li><a @click="showGroupNotification">Ver Integrantes</a></li>
+																		<!-- //
+																		<li><a href="#">Another action</a></li>
+																		<li><a href="#">Something else here</a></li>
+																		<li class="divider"></li>
+																		<li><a href="#">Separated link</a></li>
+																		-->
+																	</ul>
+																</div>
+															</div>
+														</div>
+													</div>
 												</div>
 											
 											</div>
@@ -2871,6 +2887,59 @@ var View = Vue.extend({
 		self.loadOptions();
 	},
 	methods: {
+		showGroupNotification(){
+			var self = this;
+			MV.api.readSingle('/notifications_groups', self.record.notifications_group, {
+				join: ['notifications_groups_users,users']
+			}, (a) => {
+				if(a.id){
+					$htmlBox = $('<table></table>').attr('class', 'table table-bordered')
+						.append(
+							$('<tr></tr>').attr('class', 'col-sm-12')
+								.append(
+									$('<th></th>').append(
+										a.name
+									)
+								)
+						);
+						
+					a.notifications_groups_users.forEach((b) => {
+						$htmlBox.append(
+							$('<tr></tr>').attr('class', 'col-sm-12')
+								.append(
+									$('<td></td>').append(
+										b.user.username
+									)
+								)
+						)						
+					});
+						
+					bootbox.dialog({
+						title: "Viendo grupode notificaciones # " + a.id,
+						message: $htmlBox.html(),
+						location: 'es',
+						closeButton: true,
+						buttons: {
+							noclose: {
+								label: "Crear",
+								className: 'btn-primary',
+								callback: function(){
+									console.log('Custom cancel clicked');
+									return false;
+								}
+							},
+							cancel: {
+								label: "Cerrar",
+								className: 'btn-default',
+								callback: function(){
+									console.log('Custom cancel clicked');
+								}
+							},
+						}
+					});
+				}
+			});
+		},
 		loadContractInModal(contract){
 			var self = this;
 			$htmlBox = $('<div></div>').attr('class', 'animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12')

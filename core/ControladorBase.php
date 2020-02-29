@@ -323,10 +323,11 @@ EOF;
 				$view[1] = dirname(dirname(__FILE__) . '/../') . '/view/system/';
 			};
 			
+			$this->title = $modelNode->title;
+			
 			$this->render($view, 
 				[
 				"title"=> $modelNode->title,
-				
 			], $modelNode->layout);
 		} else {
 			header('HTTP/1.0 404 Forbidden');

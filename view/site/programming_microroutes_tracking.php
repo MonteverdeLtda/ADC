@@ -38,7 +38,7 @@
 <template id="list">
 	<div>
 		<div class="row">
-			<div class="col-xs-12" v-for="(group, group_i) in groups">
+			<div class="col-xs-6" v-for="(group, group_i) in groups">
 				<div class="x_panel">
 					<div class="x_title">
 						<h2>{{ group.name }} <small>( {{ group.schedules.length }} )</small></h2>
@@ -66,7 +66,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.classText">
+										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.daysToEnd < 0 ? schedule.classText : ''">
 											<td>{{ schedule.id }}</td>
 											<td>{{ schedule.microroute.name }}</td>
 											<td>{{ schedule.microroute.id_ref }}</td>
@@ -74,15 +74,15 @@
 											<td>{{ schedule.date_executed_schedule_end }}</td>
 											<td>{{ schedule.microroute.area_m2 }}</td>
 											<td>{{ schedule.photosReq }}</td>
-											<td :class="schedule.activeColors == true ? (schedule.totals['A'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["A"].approved }}</td>
+											<td :class="schedule.daysToStart <= 0 ? (schedule.totals['A'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["A"].approved }}</td>
 											<td>
-												<ul v-if="schedule.activeColors == true" class="list-inline prod_color">
+												<ul v-if="schedule.daysToStart <= 0" class="list-inline prod_color">
 													<li><div :title="schedule.porcCurA + '%'" :class="'color bg-' + (schedule.porcCurA >= 100 ? 'green' : schedule.porcCurA >= 50 ? 'orange' : 'red')"></div></li>
 												</ul>
 											</td>
-											<td :class="schedule.activeColors == true ? (schedule.totals['D'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["D"].approved }}</td>
+											<td :class="schedule.daysToStart <= 0 ? (schedule.totals['D'].approved >= schedule.photosReq ? 'bg-success' : 'bg-danger') : ''">{{ schedule.totals["D"].approved }}</td>
 											<td>
-												<ul v-if="schedule.activeColors == true" class="list-inline prod_color">
+												<ul v-if="schedule.daysToStart <= 0" class="list-inline prod_color">
 													<li><div :title="schedule.porcCurD + '%'" :class="'color bg-' + (schedule.porcCurD >= 100 ? 'green' : schedule.porcCurD >= 50 ? 'orange' : 'red')"></div></li>
 												</ul>
 											</td>
@@ -685,9 +685,15 @@ var List = Vue.extend({
 			});
 			
 			dateSt = self.dateStart.format('YYYY-MM-DD');
-			dataEn = self.dateEnd.subtract({ days: 1 }).format('YYYY-MM-DD');
-			// console.log('Filtro inicio. ', dateSt);
-			// console.log('Filtro fin. ', dataEn);
+			dataEnd = self.dateEnd.format('YYYY-MM-DD');
+			dataEn = moment().add({ days: 1 }).format('YYYY-MM-DD');
+			
+			console.log('Filtro inicio. ', dateSt);
+			console.log('Filtro fin. ', dataEn);
+			console.log('Filtro fin. ', dataEnd);
+			console.log('Filtro. ', 'date_executed_schedule,bt,' + dateSt + ',' + dataEn);
+			
+			
 			
 			MV.api.readList('/schedule', {
 				join: [
@@ -703,8 +709,8 @@ var List = Vue.extend({
 					'year,eq,' + self.filter.year,
 					'is_executed,in,0',
 					// 'date_executed_schedule,ge,' + ,
-					'date_executed_schedule,ge,' + dateSt,
-					'date_executed_schedule_end,le,' + dataEn,
+					'date_executed_schedule,bt,' + dateSt + ',' + dataEn,
+					'date_executed_schedule_end,bt,' + dateSt + ',' + dataEnd,
 				],
 				order: 'group,asc'
 			}, (a) => {
@@ -780,10 +786,24 @@ var List = Vue.extend({
 							},
 						};
 						
-						totalDays = moment(b.date_executed_schedule).diff(moment(), 'days');
+						//totalDays = moment(b.date_executed_schedule).diff(moment(), 'days');
+						
+						b.daysToStart = parseInt(moment(b.date_executed_schedule).diff(moment(), 'days'));
+						b.daysToEnd = parseInt(moment(b.date_executed_schedule_end).diff(moment(), 'days'));
+						totalDays = b.daysToEnd - b.daysToStart;
+						
 						// b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? 'danger' : b.is_approved == 1 ? 'success' : b.in_novelty == 1 ? 'secondary' : b.is_executed == 1 ? 'primary' : 'default');
-						b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'success' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'warning' : 'danger') : (b.is_executed == 0 && totalDays < 0) ? 'info' : 'default');
-						b.activeColors = (b.is_executed == 0 && totalDays < 0) ? true : false;
+						//b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'success' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'warning' : 'danger') : (b.is_executed == 0 && totalDays < 0) ? 'info' : 'default');
+						
+						b.classText = (b.daysToStart <= 0) ? (
+							(b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) 
+								? 'bg-success' 
+								: (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) 
+									? 'bg-warning' 
+									: 'bg-danger'
+						)  : 'bg-default';
+						
+						b.activeColors = (b.daysToStart <= 0 && b.daysToEnd >= 0) ? true : (b.daysToEnd <= 0) ? true : false;
 						
 
 						self.groups[b_i].schedules.push(b);

@@ -9,6 +9,8 @@ RewriteRule ^(.*)$ https://%{SERVER_NAME}/$1 [R,L]
 RewriteRule ^ayudaysoporte$ https://%{SERVER_NAME}/ayudaysoporte/ [R,L,QSA]
 RewriteRule ^ayudaysoporte/(.*)$ /core/integrations/hesk/$1 [QSA,L]
 
+RewriteRule ^shortlink/(.*)$ /core/integrations/shortlink/$1 [QSA,L]
+
 RewriteCond %{REQUEST_FILENAME} !-f 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^integrations/(.*)$ core/integrations/$1 [QSA,L]

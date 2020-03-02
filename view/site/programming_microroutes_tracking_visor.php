@@ -77,7 +77,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.classText" :id="'schedule-row-' + schedule.id">
+										<tr v-for="(schedule, schedule_i) in group.schedules" :class="schedule.daysToEnd < 0 ? schedule.classText : ''" :id="'schedule-row-' + schedule.id">
 											<td>{{ schedule.microroute.name }}</td>
 											<td>{{ schedule.microroute.id_ref }}</td>
 											<td>
@@ -642,9 +642,14 @@ app = new Vue({
 			});
 			
 			dateSt = self.dateStart.format('YYYY-MM-DD');
-			dataEn = self.dateEnd.subtract({ days: 1 }).format('YYYY-MM-DD');
-			// console.log('Filtro inicio. ', dateSt);
-			// console.log('Filtro fin. ', dataEn);
+			dataEnd = self.dateEnd.format('YYYY-MM-DD');
+			dataEn = moment().add({ days: 1 }).format('YYYY-MM-DD');
+			
+			console.log('Filtro inicio. ', dateSt);
+			console.log('Filtro fin. ', dataEn);
+			console.log('Filtro fin. ', dataEnd);
+			console.log('Filtro. ', 'date_executed_schedule,bt,' + dateSt + ',' + dataEn);
+			
 			
 			MV.api.readList('/schedule', {
 				join: [
@@ -660,8 +665,9 @@ app = new Vue({
 					'year,eq,' + self.filter.year,
 					'is_executed,in,0',
 					// 'date_executed_schedule,ge,' + ,
-					'date_executed_schedule,ge,' + dateSt,
-					'date_executed_schedule_end,le,' + dataEn,
+					'date_executed_schedule,bt,' + dateSt + ',' + dataEn,
+					'date_executed_schedule_end,bt,' + dateSt + ',' + dataEnd,
+					//'date_executed_schedule_end,le,' + dataEn,
 				],
 				order: 'group,asc'
 			}, (a) => {
@@ -739,11 +745,48 @@ app = new Vue({
 							},
 						};
 						
-						totalDays = moment(b.date_executed_schedule).diff(moment(), 'days');
-						// b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? 'danger' : b.is_approved == 1 ? 'success' : b.in_novelty == 1 ? 'secondary' : b.is_executed == 1 ? 'primary' : 'default');
-						b.classText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'success' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'warning' : 'danger') : (b.is_executed == 0 && totalDays < 0) ? 'info' : 'default');
-						b.colorText = 'bg-' + ((b.is_executed == 0 && totalDays < -1) ? ((b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) ? 'green' : (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) ? 'orange' : 'red') : (b.is_executed == 0 && totalDays < 0) ? 'blue' : 'default');
-						b.activeColors = (b.is_executed == 0 && totalDays < 0) ? true : false;
+						b.daysToStart = parseInt(moment(b.date_executed_schedule).diff(moment(), 'days'));
+						b.daysToEnd = parseInt(moment(b.date_executed_schedule_end).diff(moment(), 'days'));
+						totalDays = b.daysToEnd - b.daysToStart;
+						
+						b.classText = (b.daysToStart <= 0) ? (
+							(b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) 
+								? 'bg-success' 
+								: (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) 
+									? 'bg-warning' 
+									: 'bg-danger'
+						)  : 'bg-default';
+						/*
+						b.classText = 'bg-' + (
+							(b.is_executed == 0 && b.daysToStart <= 0) 
+								? (
+									(b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) 
+										? 'success' 
+										: (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) 
+											? 'warning' 
+											: 'danger'
+								) 
+								: (b.is_executed == 0) 
+									? 'info' 
+									: 'default'
+						);*/
+						b.colorText = 'bg-' + (
+							(b.is_executed == 0 && totalDays < -1) 
+								? (
+									(b.totals["A"].approved >= photosReq && b.totals["D"].approved >= photosReq) 
+										? 'green' 
+										: (b.totals["A"].approved >= photosReq || b.totals["D"].approved >= photosReq) 
+											? 'orange' 
+											: 'red'
+								) 
+								: (b.is_executed == 0 && totalDays < 0) 
+									? 'blue' 
+									: 'default'
+						);
+						//b.activeColors = (b.is_executed == 0 && totalDays < 0) ? true : false;
+						
+						b.labeltext = (b.daysToStart <= 0 && b.daysToEnd >= 0) ? 'EN EJECUCION' : (b.daysToEnd <= 0) ? 'FINALIZADO' : 'NINGUNO';
+						b.activeColors = (b.daysToStart <= 0 && b.daysToEnd >= 0) ? true : (b.daysToEnd <= 0) ? true : false;
 						
 
 						self.groups[b_i].schedules.push(b);

@@ -1677,12 +1677,13 @@ var SingleDetails = Vue.extend({
 			/* Add the form data we need to submit */
 			formData.append('file', self.file);
 			/* Make the request to the POST /single-file URL */
-			axios.post( '/index.php?action=UploadFile', formData,
+			axios.post( '/index.php?controller=site&action=UploadFile', formData,
 			{
 				headers: { 
 					'Content-Type': 'multipart/form-data'
 				}
 			}).then(function(e){
+				console.log(e);
 				$("#file").val('');				
 				if(e.status == 200 && e.data.files.length > 0 && e.data.files[0].error === false){
 					api.post('/records/candidates_files', {
@@ -1696,8 +1697,8 @@ var SingleDetails = Vue.extend({
 						}
 					})
 					.catch(function (e) {
-						//console.error(e);
-						//console.log(e.response);
+						console.error(e);
+						console.log(e.response);
 						$('#img-upload').attr('src','');
 						$('#urlname').val('');
 						self.record.avatar = 0;
@@ -1706,9 +1707,11 @@ var SingleDetails = Vue.extend({
 					
 				}
 			})
-			.catch(function(){
+			.catch(function(e){
+				console.error(e);
+				console.log(e.response);
 				alert('Hubo un error subiendo el archivo!');
-				$("#file").val('');
+				//$("#file").val('');
 			});
 		  },
 		  /*

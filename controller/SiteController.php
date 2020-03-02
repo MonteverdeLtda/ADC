@@ -572,4 +572,171 @@ class SiteController extends ControladorBase{
 			readfile($zipSave);
 		}
 	}
+	
+	// Candidatos - Search Return IDs
+	public function actionSearchCandidates(){
+        if ($this->isGuest || ($this->checkPermission('candidates:admin') !== true)){ 
+			header('HTTP/1.0 403 Forbidden');
+			$this->render("errors", 
+				[
+				"code"=> "403",
+				"title"=> "Acceso denegado",
+				"description" => "",
+			]); exit();	
+		}
+		$error = isset($_GET['searchText']) ? false : true;
+		$text = isset($_GET['searchText']) ? $_GET['searchText'] : "";
+		$items = array();
+		$returning = (object) [
+			'error' 	=> $error,
+			'text' => $text,
+			'records' => $items,
+		];
+		
+		if ($error === false){
+			// "Busqueda 1"
+			$sql = "SELECT * FROM `candidates` 
+			WHERE 
+				`identification_number` LIKE '%{$text}%' 
+				OR `names` LIKE '%{$text}%' 
+				OR `surname` LIKE '%{$text}%' 
+				OR `address` LIKE '%{$text}%' 
+				OR `salary` LIKE '%{$text}%' 
+				OR `email` LIKE '%{$text}%' 
+				OR `phone` LIKE '%{$text}%' 
+				OR `mobile` LIKE '%{$text}%' 
+				OR `notes` LIKE '%{$text}%'";
+			$conn = new EntidadBase('candidates', $this->adapter);
+			$data = $conn->getSQL($sql);
+			$records1 = [];
+			foreach($data as $candidate){
+				$candidate = is_array($candidate) ? (object) $candidate : $candidate;
+				//$returning->records[] = $candidate->id;
+				if(!isset($records1[$candidate->id])){
+					$records1[] = $candidate->id;
+				}
+			}
+			// "Busqueda 2" - Dentro de experiencia
+			$sql2 = "SELECT * FROM `candidates_experience` 
+			WHERE 
+				`business` LIKE '%{$text}%' 
+				OR `position` LIKE '%{$text}%' 
+				OR `functions` LIKE '%{$text}%' ";
+			$conn2 = new EntidadBase('candidates_experience', $this->adapter);
+			$data2 = $conn2->getSQL($sql2);
+			$records2 = [];
+			foreach($data2 as $experience){
+				$experience = is_array($experience) ? (object) $experience : $experience;
+				if(!isset($records2[$experience->candidate])){
+					$records2[] = $experience->candidate;
+				}
+			}
+		}
+		$returning->records = array_merge(array_unique(array_merge($records1, $records2)), array());
+		echo json_encode($returning);
+		return json_encode($returning);
+	}
+	
+	// media - Subir Archivo
+	public function actionUploadFile(){
+		$error = null;
+        if ($this->isGuest){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$ds          = DIRECTORY_SEPARATOR;
+		$storeFolder = 'uploads';
+		$files_detect = !isset($_FILES['file']) ? false : true;
+		$files = (isset($_FILES['file'])) ? (is_array($_FILES['file']) && isset($_FILES['file'][0]['tmp_name']) ? $_FILES['file'] : [$_FILES['file']]) : [];
+		$returning = (object) [
+			'error' 	=> true,
+			'status'    => 'error',
+			'result' => false,
+			'files_detect' => $files_detect,
+			'files' => [],
+			//'files' => isset($_FILES['file']) ? $_FILES['file'] : [],
+			'text' => ""
+		];
+		
+		if (isset($files)) {
+			$isArray = is_array($files) ? true : false;
+			$day = date("d");
+			$mouth = date("m");
+			$year = date("Y");
+			$targetPath = PUBLIC_PATH . "/files/rrhh/{$year}/{$mouth}/{$day}/";
+			// Compruebe si la carpeta de carga si existe sino se crea la carpeta
+			if ( !file_exists($targetPath) && !is_dir($targetPath) ) { mkdir($targetPath, 0777, true); };
+			// Compruebe si la carpeta se creo o si existe
+			if ( file_exists($targetPath) && is_dir($targetPath) ) {
+				// Comprueba si podemos escribir en el directorio de destino
+				if ( is_writable($targetPath) ) {
+					/** Empieza a bailar */
+					if($isArray == true){
+						// $returning->text = "multiples archivos."; //carpeta: {$targetPath}
+						$total = count($files);
+						for($i = 0; $i < $total; $i++){
+							$model = new Media($this->adapter);
+							$model->name = randomString(16, $files[$i]['name']);
+							$model->type = $files[$i]['type'];
+							$model->size = $files[$i]['size'];
+							$model->path_short = "/public/files/rrhh/{$year}/{$mouth}/{$day}/" . $model->name;
+							$model->path_full = $targetPath . $model->name;
+							$model->create_by = $this->user->id;
+							
+							// Mover archivo
+							$error_up = !$model->copyFile($files[$i]['tmp_name']);
+							$returning->error = $error_up;
+								$returning->text = $error_up; // carpeta: {$targetPath}
+							if ($error_up == false) {
+								$returning->status = 'succes';
+								$returning->files[] = (object) [
+									"id" => $model->id,
+									"name" => $model->name,
+									"type" => $model->type,
+									"size" => $model->size,
+									"path_short" => $model->path_short,
+									"path_full" => $model->path_full,
+									"error" => ($model->id > 0) ? false : true,
+								];
+							} else {
+								$returning->text = 'No se pudo guardar el archivo solicitado :(, ocurrió un misterioso error.';
+							}
+						}
+					} else {
+						$model = new Media($this->adapter);
+						$model->name = randomString(16, $_FILES['name']);
+						$model->type = $_FILES['type'];
+						$model->size = $_FILES['size'];
+						$model->path_short = "/public/files/rrhh/{$year}/{$mouth}/{$day}/" . $model->name;
+						$model->path_full = $targetPath . $model->name;
+						$model->create_by = $this->user->id;
+						
+						// Mover archivo
+						$error_up = !$model->copyFile($_FILES['tmp_name']);
+						$returning->error = $error_up;
+							$returning->text = $error_up; // carpeta: {$targetPath}
+						if ($error_up == false) {
+							$returning->files[] = (object) [
+								"id" => $model->id,
+								"name" => $model->name,
+								"type" => $model->type,
+								"size" => $model->size,
+								"path_short" => $model->path_short,
+								"path_full" => $model->path_full,
+								"error" => ($model->id > 0) ? false : true,
+							];
+						} else {
+							$returning->text = 'No se pudo cargar el archivo solicitado :(, ocurrió un misterioso error.';
+						}
+					}
+				} else {
+					$returning->text = "No hay permisos en la carpeta. ";
+				}
+			}else{
+				$returning->text = "no existe la carpeta. {$targetPath}";
+			}
+		}
+		
+		$returning->status = $returning->error == false ? 'status' : 'error';
+		$returning->files = is_object(json_decode(json_encode($returning->files))) ? [$returning->files] : $returning->files;
+		echo json_encode($returning);
+		return json_encode($returning);
+	}
 }

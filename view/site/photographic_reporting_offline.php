@@ -488,6 +488,7 @@ var app = new Vue({
 				// Make the whole body a dropzone
 				url: self.urlForm, // Set the url
 				paramName: 'file',
+				//uploadMultiple: true,
 				thumbnailWidth: 80,
 				thumbnailHeight: 80,
 				addRemoveLinks: false,

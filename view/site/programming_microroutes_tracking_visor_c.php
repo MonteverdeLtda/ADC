@@ -48,7 +48,7 @@
 				</div>
 			</div>
 			
-			<div class="col-xs-12" v-for="(group, group_i) in groups">
+			<div class="col-xs-6" v-for="(group, group_i) in groups">
 				<div class="x_panel">
 					<div class="x_title">
 						<h2>{{ group.name }} ({{ group.totals.area_m2.schedule.toLocaleString() }} m2)<small>[{{ group.schedules.length }} Lotes ]</small></h2>
@@ -96,8 +96,8 @@
 											<td>{{ schedule.totals['A'].approved }}</td>
 											<td>{{ schedule.totals['D'].approved }}</td>
 																						
-											<td>{{ schedule.date_executed_schedule.format('YYYY-MM-DD') }}</td>
-											<td>{{ schedule.date_executed_schedule_end_min.format('YYYY-MM-DD') }}</td>
+											<td>{{ schedule.date_executed_schedule.format('DD') }} {{ options.monthTextMin[schedule.date_executed_schedule.format('M')] }}</td>
+											<td>{{ schedule.date_executed_schedule_end_min.format('DD') }} {{ options.monthTextMin[schedule.date_executed_schedule_end_min.format('M')] }}</td>
 											<td>{{ schedule.proccessText }}</td>
 											<td>
 												<ul class="list-inline prod_color">
@@ -113,6 +113,99 @@
 											<?php } ?>
 										</tr>
 									</tbody>
+									<tfoot>
+										<tr>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											
+											<th></th>
+											<th></th>
+											<th></th>
+											
+											<th></th>
+											<th></th>
+											<th></th>
+											
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+										<tr>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th><b>Programado</b></th>
+											<th colspan="2">Microruta(s) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.count.schedule }}
+											</td>
+											<th></th>
+											
+											<th colspan="2">Área (m2) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.area_m2.schedule.toLocaleString() }}
+											</td>
+											<th></th>
+										</tr>
+										<tr>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th><b>Ejecutado</b></th>
+											<th colspan="2">Microruta(s) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.count.executed }}
+											</td>
+											<th></th>
+											
+											<th colspan="2">Área (m2) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.area_m2.executed.toLocaleString() }}
+											</td>
+											<th></th>
+										</tr>
+										<tr>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th><b>Aprobado</b></th>
+											<th colspan="2">Microruta(s) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.count.approved }}
+											</td>
+											<th></th>
+											
+											<th colspan="2">Área (m2) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.area_m2.approved.toLocaleString() }}
+											</td>
+											<th></th>
+										</tr>
+										<tr>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th><b>Con Observacion(es)</b></th>
+											<th colspan="2">Microruta(s) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.count.novelty }}
+											</td>
+											<th></th>
+											
+											<th colspan="2">Área (m2) </th>
+											<td colspan="2" class="text-right">
+												{{ group.totals.area_m2.novelty.toLocaleString() }}
+											</td>
+											<th></th>
+										</tr>
+									</tfoot>
 								</table>
 							
 						</div>
@@ -188,6 +281,8 @@ app = new Vue({
 			options: {
 				groups: [],
 				periods: [],
+				monthText: ['','Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				monthTextMin: ['','Ene','Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
 			},
 			filter: {
 				period: 0,
@@ -599,11 +694,11 @@ app = new Vue({
 				filter: [
 					'period,eq,' + self.filter.period,
 					'year,eq,' + self.filter.year,
-					'is_executed,in,0',
-					// 'date_executed_schedule,bt,' + dateSt + ',' + dataEnd,
-					// 'date_executed_schedule_end,bt,' + dateSt + ',' + dataEn,
-					'date_executed_schedule,bt,' + dateSt + ',' + moment().add({ days: 1 }).format('YYYY-MM-DD'),
-					'date_executed_schedule_end,bt,' + dateSt + ',' + moment().add({ days: 1 }).format('YYYY-MM-DD'),
+					// 'is_executed,in,0',
+					'date_executed_schedule,bt,' + dateSt + ',' + dataEnd,
+					'date_executed_schedule_end,bt,' + dateSt + ',' + dataEn,
+					// 'date_executed_schedule,bt,' + dateSt + ',' + moment().add({ days: 1 }).format('YYYY-MM-DD'),
+					// 'date_executed_schedule_end,bt,' + dateSt + ',' + moment().add({ days: 1 }).format('YYYY-MM-DD'),
 				],
 				order: 'group,asc',
 				order: 'date_executed_schedule,asc',
@@ -658,7 +753,6 @@ app = new Vue({
 						b.is_approved = (b.is_approved);
 						b.in_novelty = (b.in_novelty);
 						
-						
 						self.groups[b_i].totals.count.schedule++;
 						self.groups[b_i].totals.area_m2.schedule += (b.microroute.area_m2);
 						
@@ -693,8 +787,10 @@ app = new Vue({
 							},
 						};
 						
-						// if([92, 3, 2, 72, 70, 71, 67, 45, 212, 97, 137].findIndex(a => a == b.id) > -1){
-							
+					// if([92, 3, 2, 72, 70, 71, 67, 45, 212, 97, 137].findIndex(a => a == b.id) > -1){
+						
+						// console.log('Id: ', b.id);
+						
 						b.date_executed_schedule = moment(b.date_executed_schedule);
 						b.date_executed_schedule_end = moment(b.date_executed_schedule_end);
 						b.date_executed_schedule_end_min = moment(b.date_executed_schedule_end).subtract({ days: 1 });
@@ -807,8 +903,29 @@ app = new Vue({
 							
 						}
 						
-						self.groups[b_i].schedules.push(b);
-						self.records.push(b);
+
+						if(b.is_executed == 1){
+							self.groups[b_i].totals.count.executed++;
+							self.groups[b_i].totals.area_m2.executed += (b.microroute.area_m2);
+							b.proccessClass = 'green';
+							b.proccessText = ' Ejecutado.';
+						}
+						if(b.is_approved == 1){
+							self.groups[b_i].totals.count.approved++;
+							self.groups[b_i].totals.area_m2.approved += (b.microroute.area_m2);
+							b.proccessClass = 'green';
+							b.proccessText = ' Aprobado.';
+						}
+						if(b.in_novelty == 1){
+							self.groups[b_i].totals.count.in_novelty++;
+							self.groups[b_i].totals.area_m2.in_novelty += (b.microroute.area_m2);
+							b.proccessClass = 'purple';
+							b.proccessText += ' Con Observaciones';
+						}
+
+							
+							self.groups[b_i].schedules.push(b);
+							self.records.push(b);
 						
 						// }
 					}

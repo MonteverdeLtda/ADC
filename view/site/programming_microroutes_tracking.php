@@ -220,8 +220,8 @@ var List = Vue.extend({
 	template: '#list',
 	data(){
 		return {
-			baseAreaCalc_m2_photos: 0.000986,
-			minPhotosSpaceSmall: 8,
+			baseAreaCalc_m2_photos: 0.000336,
+			minPhotosSpaceSmall: 5,
 			options: {
 				groups: [],
 				periods: [],

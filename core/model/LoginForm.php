@@ -42,4 +42,5 @@ class LoginForm extends ModeloBase
         ];
     }
 	
+	public function save($columns = NULL){}
 }

@@ -1,13 +1,10 @@
 <?php header('Content-Type: text/javascript'); 
-/*
-?>
-
 self.addEventListener('install', function(event) {
 	// Instalar de inmediato
 	if (self.skipWaiting) { self.skipWaiting(); }
 	event.waitUntil(
 		caches.open(
-			'cacheMVLTDA_00001'
+			'cacheMVLTDA_00000000001'
 		).then(function(cache) {
 			return cache.addAll([
 				'/favicon.ico',
@@ -24,7 +21,6 @@ self.addEventListener('fetch', function(event) {
 		})
 	);
 });
-
 caches.keys().then(function(cacheKeys) {
 	// Muestra en la consola la cache instalada 
 	console.log('Versión SW: ' + cacheKeys);
@@ -42,4 +38,3 @@ caches.keys().then(function(cacheNames) {
 		})
 	);
 });
-*/

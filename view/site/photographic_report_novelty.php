@@ -410,7 +410,7 @@ var app = new Vue({
 					});
 				},
 				// acceptedFiles: 'image/*;capture=camera'
-				acceptedFiles: 'image/*'
+				// acceptedFiles: 'image/*'
 			});
 			
 			// "myAwesomeDropzone" is the camelized version of the HTML element's ID

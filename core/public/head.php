@@ -11,46 +11,6 @@
 <script src='/public/assets/build/js/apiFG.js?updd=<?= date("Ymd") ?>'></script>
 <!-- <script src='/public/assets/build/js/apiFG.js'></script> -->
 <script>
-function initialiseState(reg){
-	if(reg.active) {
-		console.log('Trabajadora de servicio activo');
-		console.log('Reg: ', reg);
-	}
-};
-
-if ('serviceWorker' in navigator) {
-	window.addEventListener('load', function() {
-		navigator.serviceWorker.register('/?controller=sw&action=service_worker').then(function(registration) {
-			// Registration was successful
-			if(registration.installing) {
-				console.log('Service worker installing');
-			} else if(registration.waiting) {
-				console.log('Service worker installed');
-			} else if(registration.active) {
-				console.log('Service worker active');
-			}
-			
-			initialiseState(registration);
-		}, function(err) {
-			// registration failed :(
-			console.log('ServiceWorker registration failed: ', err);
-		});
-	});
-
-	window.addEventListener('notificationclick', function(e) {
-	  var notification = e.notification;
-	  var primaryKey = notification.data.primaryKey;
-	  var action = e.action;
-
-	  if (action === 'close') {
-		notification.close();
-	  } else {
-		clients.openWindow('http://www.example.com');
-		notification.close();
-	  }
-	});
-}
-
 const apiTickets = MV.apiFG.create({
 	baseURL: '/core/integrations/hesk/api/index.php/v1',
 	// baseURL: '/ayudaysoporte/api/index.php/v1',
@@ -58,4 +18,12 @@ const apiTickets = MV.apiFG.create({
 });
 
 apiTickets.defaults.headers['X-Auth-Token'] = '<?= X_AUTH_TOKEN_API_HESK; ?>';
+
+// Retirado de Head.
+function initialiseState(reg){
+	if(reg.active) {
+		console.log('Trabajadora de servicio activo');
+		console.log('Reg: ', reg);
+	}
+};
 </script>

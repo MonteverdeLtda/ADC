@@ -74,6 +74,10 @@ class SiteController extends ControladorBase{
 
 	// Reporte media - Subir Archivo en Reporte
 	public function actionSend_Photo_Schedule(){
+		ini_set('display_errors', 0);
+		ini_set('display_startup_errors', 0);
+		//error_reporting(NONE);
+
 		if ($this->isGuest || ($this->checkPermission('reports:photographic:offline') !== true)){ header('HTTP/1.0 403 Forbidden'); exit(); }
 		$error = null;
 		$request = $this->getRequest();
@@ -100,6 +104,7 @@ class SiteController extends ControladorBase{
 		$getFiles = $this->getFiles();
 		//$files = isset($getFiles['file']) ? is_array($getFiles['file']) == true && isset($getFiles[0]['file']) ? $getFiles['file'] : [$getFiles['file']] : isset($getFiles['files']) ? is_array($getFiles['files']) == true && isset($getFiles[0]['files']) ? $getFiles['files'] : [$getFiles['files']] : [];
 		$files = isset($getFiles['file']) ? is_array($getFiles['file']) == true && isset($getFiles[0]['file']) ? $getFiles['file'] : [$getFiles['file']] : [];
+		# $files = (isset($_FILES[0]['file'])) ? $_FILES : [$_FILES['file']];
 		
 		$returning = (object) [
 			'error' 	=> true,
@@ -115,7 +120,6 @@ class SiteController extends ControladorBase{
 		];
 		$returning->additional->files = [];
 		$returning->additional->files_origin = $files;
-		
 		
 		try {
 			if(
@@ -139,60 +143,72 @@ class SiteController extends ControladorBase{
 					$route_name,
 					$typeText,
 				];
+				// $targetPath = PUBLIC_PATH . "/files/{$year}/{$mouth}/{$day}/";
+				$targetPath = PUBLIC_PATH . $ds . implode($ds, $folderBase) . $ds;
 				$targetPath = PUBLIC_PATH . $ds . implode($ds, $folderBase) . $ds;
 				
 				$returning->folderBase = $folderBase;
 				
-				if (count($files) > 0) {
-					$isArray = is_array($files) ? true : [$files];
+				if (isset($files)) {
+					$isArray = is_array($files) ? true : false;
 					if ( !file_exists($targetPath) && !is_dir($targetPath) ) { mkdir($targetPath, 0777, true); }; // Compruebe si la carpeta de carga si existe sino se crea la carpeta
 					
 					// Compruebe si la carpeta se creo o si existe
 					if ( file_exists($targetPath) && is_dir($targetPath) ) {
 						// Comprueba si podemos escribir en el directorio de destino
-						if ( is_writable($targetPath) ) {
+						if ( is_writable($targetPath)  && $isArray == true) {
 							// $returning->message = "multiples archivos."; //carpeta: {$targetPath}
 							$total = count($files);
 							$returning->total = $total;
-							for($i = 0; $i < $total; $i++){
-								// $files[$i]['name'] = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $files[$i]['name']);
-								//$files[$i]['name'] = mb_ereg_replace("([\.]{2,})", '', $files[$i]['name']);
-								
-								$model = new ReportPhotographicFile($this->adapter);
-								$model->schedule = $schedule;
-								$model->year = $year;
-								$model->type = $type;
-								$model->group = $group;
-								$model->period = $period;
-								$model->lat = $lat;
-								$model->lng = $lng;
-								$model->file_name = randomString(6, $files[$i]['name']);
-								$model->file_type = $files[$i]['type'];
-								$model->file_size = $files[$i]['size'];
-								$model->file_path_short = $ds . "public" . $ds .implode($ds, $folderBase). $ds . $date_executed . "-" . $model->file_name;
-								$model->file_path_full = $targetPath . $date_executed . "-" . $model->file_name;
-								$model->create_by = $this->user->id;
-								
-								
-								// Mover archivo
-								$error_up = !$model->copyFile($files[$i]['tmp_name']);
-								$returning->error = $error_up;
-								if ($error_up == false) {
-									$returning->additional->files[] = (object) [
-										"id" => $model->id,
-										"name" => $model->file_name,
-										"type" => $model->file_type,
-										"size" => $model->file_size,
-										"path_short" => $model->file_path_short,
-										"path_full" => $model->file_path_full,
-										"error" => ($model->id > 0) ? false : true,
-									];
-									$returning->error = false;
-									$returning->message = 'Archivo cargado con éxito.';
-								} else {
-									$returning->error = true;
-									$returning->message = 'No se pudo cargar el archivo solicitado :(, ocurrió un misterioso error.';
+							foreach($files as $file){
+								if(isset($file['name'])){
+									
+									$fileNameTemp = $date_executed . "-" . randomString(16,  $file['name']);
+									$urlShortFile = $ds . "public" . $ds .implode($ds, $folderBase). $ds . $fileNameTemp;
+									$urlFullFile = $targetPath . $fileNameTemp;
+									
+									$model = new ReportPhotographicFile($this->adapter);
+									$model->schedule = $schedule;
+									$model->year = $year;
+									$model->type = $type;
+									$model->group = $group;
+									$model->period = $period;
+									$model->lat = $lat;
+									$model->lng = $lng;
+									$model->file_name = $fileNameTemp;
+									$model->file_type = $file['type'];
+									$model->file_size = $file['size'];
+									$model->file_path_short = $urlShortFile;
+									$model->file_path_full = $urlFullFile;
+									$model->create_by = $this->user->id;
+									
+									// Mover archivo
+									
+									$error_up = !$model->copyFile($file['tmp_name']);
+									$returning->error = $error_up;
+									
+									$returning->text = ($error_up == false) ? 'archivo no copiado' : 'Archivo Copiado con exito.'; // carpeta: {$targetPath}
+									if ($error_up == false) {
+										$returning->status = 'succes';
+										$returning->error = false;
+										$returning->message = 'Archivo cargado con éxito.';
+										
+										$returning->additional->files[] = (object) [
+											"id" => $model->id,
+											"name" => $model->file_name,
+											"type" => $model->file_type,
+											"size" => $model->file_size,
+											"path_short" => $model->file_path_short,
+											"path_full" => $model->file_path_full,
+											"error" => ($model->id > 0) ? false : true,
+										];
+									} else {
+										$returning->error = true;
+										$returning->message = "No se pudo cargar el archivo solicitado :(, ocurrió un misterioso error. {$error_up}";
+									}
 								}
+							}
+							for($i = 0; $i < $total; $i++){								
 							}
 						} else {
 							$returning->message = "No hay permisos en la carpeta. {$targetPath}";
@@ -660,7 +676,7 @@ class SiteController extends ControladorBase{
 			$day = date("d");
 			$mouth = date("m");
 			$year = date("Y");
-			$targetPath = PUBLIC_PATH . "/files/rrhh/{$year}/{$mouth}/{$day}/";
+			$targetPath = PUBLIC_PATH . "/files/{$year}/{$mouth}/{$day}/";
 			// Compruebe si la carpeta de carga si existe sino se crea la carpeta
 			if ( !file_exists($targetPath) && !is_dir($targetPath) ) { mkdir($targetPath, 0777, true); };
 			// Compruebe si la carpeta se creo o si existe
@@ -676,7 +692,7 @@ class SiteController extends ControladorBase{
 							$model->name = randomString(16, $files[$i]['name']);
 							$model->type = $files[$i]['type'];
 							$model->size = $files[$i]['size'];
-							$model->path_short = "/public/files/rrhh/{$year}/{$mouth}/{$day}/" . $model->name;
+							$model->path_short = "/public/files/{$year}/{$mouth}/{$day}/" . $model->name;
 							$model->path_full = $targetPath . $model->name;
 							$model->create_by = $this->user->id;
 							
@@ -704,7 +720,7 @@ class SiteController extends ControladorBase{
 						$model->name = randomString(16, $_FILES['name']);
 						$model->type = $_FILES['type'];
 						$model->size = $_FILES['size'];
-						$model->path_short = "/public/files/rrhh/{$year}/{$mouth}/{$day}/" . $model->name;
+						$model->path_short = "/public/files/{$year}/{$mouth}/{$day}/" . $model->name;
 						$model->path_full = $targetPath . $model->name;
 						$model->create_by = $this->user->id;
 						

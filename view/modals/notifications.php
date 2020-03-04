@@ -163,7 +163,7 @@ var appNotifications = new Vue({
 						}*/
 					}
 				});
-				localStorage.lastNotificationMV = moment();
+				localStorage.lastNotificationMV = moment().format('YYYY-MM-DD');
 				setTimeout(self.loadSyncNots, 300000); // 300000 == 5 Minutos || 1Min = 60000 || 1Seg = 1000
 			});
 		},

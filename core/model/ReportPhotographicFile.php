@@ -19,7 +19,7 @@ class ReportPhotographicFile extends ModeloBase{
 	public function copyFile($tmp_name){
 		$success = (@move_uploaded_file($tmp_name, $this->file_path_full));
 		if ($success == true) {
-			$this->save();
+			$text = $this->save();
 			return $this->id > 0 ? true : false;
 		}else{
 			return false;

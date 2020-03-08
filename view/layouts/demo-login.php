@@ -15,6 +15,7 @@
 		<title><?= $title; ?></title>
 		<?= $this->head(); ?>
 		<script>
+		/*
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', function() {
 					navigator.serviceWorker.register('/?controller=sw&action=service_worker').then(function(registration) {
@@ -47,7 +48,7 @@
 				  }
 				});
 			}
-
+		*/
 		</script>
 	</head>
 	<body class="login">

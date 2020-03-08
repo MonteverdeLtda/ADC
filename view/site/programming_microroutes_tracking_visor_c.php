@@ -809,8 +809,8 @@ app = new Vue({
 							b.proccessClass = 'green';
 							b.proccessText = 'Fotos del antes & despues completas.';
 							
-							if(b.is.executed == 0){
-								b.proccessClass = 'blue';
+							if(b.is_executed == 0){
+								b.proccessClass = 'blue-sky';
 								b.proccessText += ' (Listo para pasar a ejecutado)';
 							}
 						} else {
@@ -827,7 +827,7 @@ app = new Vue({
 									b.proccessText = 'Fotos del antes & despues completas.';
 									
 									if(b.is.executed == 0){
-										b.proccessClass = 'blue';
+										b.proccessClass = 'blue-sky';
 										b.proccessText += ' (Listo para pasar a ejecutado)';
 									}
 								}
@@ -851,7 +851,7 @@ app = new Vue({
 										b.proccessText = 'Fotos del antes & despues completas.';
 										
 										if(b.is.executed == 0){
-											b.proccessClass = 'blue';
+											b.proccessClass = 'blue-sky';
 											b.proccessText += ' (Listo para pasar a ejecutado)';
 										}
 									}
@@ -886,7 +886,7 @@ app = new Vue({
 										b.proccessText = 'Fotos del antes & despues completas.';
 										
 										if(b.is.executed == 0){
-											b.proccessClass = 'blue';
+											b.proccessClass = 'blue-sky';
 											b.proccessText += ' (Listo para pasar a ejecutado)';
 										}
 									}
@@ -907,7 +907,7 @@ app = new Vue({
 						if(b.is_executed == 1){
 							self.groups[b_i].totals.count.executed++;
 							self.groups[b_i].totals.area_m2.executed += (b.microroute.area_m2);
-							b.proccessClass = 'green';
+							b.proccessClass = 'blue';
 							b.proccessText = ' Ejecutado.';
 						}
 						if(b.is_approved == 1){

@@ -584,4 +584,50 @@ EOF;
         ]);
     }
 	
+	public function actionViewPicture(){
+        if ($this->isGuest){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$request = $this->getRequest();
+		if(isset($request['id']) && $request['id'] > 0){
+			$model = new Picture($this->adapter);
+			$model->getById($request['id']);
+			#header("Content-type: {$model->type}");
+			#echo $model->data;
+			#$image = imagecreatefromstring($model->data);
+			#print base64_encode($model->data);
+				#echo $model->data;
+			
+			# echo '<img style="width:calc(95vw);height:calc(95vh);padding: calc(2.5vh) calc(2.5vw);" src="data:image/png;base64,'.base64_encode($model->data).'">';
+			##$data = base64_decode(base64_encode($model->data));
+			##print utf8_encode($data);
+			$newData = base64_encode($model->data);
+			## echo $newData;
+			
+			header('Content-Type: image/png');
+			$im = imagecreatefromstring($newData);
+			# $im = imagecreatefrompng($im);
+			
+			
+			if ($im !== false) {
+				header('Content-Type: image/png');
+				imagepng($im);
+				imagedestroy($im);
+			}
+			else {
+				echo 'Ocurrió un error.';
+			}
+			/*
+			$data = base64_decode(base64_encode($model->data));
+			$im = imagecreatefromstring($newData);
+			if ($im !== false) {
+				header('Content-Type: image/jpeg');
+				imagejpeg($im);
+				imagedestroy($im);
+			}
+			else {
+				echo 'Ocurrió un error.';
+			}
+			*/
+		}
+		
+	}
 }

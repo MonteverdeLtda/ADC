@@ -675,6 +675,12 @@ var List = Vue.extend({
 				closeButton: false
 			});
 			
+			MV.api.readList('groups', {}, function(b){				
+				self.options.groups = b;
+				subDialog.modal('hide');
+				self.load();
+			});
+			
 			MV.api.readList('periods', {}, function(a){
 				self.options.periods = a;
 				a.forEach(function(x){
@@ -704,12 +710,6 @@ var List = Vue.extend({
 							})
 						}
 					}
-				});
-				
-				MV.api.readList('groups', {}, function(b){				
-					self.options.groups = b;
-					subDialog.modal('hide');
-					self.load();
 				});
 			});
 		},

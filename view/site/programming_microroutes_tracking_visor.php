@@ -713,7 +713,7 @@ app = new Vue({
 							b.proccessClass = 'green';
 							b.proccessText = 'Fotos del antes & despues completas.';
 							
-							if(b.is.executed == 0){
+							if(b.is_executed == 0){
 								b.proccessClass = 'blue';
 								b.proccessText += ' (Listo para pasar a ejecutado)';
 							}

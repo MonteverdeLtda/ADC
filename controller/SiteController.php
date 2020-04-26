@@ -6,9 +6,11 @@
  * ******************************/
 
 class SiteController extends ControladorBase{
-    public function __construct() {
+    
+	public function __construct() {
         parent::__construct();
     }
+	
 	public function actionMeJSON(){
         if ($this->isGuest){ header('HTTP/1.0 403 Forbidden'); exit(); }
 		header("Content-type:application/json");
@@ -580,12 +582,15 @@ class SiteController extends ControladorBase{
 				}
 			}
 			$zip->close();
-			header("Content-type: application/zip"); 
-			header("Content-Disposition: attachment; filename=$archive_file_name");
+			// http://areadeclientes.monteverdeltda.com/public/tmpZip/Fotografias-reporte-2020-1-15%20MARZO6e9Hs9Os-.zip
+			header("Location: /public/tmpZip/" . $archive_file_name);
+			
+			// header("Content-type: application/zip"); 
+			//header("Content-Disposition: attachment; filename=$archive_file_name");
 			//header("Content-length: " . filesize($zip));
-			header("Pragma: no-cache"); 
-			header("Expires: 0"); 
-			readfile($zipSave);
+			// header("Pragma: no-cache"); 
+			// header("Expires: 0"); 
+			// readfile($zipSave);
 		}
 	}
 	

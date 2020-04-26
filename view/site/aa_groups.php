@@ -59,7 +59,7 @@ ul.quick-list {
 								<i class="fa fa-bell"></i>
 								<a href="#">Gestores ({{ group.aa_groups_managers.length }}) </a>
 							</li>
-							<li style="cursor:pointer;" data-toggle="modal" data-target=".bs-modal-microroutes-programming" @click="modals.microroutes_programming.aa_groups_microroutes = group.aa_groups_microroutes">
+							<li style="cursor:pointer;" data-toggle="modal" data-target=".bs-modal-microroutes-programming" @click="openModalProgramming(group)">
 								<i class="fa fa-calendar"></i>
 								<a href="#">Crear Programacion </a>
 							</li>
@@ -373,7 +373,7 @@ ul.quick-list {
 						<div class="col-xs-12">
 							<div class="x_panel">
 								<div class="x_title">
-									<h2>Plain Page</h2>
+									<h2>Datos Básicos</h2>
 									<ul class="nav navbar-right panel_toolbox">
 										<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
 										<li class="dropdown">
@@ -391,24 +391,30 @@ ul.quick-list {
 									<div class="row ">
 										<div class="col-md-12">
 											
-										  <div class="form-group">
-											<label class="control-label col-md-4 col-sm-4 col-xs-12" for="first-name">First Name <span class="required">*</span></label>
-											<div class="col-md-8 col-sm-8 col-xs-12">
-											  <input type="text" id="first-name" required="required" class="form-control col-md-7 col-xs-12">
+											<div class="form-group">
+												<label class="control-label col-md-4 col-sm-4 col-xs-12" for="first-name">Área Max X Día <span class="required">*</span></label>
+												<div class="col-md-8 col-sm-8 col-xs-12">
+													<input type="text" required="required" class="form-control col-md-7 col-xs-12" readonly="" v-model="modals.basic.max_area_for_day" />
+												</div>
 											</div>
-										  </div>
-										  <div class="form-group">
-											<label class="control-label col-md-4 col-sm-4 col-xs-12" for="first-name">First Name <span class="required">*</span></label>
-											<div class="col-md-8 col-sm-8 col-xs-12">
-												<div id="reportrange-date" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
-													<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-													<span>Diciembre 30, 2015 - Enero 28, 2015</span> <b class="caret"></b>
-												</div><br>
-												<div class="clearfix"><br></div>
+											<div class="form-group">
+												<label class="control-label col-md-4 col-sm-4 col-xs-12" for="first-name">First Name <span class="required">*</span></label>
+												<div class="col-md-8 col-sm-8 col-xs-12">
+													<input type="text" id="first-name" required="required" class="form-control col-md-7 col-xs-12" />
+												</div>
 											</div>
-										  </div>
-										
-										
+											<div class="form-group">
+												<label class="control-label col-md-4 col-sm-4 col-xs-12" for="first-name">First Name <span class="required">*</span></label>
+												<div class="col-md-8 col-sm-8 col-xs-12">
+													<div id="reportrange-date" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+														<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+														<span>Diciembre 30, 2015 - Enero 28, 2015</span> <b class="caret"></b>
+													</div>
+													<br>
+													<div class="clearfix"><br></div>
+												</div>
+											</div>
+											
 										</div>
 									</div>
 								</div>
@@ -417,7 +423,7 @@ ul.quick-list {
 						<div class="col-xs-4">
 							<div class="x_panel">
 								<div class="x_title">
-									<h2>Plain Page</h2>
+									<h2 style="zoom:0.8;">Microrutas ({{ modals.microroutes_programming.aa_groups_microroutes.length }})</h2>
 									<ul class="nav navbar-right panel_toolbox">
 									</ul>
 									<div class="clearfix"></div>
@@ -425,7 +431,10 @@ ul.quick-list {
 								<div class="x_content">
 									<div class="checkbox" v-for="(groups_microroute, groups_microroute_i) in modals.microroutes_programming.aa_groups_microroutes">
 										<label>
-										  <input type="checkbox" class="flat" @change="toggleMicrorouteInProgrammingModal(groups_microroute.microroute)" >
+										  <!-- // <input type="checkbox" class="flat" @change="toggleMicrorouteInProgrammingModal(groups_microroute.microroute)" > -->
+										  <input type="checkbox" class="flat" v-model="modals.microroutes_programming.aa_groups_microroutes_selected" :value="microrouteToScheduleList(groups_microroute.microroute)" />
+										  
+										  
 										  Z{{ groups_microroute.microroute.zone.id }}CC{{ zfill(groups_microroute.microroute.count, 4) }}FM{{ groups_microroute.microroute.repeat_ini }} - ({{ groups_microroute.microroute.area_m2.toLocaleString() }} m2)
 										</label>
 									</div>
@@ -437,7 +446,7 @@ ul.quick-list {
 								<div class="x_title">
 									<h2 style="zoom:0.8;">Periodo: {{ filter.dates.start }} - {{ filter.dates.endText }} ({{ filter.dates.days }} Días)</h2>
 									<ul class="nav navbar-right panel_toolbox">
-										<li><a @click="autoProgramming"><i class="fa fa-clock-o"></i></a></li>
+										<li><a @click="AutoProgrammingInGroup"><i class="fa fa-clock-o"></i></a></li>
 									</ul>
 									<div class="clearfix"></div>
 								</div>
@@ -471,6 +480,10 @@ ul.quick-list {
 								</div>
 								<div class="x_content">
 									{{ modals.microroutes_programming.aa_groups_microroutes_selected }}
+								</div>
+								<div class="x_content">
+									{{ modals.microroutes_programming.aa_groups_microroutes_selected_repair }}
+									
 								</div>
 							</div>
 						</div>
@@ -526,6 +539,7 @@ app = new Vue({
 					aa_groups_microroutes: [],
 					aa_groups_microroutes_selected: [],
 					forDays: [],
+					aa_groups_microroutes_selected_repair: [],
 				},
 				managers: {
 					aa_groups_managers: [],
@@ -539,7 +553,8 @@ app = new Vue({
 	},
 	mounted(){
 		var self = this;
-			MV.api.readList('/aa_periods', {}, a => {
+			MV.api.readList('/aa_periods', { 
+			}, a => {
 				// console.log('a', a);
 				var dateIni = moment().add(2, 'days');
 				var periodCurrent = 0;
@@ -656,11 +671,68 @@ app = new Vue({
 		});
 	},
 	methods: {
-		zfill: MV.format.zfill,
-		autoProgramming(){
+		AutoProgrammingInGroup(){
 			var self = this;
-			console.log('autoProgramming');
+			console.log('AutoProgrammingInGroup');
+			
+			repairData = [];
+			self.modals.microroutes_programming.aa_groups_microroutes_selected.forEach(a => {
+				var b = JSON.parse(JSON.stringify(a));
+				b.last_executed = b.last_executed !== null ? b.last_executed : moment().subtract(365, 'days').format('YYYY-MM-DD');
+				console.log('Revisando: ', b);
+				console.log('Repeticiones Iniciales: ', b.repeat_ini);
+				console.log('Repeticiones Actuales: ', b.repeat_current);
+				console.log('Ult. Dia Ejc: ', b.last_executed);
+				console.log('Intervalo en dias: ', b.interval_days);
+				console.log('Sugerencia en dias para programming: ', b.options.days);
+				
+				
+				var simulatorProgramming = moment(self.filter.dates.start).diff(moment(b.last_executed), 'days');
+				
+				console.log('simulatorProgramming: ', simulatorProgramming);
+				if(simulatorProgramming > b.interval_days){
+					console.log('Programacion automatica');
+					
+					// revisando dias para agregar
+					self.modals.microroutes_programming.forDays.forEach(c => {
+						console.log('c', c);
+						if(c.area_m2 >= self.modals.basic.max_area_for_day){
+							console.log('Cupo no disponible...');
+						} else {
+							if( (c.area_m2 + b.area_m2) <= self.modals.basic.max_area_for_day){
+								console.log('Cupo 1 dia...');
+							} else {
+								console.log('Cupo varios dias...');
+							}
+						}
+					});
+					
+				} else {
+					console.log('Programacion a medida');
+				}
+				
+				repairData.push(b);
+			});
+			console.log('repairData: ', repairData);
+			self.modals.microroutes_programming.aa_groups_microroutes_selected_repair = repairData;
 		},
+		microrouteToScheduleList(a){
+			var self = this;
+			var clone = JSON.parse(JSON.stringify(a));
+			clone.options = {
+				days: (clone.area_m2 / self.modals.basic.max_area_for_day)
+			};
+			
+			return clone;
+		},
+		openModalProgramming(group){
+			var self = this;
+			console.log('openModalProgramming');
+			self.modals.microroutes_programming.aa_groups_microroutes = group.aa_groups_microroutes;
+			self.modals.basic = group;
+			self.modals.microroutes_programming.aa_groups_microroutes_selected = [];
+		},
+		zfill: MV.format.zfill,
 		init_calendar(){
 			var self = this;
 			if( typeof ($.fn.fullCalendar) === 'undefined'){ return; }
@@ -718,6 +790,7 @@ app = new Vue({
 					'aa_groups_staff,users',
 					'aa_groups_managers,users',
 				],
+				// order: 'zone,asc',
 			}, (a) => {
 				self.aa_groups = a;
 				console.log('Result: load()', a);

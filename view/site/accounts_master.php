@@ -113,6 +113,11 @@
 											</button>
 										</div>
 										<div class="btn-group" role="group">
+											<button type="button" class="btn btn-nav" href="#tab-users" data-toggle="tab" >
+												<div class="visible"><span class="fa fa-users" aria-hidden="true"></span> Usuarios </div>
+											</button>
+										</div>
+										<div class="btn-group" role="group">
 											<button type="button" class="btn btn-nav" href="#tab-contracts" data-toggle="tab" >
 												<div class="visible"><span class="fa fa-legal" aria-hidden="true"></span> Contratos </div>
 											</button>
@@ -128,16 +133,7 @@
 											</button>
 										</div>
 
-
 										<!-- //
-										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-nav" href="#tab-users" data-toggle="tab">
-												<div class="visible">
-													<span class="fa fa-users" aria-hidden="true"></span>
-													Usuarios
-												</div>
-											</button>
-										</div>
 										-->
 
 										<!-- //
@@ -334,6 +330,12 @@
 																<div class="input-group-btn">
 																	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action <span class="caret"></span></button>
 																	<ul class="dropdown-menu dropdown-menu-right" role="menu">
+																		<li>
+																			<router-link :to="{ name: 'Manage-Group-Notification', params: { account_id: record.id, group_notification_id: record.notifications_group } }">
+																				Gestionar Integrantes																				
+																			</router-link>
+																		</li>
+																		
 																		<li><a @click="showGroupNotification">Ver Integrantes</a></li>
 																		<!-- //
 																		<li><a href="#">Another action</a></li>
@@ -842,6 +844,26 @@
 								<div class="clearfix"></div>
 							</div>
 							<div class="x_content">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>Usuario</th>
+											<th>Nombre</th>
+											<th>Permisos</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(item, item_i) in record.accounts_users">
+											<td>{{ item.user.username }}</td>
+											<td>{{ item.user.names }} {{ item.user.surname }}</td>
+											<td>{{ item.permissions.name }}</td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
@@ -2536,6 +2558,62 @@
 	</div>
 </template>
 
+<template id="manage-group-notification">
+	<div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2 v-if="record !== null">{{ record.name }} <small>Integrantes</small></h2>
+						<ul class="nav navbar-right panel_toolbox">
+							<li>
+								<router-link :to="{ name: 'View', params: { account_id: account_id } }">
+									<i class="fa fa-times"></i>
+								</router-link>
+							</li>
+							<!-- // <li><a @click="load" class="refresh"><i class="glyphicon glyphicon-refresh"></i></a></li> -->
+							<!-- //
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="#">Settings 1</a></li>
+									<li><a href="#">Settings 2</a></li>
+								</ul>
+							</li>
+							-->
+							<!-- // <li><a class="close-link"><i class="fa fa-close"></i></a></li> -->
+						</ul>
+						<div class="clearfix"></div>
+					</div>
+					
+					<div class="x_content">
+						<p class="text-muted font-13 m-b-30">
+							Este es el personal que recibira una notificación en caso de necesitar gestion por parte del cliente.
+						</p>
+		
+						<template v-if="record !== null">
+							<table class="table table-bordered">
+								<tr v-for="(item, item_i) in record.notifications_groups_users">
+									<td>{{ item.user.username }}</td>
+									<td>{{ item.user.names }} {{ item.user.surname }} </td>
+									<td>
+										<a @click="deleteStaff(item.id)"><i class="fa fa-times"></i></a>
+									</td>
+								</tr>
+							</table>
+						</template>
+						
+						<button class="btn btn-success" @click="addStaff">
+							Añadir
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
 <script>
 function FormException(error, aviso){
 	this.name = error;
@@ -2736,6 +2814,7 @@ var View = Vue.extend({
 				update_by: <?= $this->user->id; ?>,
 				birthday: '',
 				accounts_contacts: [],
+				accounts_users: [],
 				accounts_headquarters: [],
 				requests: [],
 			},
@@ -2893,26 +2972,17 @@ var View = Vue.extend({
 				join: ['notifications_groups_users,users']
 			}, (a) => {
 				if(a.id){
-					$htmlBox = $('<table></table>').attr('class', 'table table-bordered')
+					$htmlBox = $('<div></div>')
 						.append(
-							$('<tr></tr>').attr('class', 'col-sm-12')
-								.append(
-									$('<th></th>').append(
-										a.name
-									)
-								)
+							$('<h3></h3>').attr('class', 'col-sm-12').append(a.name)
 						);
 						
+					$table = $('<table></table>').attr('class', 'table table-bordered');
+						
 					a.notifications_groups_users.forEach((b) => {
-						$htmlBox.append(
-							$('<tr></tr>').attr('class', 'col-sm-12')
-								.append(
-									$('<td></td>').append(
-										b.user.username
-									)
-								)
-						)						
+						$table.append($('<tr></tr>').append($('<td></td>').append(b.user.username)))						
 					});
+					$htmlBox.append($table);
 						
 					bootbox.dialog({
 						title: "Viendo grupode notificaciones # " + a.id,
@@ -2920,14 +2990,6 @@ var View = Vue.extend({
 						location: 'es',
 						closeButton: true,
 						buttons: {
-							noclose: {
-								label: "Crear",
-								className: 'btn-primary',
-								callback: function(){
-									console.log('Custom cancel clicked');
-									return false;
-								}
-							},
 							cancel: {
 								label: "Cerrar",
 								className: 'btn-default',
@@ -3723,6 +3785,8 @@ var View = Vue.extend({
 					'requests',
 					'requests,requests_status',
 					'requests,users',
+					'accounts_users,permissions_group',
+					'accounts_users,users',
 				]
 			}, (a) => {
 				if(a.id){
@@ -5123,6 +5187,85 @@ var ViewRequest = Vue.extend({
 	},
 });
 
+var ManageGroupNotification = Vue.extend({
+	template: '#manage-group-notification',
+	data(){
+		return {
+			account_id: this.$route.params.account_id,
+			group_notification_id: this.$route.params.group_notification_id,
+			record: null,
+		};
+	},
+	mounted(){
+		var self = this;
+		self.load();
+	},
+	methods:{
+		load(){
+			var self = this;
+			self.record = null;
+			
+			MV.api.readSingle('/notifications_groups', self.group_notification_id, {
+				join: ['notifications_groups_users,users']
+			}, (a) => { if(a.id){ self.record = a; } });
+		},
+		addStaff(){
+			var self = this;
+			
+			MV.api.readList('/users', {
+			}, (a) => {
+				list = a.map((b)=>{
+					if(self.record.notifications_groups_users.findIndex(z => z.user.id == b.id) > -1){
+						return {
+							value: null,
+							text: null
+						}
+					} else {
+						return {
+							value: b.id,
+							text: b.username + ' | ' + b.names + ' ' + b.surname,
+						}
+					}
+				});
+				list = list.filter(x => x.value !== null && x.text !== null);
+				
+				bootbox.prompt({
+					title: "Seleccione el nuevo integrate",
+					inputType: 'select',
+					inputOptions: list,
+					callback: function (result) {
+						if(result !== null && result > 0){
+							MV.api.create('/notifications_groups_users', {
+								user: result,
+								group: self.group_notification_id,
+							}, (c) => {
+								self.load();
+							});
+						}
+					}
+				});
+				
+			});
+		},
+		deleteStaff(rel_id){
+			var self = this;
+			
+			var dialog = bootbox.confirm({
+				message: "Realmente deseas eliminar este integrante?",
+				locale: "es",
+				callback: function (result) {
+					if(result == true){
+						MV.api.remove('/notifications_groups_users/' + rel_id, {
+						}, (a) => {
+							self.load();
+						});
+					}
+				}
+			});
+		}
+	},
+});
+
 var router = new VueRouter({
 	linkActiveClass: 'active',
 	routes:[
@@ -5131,6 +5274,8 @@ var router = new VueRouter({
 		{ path: '/view/:account_id', component: View, name: 'View' },
 		{ path: '/view/:account_id/requests/create', component: CreateRequest, name: 'Create-Request' },
 		{ path: '/view/:account_id/requests/view/:request_id', component: ViewRequest, name: 'View-Requests' },
+		
+		{ path: '/view/:account_id/notifications/group/manage/:group_notification_id', component: ManageGroupNotification, name: 'Manage-Group-Notification' },
 	]
 });
 

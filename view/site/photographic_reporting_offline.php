@@ -27,7 +27,7 @@
 <div class="container" id="schedule-report-before-creator">
 	<div class="page-title">
 	  <div class="title_left">
-		<h3><?= $title; ?> </h3>
+		<h3><?= $title; ?> - <?= isset($_GET['type']) ? ($_GET['type'] == 'A' ? ' Antes' : ' Despues ') : ''; ?> </h3>
 	  </div>
 	</div>
 	<div class="clearfix"></div>

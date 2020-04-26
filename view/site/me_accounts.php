@@ -32,7 +32,7 @@
 						<div class="clearfix"></div>
 				  
 				  
-						<div class="col-md-4 col-sm-4 col-xs-12 profile_details" v-for="(accountInfo, i) in records">
+						<div class="col-md-6 col-sm-6 col-xs-12 profile_details" v-for="(accountInfo, i) in records">
 							<div class="well profile_view">
 								<div class="col-sm-12">
 									<h4 class="brief"><i><b>Nivel de Acceso</b>: {{ accountInfo.permissions !== null ? accountInfo.permissions.name : 'Solo lectura' }}</i></h4>
@@ -541,9 +541,9 @@ var Home = Vue.extend({
 							// data: self.records,
 							fixedHeader: true,
 							data: a.map(b => [
-								b.id,
-								b.name, 
-								b.id_ref, 
+								// b.id,
+								// b.name, 
+								// b.id_ref, 
 								b.address_text, 
 								b.area_m2.toLocaleString(),
 								b.contract.name,
@@ -553,9 +553,9 @@ var Home = Vue.extend({
 								b.description,
 							]),
 							columns: [
-								{ title: "id" },
-								{ title: "Microruta" },
-								{ title: "Lote REF." },
+								// { title: "id" },
+								// { title: "Microruta" },
+								// { title: "Lote REF." },
 								{ title: "Direccion(es)" },
 								{ title: "Area m2" },
 								{ title: "Contrato" },

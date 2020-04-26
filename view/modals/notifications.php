@@ -729,14 +729,14 @@ var appNotifications = new Vue({
 								
 							$('#btn-notifications-modal-communications-reply').click((event) => {
 								bootbox.prompt({
-									title: "Comunicacion a 1 click",
+									title: "Comunicacion a 1 click ||",
 									message: "Escribe la informacion adiccional o el nuevo mensaje que deseas enviar.",
 									locale: 'es',
 									centerVertical: true,
 									inputType: 'textarea',
 									callback: (a) => {
 										if(a !== null){
-											if(a.length > 15){
+											if(a.length > 2){
 												MV.api.create('/accounts_communications_parts', {
 													communication: communication.id,
 													account: communication.account.id,
@@ -762,7 +762,7 @@ var appNotifications = new Vue({
 																	send = {};
 																	send.type = 'response-communication-client';
 																	send.datajson = JSON.stringify(d);
-																	send.user = d.created_by.id;
+																	send.user = communication.created_by.id;
 																	send.created_by = <?= $this->user->id; ?>;
 																	
 																	MV.api.create('/notifications', send, (f) => {
@@ -970,7 +970,7 @@ var appNotifications = new Vue({
 									inputType: 'textarea',
 									callback: (a) => {
 										if(a !== null){
-											if(a.length > 15){
+											if(a.length > 3){
 												MV.api.create('/accounts_communications_parts', {
 													communication: communication.id,
 													account: communication.account.id,
@@ -1000,7 +1000,6 @@ var appNotifications = new Vue({
 																	send.created_by = <?= $this->user->id; ?>;
 																	
 																	MV.api.create('/notifications', send, (f) => {
-																		console.log('Result noti: ', f);
 																		new PNotify({
 																			"title": "Exito!",
 																			"text": "la notificación se a enviado correctamente.",

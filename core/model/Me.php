@@ -16,6 +16,13 @@ class Me extends Usuario{
 		//$this->form_update_access = $this->formAccess();
 		//$this->form_update_info = $this->formInfoBasic();
 	}
+	
+	public function upLastConnection(){
+		$date = new DateTime('NOW');
+		$this->last_connection = $date->format('Y-m-d H:i:s');;
+		#echo $date->format('Y-m-d H:i:s');
+		$this->save(['last_connection']);
+	}
 
 	public function formAccess(){
 		$rules = $this->rules("access");

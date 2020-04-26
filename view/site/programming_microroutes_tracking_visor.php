@@ -183,7 +183,7 @@ function FormException(error, aviso){
 app = new Vue({
 	data(){
 		return {
-			baseAreaCalc_m2_photos: 0.000336,
+			baseAreaCalc_m2_photos: 0.000236,
 			minPhotosSpaceSmall: 5,
 			options: {
 				groups: [],

@@ -51,7 +51,12 @@ class ControladorBase {
 			$this->setPermissions($this->user->permissions->list);
 		}
 		$this->addScriptsBase();
-		
+		if(!$this->isGuest){
+			$model = new Me($this->adapter);
+			$model->getById($this->session->getId());
+			$model->upLastConnection();
+			
+		}
     }
 	
 	public function set($key, $value){

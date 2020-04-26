@@ -11,7 +11,23 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<a v-for="(record, record_i) in records" type="button" class="btn btn-round btn-default" target="_blank" :href="'/shortlink/?h=' + record.hash">{{ record.name }}</a>
+						
+				<div class="btn-group" v-for="(record, record_i) in records_orig">
+					<button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" aria-expanded="false">
+						{{ record.short_link.name }} 
+						<span class="caret"></span>
+					</button>
+					<ul role="menu" class="dropdown-menu">
+						<li><a target="_blank" :href="'/shortlink/?h=' + record.short_link.hash">Abrir en otra ventana</a></li>
+						<li><a :href="'/shortlink/?h=' + record.short_link.hash">Abrir en esta ventana</a></li>
+						<li class="divider"></li>
+						<li><a @click="deleteLink(record.id)">Eliminar enlace</a></li>
+					</ul>
+				</div>
+				
+				
+						
+				
 			</div>
 		</div>
 	</div>
@@ -183,6 +199,9 @@ var app = new Vue({
 		load(){
 			var self = this;
 			MV.api.readList('/short_links_users', {
+				filter: [
+					'user,eq,<?= $this->user->id; ?>'
+				],
 				join: [
 					'short_links',
 				],
@@ -199,7 +218,23 @@ var app = new Vue({
 				'(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
 				'(\\#[-a-z\\d_]*)?$','i'); // fragment locator
 			return !!pattern.test(str);
-		}
+		},
+		deleteLink(short_link_user_id){
+			var self = this;
+			
+			var dialog = bootbox.confirm({
+				message: "Realmente deseas eliminar este enlace?",
+				locale: "es",
+				callback: function (result) {
+					if(result == true){
+						MV.api.remove('/short_links_users/' + short_link_user_id, {
+						}, (a) => {
+							self.load();
+						});
+					}
+				}
+			});
+		},
 	}
 }).$mount('#me-shorts-links');
 </script>

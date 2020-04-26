@@ -1,5 +1,5 @@
 <?php 
-	$url = 'https://areadeclientes.monteverdeltda.com/ayudaysoporte/';
+	$url = 'https://areadeclientes.monteverdeltda.com/ayudaysoporte/index.php?a=add';
 	# $server = json_decode(json_encode($_SERVER));
 ?>
 <div class="row">

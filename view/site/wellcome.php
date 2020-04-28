@@ -90,6 +90,7 @@
 							# . PHPStrap\Util\Html::tag('li', PHPStrap\Util\Html::tag('i', '', ['fa fa-line-chart'], []) . PHPStrap\Util\Html::tag('a', 'Achievements', [], [ 'href' => '#' ]) , [], [])		
 							. PHPStrap\Util\Html::tag('li', PHPStrap\Util\Html::tag('i', '', ['fa fa-sign-out'], []) . PHPStrap\Util\Html::tag('a', 'Salir', [], [ 'href' => '/index.php?controller=site&action=logout' ]) , [], [])		
 						, ['quick-list'], [])
+						/*
 						. PHPStrap\Util\Html::tag('div', 
 							PHPStrap\Util\Html::tag('h4', 'Perfil completado', [], [])
 							. PHPStrap\Util\Html::tag('canvas', '', [], ['width' => '150', 'height' => '80', 'id' => 'chart_gauge_01', 'style' => 'width: 160px; height: 100px;'])
@@ -99,6 +100,7 @@
 								. PHPStrap\Util\Html::tag('span', '100%', ['goal-value pull-right'], ['id' => 'goal-text'])
 							, ['goal-wrapper'], [])
 						, ['sidebar-widget'], [])
+						*/
 					, ['dashboard-widget-content'], [])
 				);
 				echo PHPStrap\Util\Html::tag('div', 

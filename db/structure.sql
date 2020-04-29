@@ -677,6 +677,28 @@ CREATE TABLE IF NOT EXISTS `employees` (
 
 -- La exportación de datos fue deseleccionada.
 
+-- Volcando estructura para tabla admin_procrm.employees_contacts
+CREATE TABLE IF NOT EXISTS `employees_contacts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee` int(11) NOT NULL,
+  `identification_type` int(11) NOT NULL,
+  `identification_number` varchar(50) NOT NULL,
+  `names` varchar(150) NOT NULL,
+  `surname` varchar(150) NOT NULL,
+  `email` varchar(250) DEFAULT NULL,
+  `phones` varchar(250) NOT NULL,
+  `is_emergency` int(1) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id` (`id`) USING BTREE,
+  KEY `email_key` (`email`) USING BTREE,
+  KEY `FK_users_identifications_types` (`identification_type`) USING BTREE,
+  KEY `FK_employees_contacts_employees` (`employee`),
+  CONSTRAINT `FK_employees_contacts_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_employees_contacts_identifications_types` FOREIGN KEY (`identification_type`) REFERENCES `identifications_types` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- La exportación de datos fue deseleccionada.
+
 -- Volcando estructura para tabla admin_procrm.employees_experiences
 CREATE TABLE IF NOT EXISTS `employees_experiences` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -696,7 +718,30 @@ CREATE TABLE IF NOT EXISTS `employees_experiences` (
   CONSTRAINT `FK_employees_experiences_companies_areas` FOREIGN KEY (`area`) REFERENCES `companies_areas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_experiences_companies_sectors` FOREIGN KEY (`company_sector`) REFERENCES `companies_sectors` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_experiences_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla admin_procrm.employees_family_groups
+CREATE TABLE IF NOT EXISTS `employees_family_groups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee` int(11) NOT NULL,
+  `relationship` int(11) NOT NULL,
+  `identification_type` int(11) NOT NULL,
+  `identification_number` varchar(50) NOT NULL,
+  `names` varchar(250) NOT NULL,
+  `surname` varchar(250) NOT NULL,
+  `birthdate` date NOT NULL,
+  `notes` text,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `FK_employees_family_groups_employees` (`employee`),
+  KEY `FK_employees_family_groups_family_relationships` (`relationship`),
+  KEY `FK_employees_family_groups_identifications_types` (`identification_type`),
+  CONSTRAINT `FK_employees_family_groups_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_employees_family_groups_family_relationships` FOREIGN KEY (`relationship`) REFERENCES `family_relationships` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_employees_family_groups_identifications_types` FOREIGN KEY (`identification_type`) REFERENCES `identifications_types` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -729,6 +774,16 @@ CREATE TABLE IF NOT EXISTS `employees_studies` (
   CONSTRAINT `FK_employees_studies_study_levels` FOREIGN KEY (`level_study`) REFERENCES `study_levels` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_studies_study_status` FOREIGN KEY (`status`) REFERENCES `study_status` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla admin_procrm.family_relationships
+CREATE TABLE IF NOT EXISTS `family_relationships` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 

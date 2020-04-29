@@ -522,19 +522,24 @@
 											<i class="fa fa-book"></i> Formación
 										</a>
 									</li>
-									<li role="presentation">
+									<li role="presentation" class="">
 										<a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">
 											<i class="fa fa-briefcase"></i> Experiencias profesionales
 										</a>
 									</li>
 									<li role="presentation" class="">
-										<a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
-											<i class="fa fa-line-chart"></i> Desempeño
+										<a href="#tab_content4" role="tab" id="profile-tab3" data-toggle="tab" aria-expanded="false">
+											<i class="fa fa-users"></i> Grupo familiar
 										</a>
 									</li>
 									<li role="presentation" class="">
-										<a href="#tab_content4" role="tab" id="profile-tab3" data-toggle="tab" aria-expanded="false">
-											<i class="fa fa-users"></i> Grupo familiar
+										<a href="#tab_content5" role="tab" id="profile-tab5" data-toggle="tab" aria-expanded="false">
+											<i class="fa fa-phone"></i> Contactos
+										</a>
+									</li>
+									<li role="presentation" class="">
+										<a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
+											<i class="fa fa-line-chart"></i> Desempeño
 										</a>
 									</li>
 								</ul>
@@ -650,42 +655,85 @@
 									</div>
 									<div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
 										<div class="row">
+											<table class="table table-striped table-bordered table-hover">
+												<thead>
+													<tr>
+														<th>Tipo Doc.</th>
+														<th># Documento</th>
+														<th>Nombre(s)</th>
+														<th>Apellido(s)</th>
+														<th>Parentesco</th>
+														<th>Fecha Nac.</th>
+														<th>Edad</th>
+														<th>Notas</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr v-for="(item, item_i) in record.employees_family_groups">
+														<td :title="item.identification_type.name">{{ item.identification_type.code }}</td>
+														<td>{{ item.identification_number }}</td>
+														<td>{{ item.names }}</td>
+														<td>{{ item.surname }}</td>
+														<td>{{ item.relationship.name }}</td>
+														<td>{{ item.birthdate }}</td>
+														<td>{{ $root.calcularEdad(item.birthdate) }}</td>
+														<td>{{ item.notes }}</td>
+														<td>
+															<a style="cursor:pointer" @click="removeFamilyRelationship(item.id)"><i class="fa fa-lg fa-times"></i></a>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										  
+										  
+											<div class="clearfix"></div>
+											<div class="col-md-12 col-sm-12 col-xs-12 text-center">
+												<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#new-family-group-modal">
+													<i class="fa fa-plus"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">
+										<div class="row">
 											<div class="col-md-12 col-sm-12 col-xs-12 text-center">
 											</div>
 											<div class="clearfix"></div>
-										  
-												<div class="col-md-6 col-sm-6 col-xs-12 profile_details">
-													<div class="well profile_view">
-														<div class="col-sm-12">
-															<h4 class="brief"><i>Digital Strategist</i></h4>
-															<div class="left col-xs-12">
-																<h2>Nicole Pearson</h2>
-																<p><strong>About: </strong> Web Designer / UX / Graphic Artist / Coffee Lover </p>
-																<ul class="list-unstyled">
-																	<li><i class="fa fa-building"></i> Address: </li>
-																	<li><i class="fa fa-phone"></i> Phone #: </li>
-																</ul>
-															</div>
+											<div class="col-md-4 col-sm-4 col-xs-12 profile_details" v-for="(item, item_i) in record.employees_contacts">
+												<div class="well profile_view">
+													<div class="col-sm-12">
+														<h4 class="brief"><i>{{ item.identification_type.code }} - {{ item.identification_number }}</i></h4>
+														<div class="left col-xs-12">
+															<h2>{{ item.names }} {{ item.surname }}</h2>
+															<!--// <p><strong>About: </strong> Web Designer / UX / Graphic Artist / Coffee Lover </p> -->
+															<ul class="list-unstyled">
+																<li><i class="fa fa-envelope"></i> E-Mail: {{ item.email }}</li>
+																<li><i class="fa fa-phone"></i> Teléfono(s): {{ item.phones }}</li>
+															</ul>
 														</div>
-														<div class="col-xs-12 bottom text-center">
-															<div class="col-xs-12 col-sm-6 emphasis">
-																<p class="ratings">
-																	<a href="#"><span class="fa fa-star"></span></a>
-																	<a href="#"><span class="fa fa-star-o"></span></a>
-																</p>
-															</div>
-															<div class="col-xs-12 col-sm-6 emphasis">
-																<button type="button" class="btn btn-success btn-xs"> <i class="fa fa-user">
-																										</i> <i class="fa fa-comments-o"></i> </button>
-																<button type="button" class="btn btn-primary btn-xs">
-																	<i class="fa fa-user"> </i> View Profile
-																</button>
-															</div>
+													</div>
+													<div class="col-xs-12 bottom text-center">
+														<div class="col-sm-10 emphasis">
+															<p class="ratings">
+																<i class="fa fa-ambulance fa-lg" v-if="item.is_emergency == 1" title="Contacto para emergencia(s)"></i>
+																
+															</p>
+														</div>
+														<div class="col-sm-2 emphasis">
+															<button type="button" class="btn btn-danger btn-xs" @click="removeContact(item.id)"> <i class="fa fa-times"></i> </button>
 														</div>
 													</div>
 												</div>
-											  
-										</div>
+											</div>
+										
+											<div class="clearfix"></div>
+											<div class="col-md-12 col-sm-12 col-xs-12 text-center">
+												<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#new-contact-modal">
+													<i class="fa fa-plus"></i>
+												</button>
+											</div>	
+									
 									</div>
 								</div>
 							</div>
@@ -816,7 +864,7 @@
 									<label class="control-label">
 										<input type="checkbox"  class="" v-model="defaultData.experiency_date_current" >
 										Actualmente
-									</label>									
+									</label>
 								</div>
 							</div>
 							
@@ -840,6 +888,160 @@
 			</div>
 		</div>
 		<!-- // Modal new experiency -->
+		
+		<!-- Modal new family relationships -->
+		<div class="modal fade" id="new-family-group-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="modalLabelSmall">Agregar integrante (Grupo Familiar)</h4>
+					</div>
+					<form class="form-horizontal form-label-left" action="javascript:return false;" v-on:submit="createNewFamilyRelationship">
+						<div class="modal-body">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Relación / Parentesco <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<select v-model="modals.new_family_relationship.relationship" class="form-control col-md-7 col-xs-12" required="required">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.family_relationships" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo Documento <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<select v-model="modals.new_family_relationship.identification_type" class="form-control col-md-7 col-xs-12" required="required">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.identifications_types" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12"># Documento <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_family_relationship.identification_number" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Nombre(s) <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_family_relationship.names" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Apellido(s) <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_family_relationship.surname" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha de nacimiento <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_family_relationship.birthdate" type="text" required="required" class="form-control col-md-7 col-xs-12 date_modal_sql" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Observacion(es) </label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<textarea v-model="modals.new_family_relationship.notes" rows="5" class="form-control col-md-7 col-xs-12"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="form-group">
+								<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+									<button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
+									<button type="submit" class="btn btn-success">Crear</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- //new family relationships -->
+		
+		<!-- Modal New -->
+		<div class="modal fade" id="new-contact-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title" id="modalLabelSmall">Nuevo Contacto</h4>
+					</div>
+					<form class="form-horizontal form-label-left" action="javascript:return false;" v-on:submit="createNewContact">
+						<div class="modal-body">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo Documento <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<select v-model="modals.new_contact.identification_type" class="form-control col-md-7 col-xs-12" required="required">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.identifications_types" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12"># Documento <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_contact.identification_number" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Nombre(s) <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_contact.names" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Apellido(s) <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_contact.surname" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Correo electronico </label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_contact.email" type="email" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Teléfono(s) <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<input v-model="modals.new_contact.phones" type="text" required="required" class="form-control col-md-7 col-xs-12" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">¿Contacto de Emergencia(s)? <span class="required">*</span></label>
+								<div class="col-md-9 col-sm-9 col-xs-12">
+									<div class="btn-group" >
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="modals.new_contact.is_emergency" value="1" required="required"> <i class="fa fa-check"></i> &nbsp; SI &nbsp;
+										</label>
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="modals.new_contact.is_emergency" value="0" required="required"> <i class="fa fa-ban"></i> &nbsp; NO &nbsp;
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="form-group">
+								<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+									<button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
+									<button type="submit" class="btn btn-success">Crear</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- /Modal New -->
 	</div>
 </template>
 
@@ -1043,16 +1245,7 @@ var Create = Vue.extend({
 			var self = this;
 			MV.api.create('/employees', self.record, (a) => {
 				if(a > 0){
-					new PNotify({
-						"title": "Exito!",
-						"text": "El empleado se creo con exito.",
-						"styling":"bootstrap3",
-						"type":"success",
-						"icon":true,
-						"animation":"flip",
-						"hide":true,
-						"delay": 2500,
-					});
+					self.$root.notificationPush("Exito!", "El empleado se creo con exito.", "success");
 					
 					self.$router.push({
 						name: 'Single',
@@ -1061,16 +1254,7 @@ var Create = Vue.extend({
 						},
 					});
 				} else {
-					new PNotify({
-						"title": "Ups!",
-						"text": "Verifica el formulario e intenta de nuevo.",
-						"styling":"bootstrap3",
-						"type":"error",
-						"icon":true,
-						"animation":"flip",
-						"hide":true,
-						"delay": 2500,
-					});
+					self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
 				}
 			});
 		}
@@ -1194,6 +1378,26 @@ var Single = Vue.extend({
 					period_end: '1950-01-01',
 					notes: '',
 				},
+				new_family_relationship: {
+					employee: this.$route.params.employee_id,
+					relationship: 0,
+					identification_type: 0,
+					identification_number: '',
+					names: '',
+					surname: '',
+					birthdate: '1950-01-01',
+					notes: '',
+				},
+				new_contact: {
+					employee: this.$route.params.employee_id,
+					identification_type: 0,
+					identification_number: '',
+					names: '',
+					surname: '',
+					email: '',
+					phones: '',
+					is_emergency: 0,
+				}
 			}
 		};
 	},
@@ -1232,6 +1436,9 @@ var Single = Vue.extend({
 					'employees_studies,study_status',
 					'employees_experiences,companies_areas',
 					'employees_experiences,companies_sectors',
+					'employees_family_groups,family_relationships',
+					'employees_family_groups,identifications_types',
+					'employees_contacts,identifications_types',
 				]
 			}, (r)=>{
 				self.record = r;
@@ -1251,16 +1458,7 @@ var Single = Vue.extend({
 					delete self.modals.new_experiency.period_end;
 				} else {
 					if(self.modals.new_experiency.period_end.length <= 9){
-						new PNotify({
-							"title": "Ups!",
-							"text": "Verifica el formulario e intenta de nuevo.",
-							"styling":"bootstrap3",
-							"type":"error",
-							"icon":true,
-							"animation":"flip",
-							"hide":true,
-							"delay": 2500,
-						});
+						self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
 						return false;
 					}
 				}
@@ -1278,44 +1476,48 @@ var Single = Vue.extend({
 							notes: '',
 						};
 						self.defaultData.experiency_date_current = false;
-						
-						new PNotify({
-							"title": "Exito!",
-							"text": "Estudio agregado.",
-							"styling":"bootstrap3",
-							"type":"success",
-							"icon":true,
-							"animation":"flip",
-							"hide":true,
-							"delay": 2500,
-						});
-						
+						self.$root.notificationPush("Exito!", "Experiencia agregada.", "success");
 						$('#new-experiency-modal').modal('hide');
 						self.load();
 					} else {
-						new PNotify({
-							"title": "Ups!",
-							"text": "Error creando.",
-							"styling":"bootstrap3",
-							"type":"error",
-							"icon":true,
-							"animation":"flip",
-							"hide":true,
-							"delay": 2500,
-						});
+						self.$root.notificationPush("Ups!", "Error creando.", "error");
 					}
 				});
 			} else {
-				new PNotify({
-					"title": "Ups!",
-					"text": "Verifica el formulario e intenta de nuevo.",
-					"styling":"bootstrap3",
-					"type":"error",
-					"icon":true,
-					"animation":"flip",
-					"hide":true,
-					"delay": 2500,
+				self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
+			}
+			
+		},
+		createNewFamilyRelationship(){
+			var self = this;
+			if(self.modals.new_family_relationship.employee > 0
+			&& self.modals.new_family_relationship.relationship > 0
+			&& self.modals.new_family_relationship.identification_type > 0
+			&& self.modals.new_family_relationship.identification_number.length > 4
+			&& self.modals.new_family_relationship.names.length > 2
+			&& self.modals.new_family_relationship.surname.length > 2
+			&& self.modals.new_family_relationship.birthdate.length > 9){
+				MV.api.create('/employees_family_groups', self.modals.new_family_relationship, (a) => {
+					if(a > 0){
+						self.modals.new_family_relationship = {
+							employee: this.$route.params.employee_id,
+							relationship: 0,
+							identification_type: 0,
+							identification_number: '',
+							names: '',
+							surname: '',
+							birthdate: '1950-01-01',
+							notes: '',
+						};
+						self.$root.notificationPush("Exito!", "Integrante creando.", "success");
+						$('#new-family-group-modal').modal('hide');
+						self.load();
+					} else {
+						self.$root.notificationPush("Ups!", "Error creando.", "error");
+					}
 				});
+			} else {
+				self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
 			}
 			
 		},
@@ -1334,44 +1536,50 @@ var Single = Vue.extend({
 							period_start: '1950-01-01',
 							period_end: '1950-01-01',
 						};
-						
-						new PNotify({
-							"title": "Exito!",
-							"text": "Estudio agregado.",
-							"styling":"bootstrap3",
-							"type":"success",
-							"icon":true,
-							"animation":"flip",
-							"hide":true,
-							"delay": 2500,
-						});
+						self.$root.notificationPush("Exito!", "Estudio agregado.", "success");
 						
 						$('#new-study-modal').modal('hide');
 						self.load();
 					} else {
-						new PNotify({
-							"title": "Ups!",
-							"text": "Error creando.",
-							"styling":"bootstrap3",
-							"type":"error",
-							"icon":true,
-							"animation":"flip",
-							"hide":true,
-							"delay": 2500,
-						});
+						self.$root.notificationPush("Ups!", "Error creando.", "error");
 					}
 				});
 			} else {
-				new PNotify({
-					"title": "Ups!",
-					"text": "Verifica el formulario e intenta de nuevo.",
-					"styling":"bootstrap3",
-					"type":"error",
-					"icon":true,
-					"animation":"flip",
-					"hide":true,
-					"delay": 2500,
+				self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
+			}
+		},
+		createNewContact(){
+			var self = this;
+			if(
+				self.modals.new_contact.employee > 0
+				&& self.modals.new_contact.identification_type > 0
+				&& self.modals.new_contact.identification_number.length > 4
+				&& self.modals.new_contact.names.length > 2
+				&& self.modals.new_contact.surname.length > 2
+				&& self.modals.new_contact.phones.length > 6
+			){
+				MV.api.create('/employees_contacts', self.modals.new_contact, (a) => {
+					if(a > 0){
+						self.modals.new_contact = {
+							employee: this.$route.params.employee_id,
+							identification_type: 0,
+							identification_number: '',
+							names: '',
+							surname: '',
+							email: '',
+							phones: '',
+							is_emergency: 0,
+						};
+						self.$root.notificationPush("Exito!", "Contacto agregado.", "success");
+						
+						$('#new-contact-modal').modal('hide');
+						self.load();
+					} else {
+						self.$root.notificationPush("Ups!", "Error creando.", "error");
+					}
 				});
+			} else {
+				self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
 			}
 		},
 		removeStudy(study_ref_id){
@@ -1384,16 +1592,7 @@ var Single = Vue.extend({
 						MV.api.remove('/employees_studies/' + study_ref_id, {}, (b) => {
 							if(b > 0){
 								self.load();
-								new PNotify({
-									"title": "Exito!",
-									"text": "Estudio eliminado.",
-									"styling":"bootstrap3",
-									"type":"success",
-									"icon":true,
-									"animation":"flip",
-									"hide":true,
-									"delay": 2500,
-								});
+								self.$root.notificationPush("Exito!", "Estudio eliminado.", "success");
 							}
 						});
 					}
@@ -1410,16 +1609,41 @@ var Single = Vue.extend({
 						MV.api.remove('/employees_experiences/' + experiency_ref_id, {}, (b) => {
 							if(b > 0){
 								self.load();
-								new PNotify({
-									"title": "Exito!",
-									"text": "Estudio eliminado.",
-									"styling":"bootstrap3",
-									"type":"success",
-									"icon":true,
-									"animation":"flip",
-									"hide":true,
-									"delay": 2500,
-								});
+								self.$root.notificationPush("Exito!", "Estudio eliminado.", "success");
+							}
+						});
+					}
+				}
+			});
+		},
+		removeFamilyRelationship(relationship_ref_id){
+			var self = this;
+			bootbox.confirm({
+				message: "Confirma antes de eliminar?",
+				locale: 'es',
+				callback: (a) => {
+					if(a == true){
+						MV.api.remove('/employees_family_groups/' + relationship_ref_id, {}, (b) => {
+							if(b > 0){
+								self.$root.notificationPush("Exito!", "Familiar eliminado.", "success");
+								self.load();
+							}
+						});
+					}
+				}
+			});
+		},
+		removeContact(contact_ref_id){
+			var self = this;
+			bootbox.confirm({
+				message: "Confirma antes de eliminar?",
+				locale: 'es',
+				callback: (a) => {
+					if(a == true){
+						MV.api.remove('/employees_contacts/' + contact_ref_id, {}, (b) => {
+							if(b > 0){
+								self.$root.notificationPush("Exito!", "Contacto eliminado.", "success");
+								self.load();
 							}
 						});
 					}
@@ -1456,6 +1680,7 @@ var app = new Vue({
 				study_status: [],
 				companies_areas: [],
 				companies_sectors: [],
+				family_relationships: [],
 			}
 		};
 	},
@@ -1482,7 +1707,35 @@ var app = new Vue({
 			MV.api.readList('/geo_countries', {}, (a)=>{ self.options.countries = a; });
 			MV.api.readList('/geo_departments', {}, (a)=>{ self.options.departments = a; });
 			MV.api.readList('/geo_citys', {}, (a)=>{ self.options.citys = a; });
+			
+			MV.api.readList('/family_relationships', {}, (a)=>{ self.options.family_relationships = a; });
 		},
+		notificationPush(title, message, type){
+			try{
+				new PNotify({
+					"title": title,
+					"text": message,
+					"styling":"bootstrap3",
+					"type": type,
+					"icon":true,
+					"animation":"flip",
+					"hide":true,
+					"delay": 2500,
+				});
+			} catch(e){
+				
+			}
+		},
+		calcularEdad(fecha) {
+			var hoy = new Date();
+			var cumpleanos = new Date(fecha);
+			var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+			var m = hoy.getMonth() - cumpleanos.getMonth();
+			if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+				edad--;
+			}
+			return edad;
+		}
 	}
 }).$mount('#employees-app');
 </script>

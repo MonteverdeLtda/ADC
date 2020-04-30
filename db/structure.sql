@@ -328,7 +328,7 @@ CREATE TABLE IF NOT EXISTS `addresses` (
   CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`city`) REFERENCES `geo_citys` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `addresses_ibfk_2` FOREIGN KEY (`department`) REFERENCES `geo_departments` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `addresses_ibfk_3` FOREIGN KEY (`via_principal`) REFERENCES `geo_types_vias` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -673,7 +673,7 @@ CREATE TABLE IF NOT EXISTS `employees` (
   CONSTRAINT `FK_employees_military_cards` FOREIGN KEY (`military_card`) REFERENCES `military_cards` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_pictures` FOREIGN KEY (`photo`) REFERENCES `pictures` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_status_marital` FOREIGN KEY (`status_marital`) REFERENCES `status_marital` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -695,7 +695,7 @@ CREATE TABLE IF NOT EXISTS `employees_contacts` (
   KEY `FK_employees_contacts_employees` (`employee`),
   CONSTRAINT `FK_employees_contacts_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_contacts_identifications_types` FOREIGN KEY (`identification_type`) REFERENCES `identifications_types` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -718,7 +718,7 @@ CREATE TABLE IF NOT EXISTS `employees_experiences` (
   CONSTRAINT `FK_employees_experiences_companies_areas` FOREIGN KEY (`area`) REFERENCES `companies_areas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_experiences_companies_sectors` FOREIGN KEY (`company_sector`) REFERENCES `companies_sectors` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_experiences_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -741,7 +741,35 @@ CREATE TABLE IF NOT EXISTS `employees_family_groups` (
   CONSTRAINT `FK_employees_family_groups_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_family_groups_family_relationships` FOREIGN KEY (`relationship`) REFERENCES `family_relationships` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_family_groups_identifications_types` FOREIGN KEY (`identification_type`) REFERENCES `identifications_types` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla admin_procrm.employees_media
+CREATE TABLE IF NOT EXISTS `employees_media` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee` int(11) NOT NULL,
+  `media` int(11) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `id` (`id`) USING BTREE,
+  KEY `FK_candidates_files_media` (`media`) USING BTREE,
+  KEY `FK_candidates_files_candidates` (`employee`) USING BTREE,
+  CONSTRAINT `FK_employees_media_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_employees_media_media` FOREIGN KEY (`media`) REFERENCES `media` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
+-- La exportación de datos fue deseleccionada.
+
+-- Volcando estructura para tabla admin_procrm.employees_skills
+CREATE TABLE IF NOT EXISTS `employees_skills` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee` int(11) NOT NULL,
+  `skill` varchar(250) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `FK_employees_skills_employees` (`employee`),
+  CONSTRAINT `FK_employees_skills_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -773,7 +801,7 @@ CREATE TABLE IF NOT EXISTS `employees_studies` (
   CONSTRAINT `FK_employees_studies_employees` FOREIGN KEY (`employee`) REFERENCES `employees` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_studies_study_levels` FOREIGN KEY (`level_study`) REFERENCES `study_levels` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_employees_studies_study_status` FOREIGN KEY (`status`) REFERENCES `study_status` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1031,7 +1059,7 @@ CREATE TABLE IF NOT EXISTS `media` (
   KEY `id` (`id`),
   KEY `FK_media_users` (`create_by`),
   CONSTRAINT `FK_media_users` FOREIGN KEY (`create_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=893 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=902 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1061,7 +1089,7 @@ CREATE TABLE IF NOT EXISTS `media_users` (
   KEY `FK_media_users_users` (`user`),
   CONSTRAINT `FK_media_users_media` FOREIGN KEY (`media`) REFERENCES `media` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_media_users_users` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=727 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=736 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1302,7 +1330,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
   KEY `FK_permissions_permissions` (`permission`),
   CONSTRAINT `FK_permissions_permissions` FOREIGN KEY (`permission`) REFERENCES `permissions_items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_permissions_permissions_group` FOREIGN KEY (`group`) REFERENCES `permissions_group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1315,7 +1343,7 @@ CREATE TABLE IF NOT EXISTS `permissions_group` (
   `for_account` int(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1329,7 +1357,7 @@ CREATE TABLE IF NOT EXISTS `permissions_items` (
   UNIQUE KEY `tag` (`tag`),
   KEY `id` (`id`),
   KEY `tag KEY` (`tag`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1345,7 +1373,7 @@ CREATE TABLE IF NOT EXISTS `pictures` (
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=678 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=679 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
 
 -- La exportación de datos fue deseleccionada.
 
@@ -1678,7 +1706,7 @@ CREATE TABLE IF NOT EXISTS `study_levels` (
   `name` varchar(150) CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
 
 -- La exportación de datos fue deseleccionada.
 

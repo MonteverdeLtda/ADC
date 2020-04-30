@@ -20,6 +20,17 @@ class ModeloBase extends EntidadBase
         parent::__construct($table, $adapter);
         // $this->formulario = $this->toFormHtml();
     }
+	
+	public function getById($id){
+		$id = (isset($id) && $id > 0) ? $id : 0;
+		$items = parent::getById($id);
+		if(isset($items[0])){
+			foreach($items[0] as $k=>$v){
+				$this->{$k} = $v;
+			}
+		}
+		return $items;
+	}
 
     public function toFormHtml($Action = "", $Method = "GET", $FormType = 0, $MessageError = "Datos invalidos.", $MessageSuccess = "OK."){
         $rules = $this->rules();

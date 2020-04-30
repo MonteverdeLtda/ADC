@@ -26,6 +26,19 @@ class Media extends ModeloBase{
 		}
 	}
 	
+	public function deleteDB(){
+		try {
+			$sql = "DELETE FROM {$this->getTableUse()} WHERE id=?";
+			$query = $this->db()->prepare($sql);
+			$query->execute([$this->id]);
+			return true;
+		}
+		catch(PDOException $e){
+			echo $sql . "<br>" . $e->getMessage();
+			return false;
+		}
+	}
+	
     public function save($columns = null){
 		if($this->create_by > 0){} else { return 0; }
 		$sql = "INSERT INTO {$this->getTableUse()} (name, type, size, path_full, path_short, create_by) VALUES (?, ?, ?, ?, ?, ?)";

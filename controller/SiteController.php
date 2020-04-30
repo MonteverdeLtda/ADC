@@ -760,4 +760,159 @@ class SiteController extends ControladorBase{
 		echo json_encode($returning);
 		return json_encode($returning);
 	}
+	
+	// media - Subir Archivo
+	public function actionUploadFileRRHH(){
+		$error = null;
+        if ($this->isGuest){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$ds          = DIRECTORY_SEPARATOR;
+		$storeFolder = 'uploads';
+		$files_detect = !isset($_FILES['file']) ? false : true;
+		$files = (isset($_FILES['file'])) ? (is_array($_FILES['file']) && isset($_FILES['file'][0]['tmp_name']) ? $_FILES['file'] : [$_FILES['file']]) : [];
+		$requestIn = $this->getRequest();
+		$requestIn['doc_number'] = !isset($requestIn['doc_number']) ? null : $requestIn['doc_number'];
+		
+		$returning = (object) [
+			'error' 	=> true,
+			'status'    => 'error',
+			'result' => false,
+			'files_detect' => $files_detect,
+			'files' => [],
+			//'files' => isset($_FILES['file']) ? $_FILES['file'] : [],
+			'text' => $requestIn['doc_number'] == null ? "Falta el # de documento." : ""
+		];
+		
+		if (isset($files) && $requestIn['doc_number'] !== null) {
+			$isArray = is_array($files) ? true : false;
+			$day = date("d");
+			$mouth = date("m");
+			$year = date("Y");
+			$targetPath = PUBLIC_PATH . "/files/rrhh/colaboradores/{$requestIn['doc_number']}/";
+			// Compruebe si la carpeta de carga si existe sino se crea la carpeta
+			if ( !file_exists($targetPath) && !is_dir($targetPath) ) { mkdir($targetPath, 0777, true); };
+			// Compruebe si la carpeta se creo o si existe
+			if ( file_exists($targetPath) && is_dir($targetPath) ) {
+				// Comprueba si podemos escribir en el directorio de destino
+				if ( is_writable($targetPath) ) {
+					/** Empieza a bailar */
+					if($isArray == true){
+						// $returning->text = "multiples archivos."; //carpeta: {$targetPath}
+						$total = count($files);
+						for($i = 0; $i < $total; $i++){
+							$model = new Media($this->adapter);
+							$model->name = randomString(16, $files[$i]['name']);
+							$model->type = $files[$i]['type'];
+							$model->size = $files[$i]['size'];
+							$model->path_short = "/public/files/rrhh/colaboradores/{$requestIn['doc_number']}/" . $model->name;
+							$model->path_full = $targetPath . $model->name;
+							$model->create_by = $this->user->id;
+							
+							// Mover archivo
+							$error_up = !$model->copyFile($files[$i]['tmp_name']);
+							$returning->error = $error_up;
+								$returning->text = $error_up; // carpeta: {$targetPath}
+							if ($error_up == false) {
+								$returning->status = 'succes';
+								$returning->files[] = (object) [
+									"id" => $model->id,
+									"name" => $model->name,
+									"type" => $model->type,
+									"size" => $model->size,
+									"path_short" => $model->path_short,
+									"path_full" => $model->path_full,
+									"error" => ($model->id > 0) ? false : true,
+								];
+							} else {
+								$returning->text = 'No se pudo guardar el archivo solicitado :(, ocurrió un misterioso error.';
+							}
+						}
+					} else {
+						$model = new Media($this->adapter);
+						$model->name = randomString(16, $_FILES['name']);
+						$model->type = $_FILES['type'];
+						$model->size = $_FILES['size'];
+						$model->path_short = "/public/files/rrhh/colaboradores/{$requestIn['doc_number']}/" . $model->name;
+						$model->path_full = $targetPath . $model->name;
+						$model->create_by = $this->user->id;
+						
+						// Mover archivo
+						$error_up = !$model->copyFile($_FILES['tmp_name']);
+						$returning->error = $error_up;
+							$returning->text = $error_up; // carpeta: {$targetPath}
+						if ($error_up == false) {
+							$returning->files[] = (object) [
+								"id" => $model->id,
+								"name" => $model->name,
+								"type" => $model->type,
+								"size" => $model->size,
+								"path_short" => $model->path_short,
+								"path_full" => $model->path_full,
+								"error" => ($model->id > 0) ? false : true,
+							];
+						} else {
+							$returning->text = 'No se pudo cargar el archivo solicitado :(, ocurrió un misterioso error.';
+						}
+					}
+				} else {
+					$returning->text = "No hay permisos en la carpeta. ";
+				}
+			}else{
+				$returning->text = "no existe la carpeta. {$targetPath}";
+			}
+		}
+		
+		$returning->status = $returning->error == false ? 'status' : 'error';
+		$returning->files = is_object(json_decode(json_encode($returning->files))) ? [$returning->files] : $returning->files;
+		echo json_encode($returning);
+		return json_encode($returning);
+	}
+	
+	
+	// media - Subir Archivo
+	public function actionRemoveFileRRHH(){
+		$error = null;
+        if ($this->isGuest){ header('HTTP/1.0 403 Forbidden'); exit(); }
+		$ds          = DIRECTORY_SEPARATOR;
+		$storeFolder = 'uploads';
+		$requestIn = $this->getRequest();
+		$requestIn['media_id'] = !isset($requestIn['media_id']) ? null : $requestIn['media_id'];
+			
+		$returning = (object) [
+			'error' 	=> true,
+			'media_id'    => $requestIn['media_id'],
+			'status'    => "",
+			'file'    => null,
+			'text'    => "",
+		];
+		
+		
+		if($requestIn['media_id'] !== null){
+			$model = new Media($this->adapter);
+			$model->getById($requestIn['media_id']);
+			$returning->file = $model->path_full;
+			if ( file_exists($model->path_full) && !is_dir($model->path_full) ) {
+				$returning->text = "El archivo existe.";
+				$deleteR = $model->deleteDB();
+				if($deleteR == true){
+					$returning->text = "El archivo fue borrado de la DB.";
+					$returning->error = unlink($returning->file);
+					if($returning->error == true){
+						$returning->text = "El archivo fue borrado.";
+						$returning->error = false;
+					} else {
+						$returning->text = "Error borrando el archivo de la carpeta.";
+					}
+				} else {
+					$returning->text = "El archivo no se pudo eliminar de la base de datos.";
+				}
+			} else {
+				$returning->text = "El archivo no existe o es directorio.";
+			}
+		}
+		
+		
+		$returning->status = $returning->error == false ? 'succes' : 'error';
+		echo json_encode($returning);
+		return json_encode($returning);
+	}
 }

@@ -20,7 +20,6 @@
 
 <template id="home">
 	<div>
-		
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
@@ -41,9 +40,6 @@
 				</div>
 			</div>
 		</div>
-		
-		
-		
 	</div>
 </template>
 
@@ -233,10 +229,10 @@
 									</select>
 								</div>
 								<div class="col-md-2 col-sm-2 col-xs-4">
-									<input type="text" required="required" class="form-control col-md-7 col-xs-12" v-model="record.military_card_number">
+									<input type="text" class="form-control col-md-7 col-xs-12" v-model="record.military_card_number">
 								</div>
 								<div class="col-md-2 col-sm-2 col-xs-4">
-									<input type="text" required="required" class="form-control col-md-7 col-xs-12" v-model="record.military_card_dm">
+									<input type="text" class="form-control col-md-7 col-xs-12" v-model="record.military_card_dm">
 								</div>
 							</div>
 							<div class="form-group">
@@ -278,7 +274,7 @@
 							<div class="form-group">
 								<label class="control-label col-md-3 col-sm-3 col-xs-12">Observaciones del Jefe de RRHH Y/O Contratos <span class="required">*</span></label>
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<textarea rows="7" class="form-control col-md-7 col-xs-12" required="required" v-model="record.notes"></textarea>
+									<textarea rows="7" class="form-control col-md-7 col-xs-12" v-model="record.notes"></textarea>
 								</div>
 							</div>
 							
@@ -420,6 +416,382 @@
 	</div>
 </template>
 
+<template id="edit">
+	<div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<h2>Nuevo empleado<small></small></h2>
+						<ul class="nav navbar-right panel_toolbox">
+							<li>
+								<router-link :to="{ name: 'Home'}">
+									<span class="fa fa-close" aria-hidden="true"></span>
+								</router-link>
+							</li>
+						</ul>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<br />
+						<form class="form-horizontal form-label-left" action="javascript:return false;" v-on:submit="saveEmployee">
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Nombre(s) <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input type="text" required="required" class="form-control col-md-7 col-xs-12" v-model="record.names">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Apellido(s) <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input type="text" required="required" class="form-control col-md-7 col-xs-12" v-model="record.surname">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Tipo de identificación <span class="required">*</span></label>
+								<div class="col-md-3 col-sm-3 col-xs-6">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.identification_type">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.identifications_types" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+								<div class="col-md-3 col-sm-3 col-xs-6">
+									<input class="form-control col-md-7 col-xs-12" type="text" name="middle-name" required="required" v-model="record.identification_number">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Nacionalidad <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.nationality">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.countries" :value="item.id">{{ item.name }} ({{ item.iso }})</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Fecha de nacimiento <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input id="cal_birthday" class="form-control col-md-7 col-xs-12" type="text" required="required" v-model="record.birthdate">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Lugar de nacimiento <span class="required">*</span></label>
+								<div class="col-md-2 col-sm-2 col-xs-4">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.place_birth_country" @change="record.place_birth_department=0;record.place_birth_city=0;">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.countries" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+								<div class="col-md-2 col-sm-2 col-xs-4">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.place_birth_department" @change="record.place_birth_city=0;">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.departments.filter(dtp => dtp.country == record.place_birth_country)" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+								<div class="col-md-2 col-sm-2 col-xs-4">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.place_birth_city">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.citys.filter(city => city.department == record.place_birth_department)" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Género <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<div class="btn-group" >
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="record.gender" value="male" required="required"> &nbsp; Masculino &nbsp;
+										</label>
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="record.gender" value="female" required="required"> Femenino
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Estado civil <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.status_marital">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.status_marital" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Teléfono Fijo <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input class="form-control col-md-7 col-xs-12" type="text" required="required" v-model="record.phone" datas-inputmask="'mask': '(9) 999 9999'">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Teléfono Móvil <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<input class="form-control col-md-7 col-xs-12" type="text" required="required" v-model="record.mobile" datas-inputmask="'mask' : '399 999-9999'">
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Direccion <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">									
+									<div class="input-group col-xs-12">
+										<template v-if="record.address > 0">
+											<input readonly="true" type="text" class="form-control" :value="repairAddressFull">
+										</template>
+										<template v-else>
+											<input readonly="true" type="text" class="form-control" value="Ingrese su direccion">
+										</template>
+										
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addresses-modal">
+												<i class="fa fa-search"></i>
+											</button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Licencia de conducción <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.driving_license">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.driving_licenses" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Dispone de vehículo propio <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<div class="btn-group" >
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="record.own_vehicle" value="1" required="required"> &nbsp; Si &nbsp;
+										</label>
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="record.own_vehicle" value="0" required="required"> No
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Discapacidad <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<div class="btn-group" >
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="record.disability" value="1" required="required"> &nbsp; Si &nbsp;
+										</label>
+										<label class="btn btn-default" data-toggle-class="btn-primary" data-toggle-passive-class="btn-default">
+											<input type="radio" v-model="record.disability" value="0" required="required"> No
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Estado <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.status">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.employees_status" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Libreta Militar / Número / D.M. <span class="required">*</span></label>
+								<div class="col-md-2 col-sm-2 col-xs-4">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.military_card">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.military_cards" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+								<div class="col-md-2 col-sm-2 col-xs-4">
+									<input type="text" class="form-control col-md-7 col-xs-12" v-model="record.military_card_number">
+								</div>
+								<div class="col-md-2 col-sm-2 col-xs-4">
+									<input type="text" class="form-control col-md-7 col-xs-12" v-model="record.military_card_dm">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">EPS <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.eps">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.membership_entities.filter(enty => enty.type == 'eps')" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">ARL <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.arl">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.membership_entities.filter(enty => enty.type == 'arl')" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">AFP <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.afp">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.membership_entities.filter(enty => enty.type == 'afp')" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">CCF <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<select class="form-control col-md-7 col-xs-12" required="required" v-model="record.ccf">
+										<option value="0">Seleccione</option>
+										<option v-for="(item, item_i) in $root.options.membership_entities.filter(enty => enty.type == 'ccf')" :value="item.id">{{ item.name }}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-md-3 col-sm-3 col-xs-12">Observaciones del Jefe de RRHH Y/O Contratos <span class="required">*</span></label>
+								<div class="col-md-6 col-sm-6 col-xs-12">
+									<textarea rows="7" class="form-control col-md-7 col-xs-12" v-model="record.notes"></textarea>
+								</div>
+							</div>
+							
+							<div class="ln_solid"></div>
+							<div class="form-group">
+								<div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+								
+									<router-link tag="button" class="btn btn-primary" type="button" :to="{ name: 'Single', params: { employee_id: record.id } }">
+										Cancelar
+									</router-link>
+									
+									<button class="btn btn-primary" type="reset">Limpiar</button>
+									<button type="submit" class="btn btn-success">Guardar</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Modal Addresses -->
+			<div class="modal fade" id="addresses-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="modalLabelSmall">Normalizar Direcciones</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form" action="javascript:false;" v-on:submit="NormalizeAddressesModal" method="post">
+							
+								<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+									<select v-model="addressNormalize.department" type="text" required="required" class="form-control has-feedback-left" @change="addressNormalize.city = 0;">
+										<option value="0">Elija un departamento...</option>
+										<option v-for="(item, item_i) in $root.options.departments" :value="item.id">{{ item.name }}</option>
+									</select>
+									<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+								</div>
+								<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+									<select v-model="addressNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+										<option value="0">Elija una ciudad...</option>
+										<option v-for="(item, item_i) in $root.options.citys.filter(city => city.department == addressNormalize.department)" :value="item.id">{{ item.name }}</option>
+									</select>
+									<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+								</div>
+
+								<div class="col-xs-4">
+									<h5>Via principal. (*)</h5>
+									<div class="form-group">
+										<select v-model="addressNormalize.via_principal" required="required" class="form-control">
+											<option value="0">Elija una opción...</option>
+											<option v-for="(item, index_item) in $root.options.types_vias" :key="item.id" :value="item.id">{{ item.name }} - {{ item.code }}</option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="col-xs-2">
+									<h5>Num. (*)</h5>
+									<div class="form-group">
+										<input v-model="addressNormalize.via_principal_number" type="text" required="" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<h5>Letra</h5>
+									<div class="form-group">
+										<input v-model="addressNormalize.via_principal_letter" type="text" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<h5>Cuadrante</h5>
+									<div class="form-group">
+										<select v-model="addressNormalize.via_principal_quadrant" class="form-control">
+											<option value="0">Elija una opción...</option>
+											<option v-for="(item, index_item) in $root.options.types_quadrants" :key="item.id" :value="item.code">{{ item.name }}</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<h5>Num. (*)</h5>
+									<div class="form-group">
+										<input v-model="addressNormalize.via_secondary_number" type="text" required="" class="form-control" />
+									</div>
+								</div>
+
+								<div class="col-xs-2">
+									<h5>Letra.</h5>
+									<div class="form-group">
+										<input v-model="addressNormalize.via_secondary_letter" type="text" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<h5>Cuadrante</h5>
+									<div class="form-group">
+										<select v-model="addressNormalize.via_secondary_quadrant" class="form-control">
+											<option value="0">Elija una opción...</option>
+											<option v-for="(item, index_item) in $root.options.types_quadrants" :key="item.id" :value="item.code">{{ item.name }}</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-xs-2">
+									<h5>Num. (*)</h5>
+									<div class="form-group">
+										<input v-model="addressNormalize.via_end_number" type="text" required="" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-12">
+									<h5>Complemento</h5>
+									<div class="form-group">
+										<input v-model="addressNormalize.via_end_extra" type="text" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-12">
+									<h5>Simple</h5>
+									<div class="form-group">
+										<input v-model="repairAddressMin" type="text" readonly="" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-12">
+									<h5>Completo</h5>
+									<div class="form-group">
+										<input v-model="repairAddressFull" type="text" readonly="" class="form-control" />
+									</div>
+								</div>
+								<div class="col-xs-12">
+									<div class="form-group">
+										<div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+											<button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Cancelar</button>
+											<button class="btn btn-primary" type="reset">Limpiar Formulario</button>
+											<button v-if="addressNormalizeError === false" type="submit" class="btn btn-success">Guardar Direccion</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /Modal Addresses -->
+		</div>
+	</div>
+</template>
+
 <template id="single">
 	<div>
 		<div class="clearfix"></div>
@@ -441,8 +813,19 @@
 						<div class="col-md-3 col-sm-3 col-xs-12 profile_left">
 							<div class="profile_img">
 								<div id="crop-avatar">
+									<div class="col-md-12 col-sm-12 col-xs-12">
+										<div class="input-group" style="zoom: 0.7">
+											<span class="input-group-btn">
+												<span class="btn btn-default btn-file-photo">
+													Subir… <input type="file" accept="image/png, image/jpeg, image/gif" id="imgInp-photo" v-on:change="changePhoto">
+												</span>
+											</span>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									
 									<!-- Current avatar -->
-									<img class="img-responsive avatar-view" :src="(record.photo !== null && record.photo > 0) ? '/public/assets/images/picture.jpg' : defaultData.photo" alt="Avatar" title="Change the avatar" />
+									<img class="img-responsive avatar-view" :src="(record.photo !== null && record.photo.id > 0) ? 'data:image/png;base64, ' + record.photo.data : defaultData.photo" alt="Avatar" />
 								</div>
 							</div>
 							<h3>{{ record.names }} {{ record.surname }} ({{ record.status.name }}) </h3>
@@ -482,6 +865,17 @@
 								-->
 							</ul>
 							<!-- <a class="btn btn-success"><i class="fa fa-edit m-right-xs"></i>Edit Profile</a> -->
+							
+							
+							<h4>Observacion(es)</h4>
+							<p>{{ record.notes }}</p>
+							
+							<hr>
+							<a class="btn btn-danger" @click="deleteThisEmployee"><i class="fa fa-trash m-right-xs"></i></a>
+							<router-link :to="{ name: 'Edit', params: { employee_id: employee_id } }" class="btn btn-primary">
+								<span class="fa fa-edit m-right-xs" aria-hidden="true"></span> Editar
+							</router-link>
+							
 							<br />
 							
 							<!-- start skills -- >
@@ -543,10 +937,16 @@
 										</a>
 									</li>
 									<li role="presentation" class="">
+										<a href="#tab_content7" role="tab" id="profile-tab7" data-toggle="tab" aria-expanded="false">
+											<i class="fa fa-cogs"></i> Habilidades
+										</a>
+									</li>
+									<!-- // <li role="presentation" class="">
 										<a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
 											<i class="fa fa-line-chart"></i> Desempeño
 										</a>
 									</li>
+									-->
 								</ul>
 								<div id="myTabContent" class="tab-content">
 									<div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
@@ -741,7 +1141,84 @@
 										</div>
 									</div>
 									<div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="profile-tab">
-										Docs
+										
+										<template>
+											<div class="container">
+												<div class="large-8 medium-10 small-12 pull-right">
+												<div class="large-12 medium-12 small-12 cell">
+													<label>Subir Archivo...
+														<input type="file" id="file" ref="file" v-on:change="handleFileUpload()" accept="application/pdf, image/*" /> <!-- //  accept="image/png, image/jpeg, image/gif," -->
+													</label>
+													<button v-on:click="submitFile()">Subir</button>
+												</div>
+												</div>
+											</div>
+										</template>
+										<div class="clearfix"></div>
+										
+										<div class="row">
+											<div class="col-md-12">
+												<table class="table table-striped table-bordered table-hover">
+													<thead>
+														<tr>
+															<th>Nombre del Archivo.</th>
+															<th>Tipo de archivo.</th>
+															<th>Fecha de subida.</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr v-for="(item, item_i) in record.employees_media">
+															<td>{{ item.media.name.split("-").splice(1).join('-') }}</td>
+															<td>{{ item.media.type.split("/").splice(1).join('/') }}</td>
+															<td>{{ item.media.created }}</td>
+															<td>
+																<a class="btn btn-sm btn-info" :href="item.media.path_short" target="_new" style="cursor:pointer" ><i class="fa fa-lg fa-eye"></i></a>
+																<a @click="removeFile(item.id, item.media.id)" class="btn btn-sm btn-danger" style="cursor:pointer" ><i class="fa fa-lg fa-times"></i></a>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="clearfix"></div>
+
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab_content7" aria-labelledby="profile-tab">
+										<div class="row">
+											<div class="col-md-12 col-sm-12 col-xs-12 text-center"></div>
+											
+											<div class="clearfix"></div>
+											<div class="col-md-12 col-sm-12 col-xs-12 text-center">
+												<div class="form-group">
+													<label class="control-label col-md-3 col-sm-3 col-xs-12">Agregar Habilidad <span class="required">*</span></label>
+													<div class="col-md-9 col-sm-9 col-xs-12">
+														<form action="javascript: return false;" v-on:submit="addSkill">
+															<div class="input-group">
+																<input required="required" v-model="modals.new_skill.skill" type="text" class="form-control">
+																<span class="input-group-btn">
+																	<button type="submit" class="btn btn-primary"><i class="fa fa-lg fa-plus-circle"></i></button>
+																</span>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+											
+											<div class="clearfix"></div>
+											<div class="col-sm-2"></div>
+											<div class="offset-sm-2 col-md-8 text-center">
+												<div class="btn-group" v-for="(item, item_i) in record.employees_skills">
+													<button data-toggle="dropdown" class="btn btn-md btn-default dropdown-toggle" type="button" aria-expanded="false">
+														{{ item.skill }} <span class="caret"></span>
+													</button>
+													<ul role="menu" class="dropdown-menu">
+														<li><a @click="removeSkill(item.id)">Quitar</a></li>
+													</ul>
+												</div>
+											</div>
+											
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1356,17 +1833,232 @@ var Create = Vue.extend({
 	}
 });
 
+var Edit = Vue.extend({
+	template: '#edit',
+	data(){
+		return {
+			addressNormalizeError: true,
+			record: {
+				id: this.$route.params.employee_id,
+				names: '',
+				surname: '',
+				identification_type: 0,
+				identification_number: '',
+				nationality: 0,
+				birthdate: '1950-01-01',
+				place_birth_country: 0,
+				place_birth_department: 0,
+				place_birth_city: 0,
+				gender: '',
+				status_marital: 0,
+				phone: '',
+				mobile: '',
+				address: 0,
+				driving_license: 0,
+				own_vehicle: 0,
+				disability: 0,
+				status: 0,
+				military_card: 0,
+				military_card_number: '',
+				military_card_dm: '',
+				notes: '',
+				eps: 0,
+				arl: 0,
+				afp: 0,
+				ccf: 0,
+			},
+			addressNormalize: {
+				department: 0,
+				city: 0,
+				"via_principal": 0,
+				"via_principal_number": "",
+				"via_principal_letter": "",
+				"via_principal_quadrant": "",
+				"via_secondary_number": "",
+				"via_secondary_letter": "",
+				"via_secondary_quadrant": "",
+				"via_end_number": "",
+				"via_end_extra": "",
+				"minsize": "",
+				"complete": ""
+			}
+		}
+	},
+	mounted(){
+		var self = this;
+		self.load();
+		$('#cal_birthday').daterangepicker({
+			singleDatePicker: true,
+			singleClasses: "picker_1",
+			locale: {
+				format: 'YYYY-MM-DD'
+			}
+		}, function(start, end, label) {
+			//console.log(start.toISOString(), end.toISOString(), label);
+		});
+	},
+	methods: {
+		load(){
+			var self = this;
+			//self.record = null;
+			MV.api.readSingle('/employees', self.record.id, {
+			}, (r)=>{
+				console.log(r);
+				self.record = r;
+			});
+		},
+		NormalizeAddressesModal(){
+			var self = this;
+			self.record.address = 0;
+			MV.api.read('/addresses', {
+				filter: [
+					'department,eq,' + self.addressNormalize.department,
+					'city,eq,' + self.addressNormalize.city,
+					'complete,eq,' + self.addressNormalize.complete,
+					'minsize,eq,' + self.addressNormalize.minsize
+				]
+			}, (a) => {
+				console.log("Buscando: ", a);
+				if(a.length > 0){
+					// console.log("Direccion existente");
+					self.record.address = a[0].id;
+					$('#addresses-modal').modal('hide');
+				} else {
+					MV.api.create('/addresses', self.addressNormalize, (b) => {
+						if(b > 0){
+							// console.log("Direccion nueva agregada con exito.");
+							self.record.address = b;
+							$('#addresses-modal').modal('hide');
+						} else {
+							console.log("Error creando");
+						}
+					});
+				}
+			});
+		},
+		saveEmployee(){
+			var self = this;
+			MV.api.update('/employees/' + self.record.id, self.record, (a) => {
+				if(a > 0){
+					self.$root.notificationPush("Exito!", "El empleado se guardo con exito.", "success");
+					self.$router.push({
+						name: 'Single',
+						params: {
+							employee_id: self.record.id
+						},
+					});
+				} else {
+					self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
+				}
+			});
+		}
+	},
+	computed: {
+		repairAddressMin(){
+			var self = this;
+			var addressReturn = "";
+			try {
+				var principal_via = self.$root.options.types_vias[self.$root.options.types_vias.map(function(x) { return x.id; }).indexOf(self.addressNormalize.via_principal)];
+				self.addressNormalize.department = self.addressNormalize.department;
+				self.addressNormalize.city = self.addressNormalize.city;
+				var city = self.$root.options.citys[self.$root.options.citys.map(function(x) { return x.id; }).indexOf(self.addressNormalize.city)];
+				var department = self.$root.options.departments[self.$root.options.departments.map(function(x) { return x.id; }).indexOf(self.addressNormalize.department)];
+
+				self.addressNormalize.via_principal_number = self.addressNormalize.via_principal_number.replace(/[a-zA-Z-+()\s]/g, '');
+				self.addressNormalize.via_secondary_number = self.addressNormalize.via_secondary_number.replace(/[a-zA-Z-+()\s]/g, '');
+				self.addressNormalize.via_end_number = self.addressNormalize.via_end_number.replace(/[a-zA-Z-+()\s]/g, '');
+				self.addressNormalize.via_principal_letter = self.addressNormalize.via_principal_letter.replace(/[0-9-+()\s]/g, '').toUpperCase();
+				self.addressNormalize.via_secondary_letter = self.addressNormalize.via_secondary_letter.replace(/[0-9-+()\s]/g, '').toUpperCase();
+				self.addressNormalize.via_end_extra = self.addressNormalize.via_end_extra.toUpperCase();
+
+				if(self.addressNormalize.via_principal_number.length > 0 && self.addressNormalize.via_secondary_number.length > 0 && self.addressNormalize.via_end_number.length > 0){
+					if(principal_via.id !== undefined){ addressReturn += principal_via.code; }
+					addressReturn += ' ' + self.addressNormalize.via_principal_number;
+					addressReturn += (self.addressNormalize.via_principal_letter !== "") ? '' + self.addressNormalize.via_principal_letter : "";
+					addressReturn += (self.addressNormalize.via_principal_quadrant !== "") ? ' ' + self.addressNormalize.via_principal_quadrant : "";
+					addressReturn += (self.addressNormalize.via_secondary_number !== "") ? ' ' + self.addressNormalize.via_secondary_number : "";
+					addressReturn += (self.addressNormalize.via_secondary_letter !== "") ? '' + self.addressNormalize.via_secondary_letter : "";
+					addressReturn += (self.addressNormalize.via_secondary_quadrant !== "") ? ' ' + self.addressNormalize.via_secondary_quadrant : "";
+					addressReturn += (self.addressNormalize.via_end_number !== "") ? '-' + self.addressNormalize.via_end_number : "";
+					addressReturn += (self.addressNormalize.via_end_extra !== "") ? ' ' + self.addressNormalize.via_end_extra : "";
+
+					if(city.id !== undefined){ addressReturn += ', ' + city.name.toUpperCase(); }
+					if(department.id !== undefined){ addressReturn += ', ' + department.name.toUpperCase(); }
+
+					self.addressNormalize.minsize = addressReturn;
+					return addressReturn;
+				} else {
+					self.addressNormalizeError = true;
+					return "Formulario incompleto";
+				}
+			} catch(e){
+				self.addressNormalizeError = true;
+				return "Direccion invalida";
+			};
+		},
+		repairAddressFull(){
+			var self = this;
+			var addressReturn = "";
+			try {
+				var principal_via = self.$root.options.types_vias[self.$root.options.types_vias.map(function(x) { return x.id; }).indexOf(self.addressNormalize.via_principal)];
+				var city = self.$root.options.citys[self.$root.options.citys.map(function(x) { return x.id; }).indexOf(self.addressNormalize.city)];
+				var department = self.$root.options.departments[self.$root.options.departments.map(function(x) { return x.id; }).indexOf(self.addressNormalize.department)];
+
+				self.addressNormalize.via_principal_number = self.addressNormalize.via_principal_number.replace(/[a-zA-Z-+()\s]/g, '');
+				self.addressNormalize.via_secondary_number = self.addressNormalize.via_secondary_number.replace(/[a-zA-Z-+()\s]/g, '');
+				self.addressNormalize.via_end_number = self.addressNormalize.via_end_number.replace(/[a-zA-Z-+()\s]/g, '');
+				self.addressNormalize.via_principal_letter = self.addressNormalize.via_principal_letter.replace(/[0-9-+()\s]/g, '').toUpperCase();
+				self.addressNormalize.via_secondary_letter = self.addressNormalize.via_secondary_letter.replace(/[0-9-+()\s]/g, '').toUpperCase();
+				self.addressNormalize.via_end_extra = self.addressNormalize.via_end_extra.toUpperCase();
+
+				if(self.addressNormalize.via_principal_number.length > 0 && self.addressNormalize.via_secondary_number.length > 0 && self.addressNormalize.via_end_number.length > 0){
+					if(principal_via.id !== undefined){ addressReturn += principal_via.name; }
+
+					addressReturn += ' ' + self.addressNormalize.via_principal_number;
+					addressReturn += (self.addressNormalize.via_principal_letter !== "") ? '' + self.addressNormalize.via_principal_letter : "";
+					addressReturn += (self.addressNormalize.via_principal_quadrant !== "") ? ' ' + self.addressNormalize.via_principal_quadrant : "";
+					addressReturn += (self.addressNormalize.via_secondary_number !== "") ? ' ' + self.addressNormalize.via_secondary_number : "";
+					addressReturn += (self.addressNormalize.via_secondary_letter !== "") ? '' + self.addressNormalize.via_secondary_letter : "";
+					addressReturn += (self.addressNormalize.via_secondary_quadrant !== "") ? ' ' + self.addressNormalize.via_secondary_quadrant : "";
+					addressReturn += (self.addressNormalize.via_end_number !== "") ? '-' + self.addressNormalize.via_end_number : "";
+					addressReturn += (self.addressNormalize.via_end_extra !== "") ? ' ' + self.addressNormalize.via_end_extra : "";
+
+					if(city.id !== undefined){ addressReturn += ', ' + city.name.toUpperCase(); }
+					if(department.id !== undefined){ addressReturn += ', ' + department.name.toUpperCase(); }
+
+					self.addressNormalize.complete = addressReturn;
+					self.addressNormalizeError = false;
+
+					return addressReturn;
+				} else {
+					self.addressNormalizeError = true;
+					return "Formulario incompleto";
+				}
+			} catch(e){
+				self.addressNormalizeError = true;
+				return "Direccion invalida";
+			};
+		},
+	}
+});
+
 var Single = Vue.extend({
 	template: '#single',
 	data(){
 		return {
 			employee_id: this.$route.params.employee_id,
 			record: null,
+			file_photo: null,
+			file: '',
 			defaultData: {
 				photo: 'data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMvaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjYtYzA2NyA3OS4xNTc3NDcsIDIwMTUvMDMvMzAtMjM6NDA6NDIgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDQyAyMDE1IChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3RkVCODBDMjU1OTMxMUVBQTZGOEI1OTNBODA2MjE2NSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3RkVCODBDMzU1OTMxMUVBQTZGOEI1OTNBODA2MjE2NSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjdGRUI4MEMwNTU5MzExRUFBNkY4QjU5M0E4MDYyMTY1IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjdGRUI4MEMxNTU5MzExRUFBNkY4QjU5M0E4MDYyMTY1Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+/+4ADkFkb2JlAGTAAAAAAf/bAIQABgQEBAUEBgUFBgkGBQYJ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',
 				experiency_date_current: false,
 			},
 			modals: {
+				new_skill: {
+					employee: this.$route.params.employee_id,
+					skill: '',
+				},
 				new_study: {
 					employee: this.$route.params.employee_id,
 					name: '',
@@ -1411,7 +2103,6 @@ var Single = Vue.extend({
 	},
 	mounted(){
 		var self = this;
-		
 		$('.date_modal_sql').daterangepicker({
 			singleDatePicker: true,
 			singleClasses: "picker_1",
@@ -1421,9 +2112,67 @@ var Single = Vue.extend({
 		}, function(start, end, label) {});
 		
 		self.load();
-		
 	},
 	methods: {
+		deleteThisEmployee(){
+			var self = this;
+			bootbox.confirm({
+				message: "Confirma antes de eliminar?<br> <b>Nota:</b> Recuerda que debes eliminar todo el contenido del empleado antes de eliminarlo.",
+				locale: 'es',
+				callback: (a) => {
+					if(a == true){
+						MV.api.remove('/employees/' + self.employee_id, {}, (b) => {
+							if(b > 0){
+								self.$root.notificationPush("Exito!", "eliminado.", "success");
+								self.$router.push({
+									name: 'Home',
+								});
+							} else {
+								self.$root.notificationPush("Ups!", "No se pudo eliminar el empleado.", "error");
+							}
+						});
+					}
+				}
+			});
+		},
+		changePhoto(){
+			var self = this;
+			console.log("Foto cambiada");
+			var input = $("#imgInp-photo")[0];
+			
+			if (input.files && input.files[0]) {
+				console.log("archivo", input.files[0]);
+				
+				var reader = new FileReader();
+				reader.onload = function (e) {				
+					pict = {
+						name: input.files[0].name,
+						size: input.files[0].size,
+						data: e.target.result.split('base64,')[1],
+						type: input.files[0].type,
+					};
+					
+					MV.api.create('/pictures', pict, (a) => {
+						console.log(a);
+						if(a > 0){
+							MV.api.update('/employees/' + self.record.id, {
+								photo: a
+							}, (e) => {
+								if(e > 0){
+									// $('#img-upload-photo').attr('src', e.target.result);
+									self.load();
+								} else {
+									self.$root.notificationPush("Ups!", 'Hubo un error actualizando la imagen en el perfil.', "error");
+								}
+							});
+						} else {
+							self.$root.notificationPush("Ups!", "Error creando.", "error");
+						}
+					});
+				}
+				reader.readAsDataURL(input.files[0]);
+			}
+		},
 		load(){
 			var self = this;
 			//self.record = null;
@@ -1438,7 +2187,7 @@ var Single = Vue.extend({
 					'identifications_types',
 					'membership_entities',
 					'military_cards',
-					//'pictures',
+					'pictures',
 					'status_marital',
 					'employees_studies,study_levels',
 					'employees_studies,study_status',
@@ -1447,10 +2196,37 @@ var Single = Vue.extend({
 					'employees_family_groups,family_relationships',
 					'employees_family_groups,identifications_types',
 					'employees_contacts,identifications_types',
+					'employees_media,media',
+					'employees_skills',
 				]
 			}, (r)=>{
 				self.record = r;
 			});
+		},
+		addSkill(){
+			var self = this;
+			if(self.modals.new_skill.skill.length >= 3){
+				MV.api.create('/employees_skills', self.modals.new_skill, (a) => {
+					if(a > 0){
+						self.record.employees_skills.push({
+							id: a,
+							employee: self.modals.new_skill.employee,
+							skill: self.modals.new_skill.skill
+						});
+						
+						self.modals.new_skill = {
+							employee: this.$route.params.employee_id,
+							skill: '',
+						};
+						self.$root.notificationPush("Exito!", "Agregado.", "success");
+					} else {
+						self.$root.notificationPush("Ups!", "Error creando.", "error");
+					}
+				});
+			} else {
+				self.$root.notificationPush("Ups!", "Verifica el formulario e intenta de nuevo.", "error");
+			}
+			
 		},
 		createNewExperiency(){
 			var self = this;
@@ -1459,7 +2235,7 @@ var Single = Vue.extend({
 			&& self.modals.new_experiency.company_sector > 0
 			&& self.modals.new_experiency.position.length >= 4
 			&& self.modals.new_experiency.area > 0
-			&& self.modals.new_experiency.notes.length > 20
+			&& self.modals.new_experiency.notes.length > 10
 			&& self.modals.new_experiency.period_start.length >= 10){
 				if(self.defaultData.experiency_date_current == true){
 					self.modals.new_experiency.period_end = null;
@@ -1531,7 +2307,7 @@ var Single = Vue.extend({
 		},
 		createNewStudy(){
 			var self = this;
-			if(self.modals.new_study.employee > 0 && self.modals.new_study.name.length >= 5 && self.modals.new_study.educational_center.length >= 5 && self.modals.new_study.level_study > 0
+			if(self.modals.new_study.employee > 0 && self.modals.new_study.name.length >= 5 && self.modals.new_study.educational_center.length >= 3 && self.modals.new_study.level_study > 0
 				&& self.modals.new_study.status > 0 && self.modals.new_study.period_start.length >= 5 && self.modals.new_study.period_end.length >= 5){
 				MV.api.create('/employees_studies', self.modals.new_study, (a) => {
 					if(a > 0){
@@ -1658,6 +2434,98 @@ var Single = Vue.extend({
 				}
 			});
 		},
+		removeFile(media_ref_id, media_id){
+			var self = this;
+			bootbox.confirm({
+				message: "Confirma antes de eliminar?",
+				locale: 'es',
+				callback: (a) => {
+					if(a == true){
+						MV.api.remove('/employees_media/' + media_ref_id, {}, (b) => {
+							if(b > 0){
+								self.$root.notificationPush("Exito!", "Se quito el archivo del empleado, espere mientras lo eliminamos.", "success");
+								MV.apiFG.get('/index.php?action=RemoveFileRRHH&media_id=' + media_id, {})
+								.then(function (c){
+									self.$root.notificationPush(c.data.error == true ? 'Ups!' : 'Exito!', c.data.text, c.data.status);
+									self.load();
+								})
+								.catch(function (e) {
+									console.error(e);
+									// console.log(e.response);
+								});
+							}
+						});
+					}
+				}
+			});
+		},
+		submitFile(){
+			var self = this;
+			/* Initialize the form data */
+			let formData = new FormData();
+			/* Add the form data we need to submit */
+			formData.append('file', self.file);
+			/* Make the request to the POST /single-file URL */
+			axios.post( '/index.php?controller=site&action=UploadFileRRHH&doc_number=' + self.record.identification_number, formData,
+			{
+				headers: { 
+					'Content-Type': 'multipart/form-data'
+				}
+			}).then(function(e){
+				console.log(e);
+				$("#file").val('');				
+				if(e.status == 200 && e.data.files.length > 0 && e.data.files[0].error === false){
+					api.post('/records/employees_media', {
+						employee: self.$route.params.employee_id,
+						media: e.data.files[0].id,
+					})
+					.then(function (d){
+						if(d.status == 200){
+							console.log('SUCCESS!!', e);
+							self.load();
+						}
+					})
+					.catch(function (e) {
+						console.error(e);
+						console.log(e.response);
+						$('#img-upload').attr('src','');
+						$('#urlname').val('');
+						self.record.avatar = 0;
+					});
+				} else {
+					
+				}
+			})
+			.catch(function(e){
+				console.error(e);
+				console.log(e.response);
+				alert('Hubo un error subiendo el archivo!');
+				//$("#file").val('');
+			});
+		},
+		handleFileUpload(){
+			var self = this;
+			self.file = self.$refs.file.files[0];
+		},
+		removeSkill(skill_ref_id){
+			var self = this;
+			bootbox.confirm({
+				message: "Confirma antes de eliminar?",
+				locale: 'es',
+				callback: (a) => {
+					if(a == true){
+						MV.api.remove('/employees_skills/' + skill_ref_id, {}, (b) => {
+							if(b > 0){
+								self.$root.notificationPush("Exito!", "Habilidad eliminada.", "success");
+								
+								index = self.record.employees_skills.findIndex((c) => c.id == skill_ref_id);
+								self.load();
+							}
+						});
+					}
+				}
+			});
+		},
 	},
 });
 
@@ -1667,6 +2535,7 @@ var router = new VueRouter({
 		{ path: '/', component: Home, name: 'Home' },
 		{ path: '/create', component: Create, name: 'Create' },
 		{ path: '/view/single/:employee_id', component: Single, name: 'Single' },
+		{ path: '/editin/single/:employee_id', component: Edit, name: 'Edit' },
 	]
 });
 

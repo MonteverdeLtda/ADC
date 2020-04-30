@@ -1713,14 +1713,14 @@ var SingleDetails = Vue.extend({
 				alert('Hubo un error subiendo el archivo!');
 				//$("#file").val('');
 			});
-		  },
-		  /*
+		},
+		/*
 			Handles a change on the file upload
-		  */
-		  handleFileUpload(){
-			  var self = this;
-			  self.file = self.$refs.file.files[0];
-		  }
+		*/
+		handleFileUpload(){
+			var self = this;
+			self.file = self.$refs.file.files[0];
+		}
 	}
 });
 

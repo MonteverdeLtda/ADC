@@ -445,7 +445,7 @@
 									<img class="img-responsive avatar-view" :src="(record.photo !== null && record.photo > 0) ? '/public/assets/images/picture.jpg' : defaultData.photo" alt="Avatar" title="Change the avatar" />
 								</div>
 							</div>
-							<h3>{{ record.names }} {{ record.surname }} </h3>
+							<h3>{{ record.names }} {{ record.surname }} ({{ record.status.name }}) </h3>
 							<h4>{{ record.identification_type.code }} {{ record.identification_number }} ({{ record.nationality.name }})</h4>
 							<ul class="list-unstyled user_data">
 								<li><i class="fa fa-birthday-cake user-profile-icon"></i> {{ record.birthdate }} <i > {{ record.place_birth_city.name }}, {{ record.place_birth_department.name }}, {{ record.place_birth_country.name }}</i> </li>
@@ -535,6 +535,11 @@
 									<li role="presentation" class="">
 										<a href="#tab_content5" role="tab" id="profile-tab5" data-toggle="tab" aria-expanded="false">
 											<i class="fa fa-phone"></i> Contactos
+										</a>
+									</li>
+									<li role="presentation" class="">
+										<a href="#tab_content6" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
+											<i class="fa fa-file"></i> Documentos
 										</a>
 									</li>
 									<li role="presentation" class="">
@@ -697,8 +702,7 @@
 									</div>
 									<div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">
 										<div class="row">
-											<div class="col-md-12 col-sm-12 col-xs-12 text-center">
-											</div>
+											<div class="col-md-12 col-sm-12 col-xs-12 text-center"></div>
 											<div class="clearfix"></div>
 											<div class="col-md-4 col-sm-4 col-xs-12 profile_details" v-for="(item, item_i) in record.employees_contacts">
 												<div class="well profile_view">
@@ -734,6 +738,10 @@
 												</button>
 											</div>	
 									
+										</div>
+									</div>
+									<div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="profile-tab">
+										Docs
 									</div>
 								</div>
 							</div>

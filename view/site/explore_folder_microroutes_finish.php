@@ -123,7 +123,7 @@ $hidenames = (isset($_GET['hidenames']) &&  $_GET['hidenames'] == true) ? true :
 															
 															<li>
 																<span>
-																	<a style="color:#000; text-decoration:none;" href="<?= "/index.php?action=CreateZipPhotos&year={$year}&period_name=" . base64_encode($period_name); ?>" download="">
+																	<a target="_blank" style="color:#000; text-decoration:none;" href="<?= "/index.php?action=CreateZipPhotos&year={$year}&period_name=" . base64_encode($period_name); ?>">
 																		Descargar
 																	</a>
 																</span>

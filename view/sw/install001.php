@@ -1,4 +1,4 @@
-<?php header('Content-Type: text/javascript'); 
+<?php header('Content-Type: text/javascript'); ?>
 self.addEventListener('install', function(event) {
 	// Instalar de inmediato
 	if (self.skipWaiting) { self.skipWaiting(); }

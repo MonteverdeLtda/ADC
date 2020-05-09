@@ -1,3 +1,11 @@
+<link href='https://unpkg.com/@fullcalendar/core@4.4.0/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/timeline@4.4.0/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/resource-timeline@4.4.0/main.min.css' rel='stylesheet' />
+<script src='https://unpkg.com/@fullcalendar/core@4.4.0/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/timeline@4.4.0/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/resource-common@4.4.0/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/resource-timeline@4.4.0/main.min.js'></script>
+
 <style>
 .circle-color {
 	position: relative;
@@ -816,8 +824,32 @@
 
 							</div>
 							
+							
+							<div class="x_title">
+								<h2>
+									<i class="fa fa-info-circle"></i>
+									<b>Debug</b>
+								</h2>
+								<div class="clearfix"></div>
+							</div>
 							<div class="x_content">
-								{{ record.requests }}
+								<table v-for="(item, i) in record.requests" class="table">
+									<thead class="table-dark">
+										<tr>
+											<th></th>
+											<th>Item {{ i }}</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="(value, name, index) in item">
+											<td>{{ index }}</td>
+											<td>{{ name }}</td>
+											<td>{{ value }}</td>
+										</tr>
+									</tbody>
+								</table>
+								
 								<hr>
 							</div>
 						</div>
@@ -1325,14 +1357,14 @@
 						<form class="form" action="javascript:false;" v-on:submit="NormalizeAddressesModal" method="post">
 
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-								<select @change="loadCitys" v-model="addressNormalize.department" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+								<select @change="loadCitys" v-model="addressNormalize.department" type="text" required="required" class="form-control has-feedback-left">
 									<option value="">Elija un departamento...</option>
 									<option v-for="(item, index_item) in options.geo_departments" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
 								<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-								<select v-model="addressNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+								<select v-model="addressNormalize.city" type="text" required="required" class="form-control has-feedback-left">
 									<option value="">Elija una ciudad...</option>
 									<option v-for="(item, index_item) in options.geo_citys" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
@@ -1455,14 +1487,14 @@
 								</div>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-								<select @change="loadCitysHeadquarters" v-model="headquartersNormalize.department" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+								<select @change="loadCitysHeadquarters" v-model="headquartersNormalize.department" type="text" required="required" class="form-control has-feedback-left">
 									<option value="">Elija un departamento...</option>
 									<option v-for="(item, index_item) in options.geo_departments" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
 								<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-								<select v-model="headquartersNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+								<select v-model="headquartersNormalize.city" type="text" required="required" class="form-control has-feedback-left">
 									<option value="">Elija una ciudad...</option>
 									<option v-for="(item, index_item) in options.geo_citys" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
@@ -1665,7 +1697,7 @@
 								</div>
 
 								<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-									<input type="text" v-model="form.names" class="form-control has-feedback-left" id="inputSuccess2" required="required" :placeholder="(form.type == 1) ? 'Nombre(s)' : 'Razon social' + '(*)'" />
+									<input type="text" v-model="form.names" class="form-control has-feedback-left" required="required" :placeholder="(form.type == 1) ? 'Nombre(s)' : 'Razon social' + '(*)'" />
 									<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 								</div>
 
@@ -1786,14 +1818,14 @@
 						<form class="form" action="javascript:false;" v-on:submit="NormalizeAddressesModal" method="post">
 
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-								<select @change="loadCitys" v-model="addressNormalize.department" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+								<select @change="loadCitys" v-model="addressNormalize.department" type="text" required="required" class="form-control has-feedback-left">
 									<option value="">Elija un departamento...</option>
 									<option v-for="(item, index_item) in options.geo_departments" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
 								<span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
 							</div>
 							<div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-								<select v-model="addressNormalize.city" type="text" id="inputSuccess2" required="required" class="form-control has-feedback-left">
+								<select v-model="addressNormalize.city" type="text" required="required" class="form-control has-feedback-left">
 									<option value="">Elija una ciudad...</option>
 									<option v-for="(item, index_item) in options.geo_citys" :key="item.id" :value="item.id">{{ item.name }}</option>
 								</select>
@@ -2550,6 +2582,9 @@
 						<h4 class="modal-title" id="myModalLabel">Agendar Visita Técnica</h4>
 					</div>
 					<div class="modal-body">
+						<button class="btn btn-primary" @click="loadCalendarGantt">Cargar calendario</button>
+						<hr>
+						<div id="calendar-box-gantt"></div>
 					</div>
 				</div>
 			</div>
@@ -5182,8 +5217,137 @@ var ViewRequest = Vue.extend({
 			}).catch(function (error) {
 			  console.log(error);
 			});
-			
 		},
+		loadCalendarGantt(){
+			var self = this;
+			
+			if( typeof ($.fn.fullCalendar) === 'undefined'){ return; }
+			console.log(('init_calendar'));
+				
+			var date = new Date(),
+				d = date.getDate(),
+				m = date.getMonth(),
+				y = date.getFullYear(),
+				started,
+				categoryClass;
+			/*
+			if(self.calendar !== null){
+				self.calendar.fullCalendar('destroy')
+			}*/
+			
+			var calendarEl = document.getElementById('calendar-box-gantt');
+
+			var calendar = new FullCalendar.Calendar(calendarEl, {
+				dayNames: ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
+				dayNamesShort: ['Dom','Lun','Mar','Mie','Jue','Vie','Sáb'],
+				monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				buttonText: { today:    'Hoy', month:    'Mes', week:     'Semana', day:      'Día', list:     'Lista' },
+				defaultButtonText: { prev: "Anterior", next: "Siguiente", prevYear: "Ant Año", nextYear: "Sig Año", today: 'Hoy', month: 'mes', week: 'Semana', day: 'Día', timelineMonth: 'Gantt' },
+				
+			  plugins: [ 'resourceTimeline' ],
+			  header: {
+				left: 'today prev,next',
+				center: 'title',
+				right: 'resourceTimelineDay,resourceTimelineWeek'
+			  },
+			  defaultView: 'resourceTimelineDay',
+			  resources: 'https://fullcalendar.io/demo-resources.json',
+
+			  resourceRender: function(info) {
+				var questionMark = document.createElement('strong');
+				questionMark.innerText = ' (?) ';
+
+				info.el.querySelector('.fc-cell-text')
+				  .appendChild(questionMark);
+
+				var tooltip = new Tooltip(questionMark, {
+				  title: info.resource.title + '!!!',
+				  placement: 'top',
+				  trigger: 'hover',
+				  container: 'body'
+				});
+			  }
+			});
+
+			calendar.render();
+			
+			/*
+				events: [
+					{
+						title: 'All Day Event',
+						start: new Date(y, m, 1)
+					}, 
+					{
+						title: 'Long Event',
+						start: new Date(y, m, d - 5),
+						end: new Date(y, m, d - 2)
+					},
+					{
+						title: 'Meeting',
+						start: new Date(y, m, d, 10, 30),
+						allDay: false
+					}, 
+					{
+						title: 'Lunch',
+						start: new Date(y, m, d + 14, 12, 0),
+						end: new Date(y, m, d, 14, 0),
+						allDay: false
+					}, {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false}, {title: 'Click for Google',start: new Date(y, m, 28),end: new Date(y, m, 29),url: 'http://google.com/'}
+				],
+			*/
+		},
+		jsonEvent(a){
+			var self = this;
+			//a.editable = (a.editable == 1) ? 1 : (a.created_by.id === undefined && a.created_by == '<?= $this->user->id; ?>') ? 1 : (a.created_by.id !== undefined && a.created_by.id == '<?= $this->user->id; ?>') ? 1 : 0;
+			//a['100_events_staff'].forEach(function(b){ a.editable = (b.isAdmin == 1) ? 1 : a.editable; });
+			a.title = (a.microroute.name);
+			a.start = moment(a.date_executed_schedule);
+			a.end = moment(a.date_executed_schedule_end);
+			
+			totalDays = a.start.diff(moment(), 'days');
+			console.log('a.start', a.start.format('YYYY-MM-DD'));
+			console.log('totalDays', totalDays);
+			
+			if(totalDays > -1 || (a.is_executed == 0 && totalDays < -1)){
+				a.editable = self.intToboolean(1);
+			} else {
+				a.editable = self.intToboolean(0);
+			}
+			
+			
+			a.color = (a.is_executed == 0 && totalDays < -1) ? '#f44336' : a.is_approved == 1 ? '#8bc34a' : a.is_executed == 1 ? '#638bab' : 'gray';
+			
+			
+			
+			a.editable = self.intToboolean(0);
+			a.allDay = self.intToboolean(0);
+			return a;
+		},
+		booleanToint(d, def){
+			def = (def !== undefined) ? def : 0;
+			var self = this;
+			if(d === true){
+				return 1;
+			} else if(d === false){
+				return 0;
+			} else {
+				return def;
+			}
+		},
+		intToboolean(d, def){
+			var self = this;
+			def = (def !== undefined) ? def : false;
+			var self = this;
+			if(d == 1){
+				return true;
+			} else if(d === 0){
+				return false;
+			} else {
+				return def;
+			}
+		},
+		
 	},
 });
 
